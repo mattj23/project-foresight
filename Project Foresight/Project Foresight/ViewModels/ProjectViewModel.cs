@@ -14,6 +14,26 @@ namespace Project_Foresight.ViewModels
 
         private Foresight.Project _project = null;
 
+        public string Name
+        {
+            get { return this._project.Name; }
+            set
+            {
+                this._project.Name = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string Description
+        {
+            get { return this._project.Description; }
+            set
+            {
+                this._project.Description = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         public ObservableCollection<TaskViewModel> Tasks { get; set; }
 

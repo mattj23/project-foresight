@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Project_Foresight.ViewModels;
 
 namespace Project_Foresight
 {
@@ -23,6 +24,7 @@ namespace Project_Foresight
         public MainWindow()
         {
             InitializeComponent();
+            this.DataContext = AppViewModel.Global;
         }
     }
 }
