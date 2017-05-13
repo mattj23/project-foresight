@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -32,6 +33,11 @@ namespace Foresight
         {
             this._tasks.Remove(task);
             task.UnlinkAll();
+        }
+
+        public PertTask GetTaskById(Guid id)
+        {
+            return this._tasks.FirstOrDefault(x => x.Id == id);
         }
 
     }

@@ -31,6 +31,24 @@ namespace Foresight.Serialization
             };
 
         }
+
+        /// <summary>
+        /// Converts a SerializeablePertTask into a PertTask, but without the employee
+        /// list or any linking
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public static PertTask ToUnlinkedPertTask(SerializeablePertTask item)
+        {
+            return new PertTask
+            {
+                Name = item.Name,
+                Id = item.Id,
+                Description = item.Description,
+                TimeEstimate = item.TimeEstimate,
+                Employees = new HashSet<Employee>()
+            };
+        }
         
     }
 }

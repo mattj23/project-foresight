@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using NUnit.Framework.Internal;
 
 namespace Foresight.Tests
@@ -74,5 +75,17 @@ namespace Foresight.Tests
             CollectionAssert.DoesNotContain(task7.Ancestors, task5);
         }
 
+        [Test]
+        public void GetByIdFails()
+        {
+            Assert.IsNull(project.GetTaskById(Guid.NewGuid()));
+        }
+
+        [Test]
+        public void GetById()
+        {
+            var taskId = task5.Id;
+            Assert.AreEqual(task5, project.GetTaskById(taskId));
+        }
     }
 }
