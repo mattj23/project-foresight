@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foresight", "Foresight\Foresight.csproj", "{2DA8A0FD-3A97-4410-A9EA-0B603B9B9042}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foresight", "Foresight\Foresight.csproj", "{911086AD-8518-4227-B1ED-7BEDE1202ADA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foresight.Tests", "Foresight.Tests\Foresight.Tests.csproj", "{0F165D56-EC98-49A5-9167-869655266BCE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2DA8A0FD-3A97-4410-A9EA-0B603B9B9042}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2DA8A0FD-3A97-4410-A9EA-0B603B9B9042}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2DA8A0FD-3A97-4410-A9EA-0B603B9B9042}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2DA8A0FD-3A97-4410-A9EA-0B603B9B9042}.Release|Any CPU.Build.0 = Release|Any CPU
+		{911086AD-8518-4227-B1ED-7BEDE1202ADA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{911086AD-8518-4227-B1ED-7BEDE1202ADA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{911086AD-8518-4227-B1ED-7BEDE1202ADA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{911086AD-8518-4227-B1ED-7BEDE1202ADA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F165D56-EC98-49A5-9167-869655266BCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F165D56-EC98-49A5-9167-869655266BCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F165D56-EC98-49A5-9167-869655266BCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F165D56-EC98-49A5-9167-869655266BCE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

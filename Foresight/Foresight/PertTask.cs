@@ -1,73 +1,102 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using Foresight.Annotations;
+using System.Linq;
 
 namespace Foresight
 {
-    /// <summary>
-    /// A PertTask represents a task in a PERT network.
-    /// </summary>
-    public class PertTask : INotifyPropertyChanged
+    public class PertTask
     {
-        private string _name;
-        private string _description;
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public string Name
+        /// <summary>
+        /// Return a HashSet with all ancestors of a task located by recursively walking the graph
+        /// </summary>
+        /// <param name="task">The task to find all ancestors of</param>
+        /// <returns></returns>
+        public static HashSet<PertTask> AllAncestorsOf(PertTask task)
         {
-            get { return _name; }
-            set
+            var tasks = new HashSet<PertTask>();
+            var checkTasks = new Queue<PertTask>();
+            checkTasks.Enqueue(task);
+            while (checkTasks.Count != 0)
             {
-                if (value == _name) return;
-                _name = value;
-                OnPropertyChanged();
+                var working = checkTasks.Dequeue();
+                foreach (var item in working.Ancestors)
+                {
+                    checkTasks.Enqueue(item);
+                }
+                tasks.Add(working);
             }
+            tasks.Remove(task);
+            return tasks;
         }
 
-        public string Description
+        /// <summary>
+        /// Return as HashSet with all descendants of a task located by recursively walking the graph
+        /// </summary>
+        /// <param name="task">The task to find all descendants of</param>
+        /// <returns></returns>
+        public static HashSet<PertTask> AllDescendantsOf(PertTask task)
         {
-            get { return _description; }
-            set
+            var tasks = new HashSet<PertTask>();
+            var checkTasks = new Queue<PertTask>();
+            checkTasks.Enqueue(task);
+            while (checkTasks.Count != 0)
             {
-                if (value == _description) return;
-                _description = value;
-                OnPropertyChanged();
+                var working = checkTasks.Dequeue();
+                foreach (var item in working.Descendants)
+                {
+                    checkTasks.Enqueue(item);
+                }
+                tasks.Add(working);
             }
+            tasks.Remove(task);
+            return tasks;
         }
 
-        
-        public ObservableCollection<Employee> Employees { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
 
-        private HashSet<PertTask> Ancestors { get; set; }
-        private HashSet<PertTask> Descendants { get; set; }
+        public IReadOnlyCollection<PertTask> Ancestors => new ReadOnlyCollection<PertTask>(this._ancestors.ToList());
+        public IReadOnlyCollection<PertTask> Descendants => new ReadOnlyCollection<PertTask>(this._descendants.ToList());
+
+        public IReadOnlyCollection<PertTask> AllAncestors => new ReadOnlyCollection<PertTask>(AllAncestorsOf(this).ToList());
+
+        public IReadOnlyCollection<PertTask> AllDescendants => new ReadOnlyCollection<PertTask>(AllDescendantsOf(this).ToList());
+
+        public Estimate TimeEstimate { get; set; }
+        public HashSet<Employee> Employees { get; set; }
+
+        private readonly HashSet<PertTask> _ancestors;
+        private readonly HashSet<PertTask> _descendants;
 
         public PertTask()
         {
-            this.Employees = new ObservableCollection<Employee>();
-            this.Ancestors = new HashSet<PertTask>();
-            this.Descendants = new HashSet<PertTask>();
+            this.Employees = new HashSet<Employee>();
+            this._ancestors = new HashSet<PertTask>();
+            this._descendants = new HashSet<PertTask>();
         }
 
         public void LinkToAncestor(PertTask ancestor)
         {
-            this.Ancestors.Add(ancestor);
-            ancestor.Descendants.Add(this);
+            // Check to make sure we're not creating a cyclic graph
+            if (ancestor == this)
+                throw new ArgumentException("Cannot link a task to itself");
+            if (ancestor.AllAncestors.Contains(this))
+                throw new ArgumentException($"Making task '{ancestor.Name}' an ancestor of task '{this.Name}' would create a cyclic project network.");
+            this._ancestors.Add(ancestor);
+            ancestor._descendants.Add(this);
         }
 
         public void LinkToDescendant(PertTask descendant)
         {
-            this.Descendants.Add(descendant);
-            descendant.Ancestors.Add(this);
+            if (descendant == this)
+                throw new ArgumentException("Cannot link a task to itself");
+            if (descendant.AllDescendants.Contains(this))
+                throw new ArgumentException($"Making task '{descendant.Name}' a descendant of task '{this.Name}' would create a cyclic project network.");
+            this._descendants.Add(descendant);
+            descendant._ancestors.Add(this);
         }
 
-        
 
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
 }
