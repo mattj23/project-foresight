@@ -23,6 +23,9 @@ namespace Project_Foresight.ViewModels
         public AppViewModel()
         {
             this.Project = new ProjectViewModel {Name = "Hello world!"};
+            this.Project.AddTask(new TaskViewModel {X = 0, Y = 0, Name = "Test Task 1!"});
+            this.Project.AddTask(new TaskViewModel { X = 200, Y = 0, Name = "Test Task 2!" });
+
         }
 
 

@@ -12,6 +12,8 @@ namespace Project_Foresight.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
 
         private Foresight.PertTask _task = null;
+        private double _y;
+        private double _x;
 
         public string Name
         {
@@ -32,6 +34,30 @@ namespace Project_Foresight.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        public double X
+        {
+            get { return _x; }
+            set
+            {
+                if (value.Equals(_x)) return;
+                _x = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double Y
+        {
+            get { return _y; }
+            set
+            {
+                if (value.Equals(_y)) return;
+                _y = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public PertTask Model => this._task;
 
         public Guid[] Ancestors => this._task.Ancestors.Select(x => x.Id).ToArray();
 

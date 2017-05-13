@@ -7,6 +7,47 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PERTView}}}">
-        <TextBlock Text="{Binding ViewModel.Name}"></TextBlock>
+        <Border x:Name="ViewArea" 
+                BorderBrush="Black"
+                BorderThickness=".5"
+                MouseWheel="ControlOnMouseWheel"
+                MouseDown="ControlOnMouseDown"
+                MouseMove="ControlOnMouseMove">
+            <Grid>
+                <Border>
+                    <Border.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="{Binding Zoom}"
+                                            ScaleY="{Binding Zoom}" />
+                            <TranslateTransform X="{Binding ShiftX}"
+                                                Y="{Binding ShiftY}" />
+
+                        </TransformGroup>
+                    </Border.RenderTransform>
+                    <Canvas x:Name="ViewCanvas">
+                        <local:CanvasItemsControl ItemsSource="{Binding ViewModel.Tasks}">
+                            <local:CanvasItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas></Canvas>
+                                </ItemsPanelTemplate>
+                            </local:CanvasItemsControl.ItemsPanel>
+
+                            <local:CanvasItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <local:TaskView ViewModel="{Binding}">
+                                        
+                                    </local:TaskView>
+                                </DataTemplate>
+                            </local:CanvasItemsControl.ItemTemplate>
+                        </local:CanvasItemsControl>
+                        <!-- <Image Source="{Binding ViewModel.Source}" /> -->
+                    </Canvas>
+                </Border>
+
+
+            </Grid>
+            
+        </Border>
+        
     </Grid>
 </UserControl>

@@ -46,6 +46,13 @@ namespace Project_Foresight.ViewModels
             this.TasksById = new Dictionary<Guid, TaskViewModel>();
         }
 
+        public void AddTask(TaskViewModel task)
+        {
+            this._project.AddTask(task.Model);
+            this.Tasks.Add(task);
+            this.TasksById.Add(task.Id, task);
+        }
+
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
