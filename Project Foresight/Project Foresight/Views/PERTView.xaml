@@ -10,6 +10,7 @@
         <Border x:Name="ViewArea" 
                 BorderBrush="Black"
                 BorderThickness=".5"
+                Background="White"
                 MouseWheel="ControlOnMouseWheel"
                 MouseDown="ControlOnMouseDown"
                 MouseMove="ControlOnMouseMove">

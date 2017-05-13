@@ -21,6 +21,8 @@ namespace Project_Foresight.Views
     /// </summary>
     public partial class TaskView : UserControl
     {
+        private Point _mouseDownPoint;
+
         public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
             "ViewModel", typeof(TaskViewModel), typeof(TaskView), new PropertyMetadata(default(TaskViewModel)));
 
@@ -32,6 +34,28 @@ namespace Project_Foresight.Views
         public TaskView()
         {
             InitializeComponent();
+        }
+
+        private void UIElement_OnMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                Canvas canvas = sender as Canvas;
+                Point canvasPoint = e.GetPosition(canvas);
+
+                this.ViewModel.X += (canvasPoint.X - _mouseDownPoint.X);
+                this.ViewModel.Y += (canvasPoint.Y - _mouseDownPoint.Y);
+                this._mouseDownPoint = canvasPoint;
+            }
+        }
+
+        private void UIElement_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Canvas canvas = sender as Canvas;
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                _mouseDownPoint = e.GetPosition(canvas);
+            }
         }
     }
 }

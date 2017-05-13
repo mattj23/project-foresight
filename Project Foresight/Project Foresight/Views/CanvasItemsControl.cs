@@ -10,8 +10,8 @@ namespace Project_Foresight.Views
                             DependencyObject element,
                             object item)
         {
-            Binding leftBinding = new Binding() { Path = new PropertyPath("X") };
-            Binding topBinding = new Binding() { Path = new PropertyPath("Y") };
+            Binding leftBinding = new Binding() { Path = new PropertyPath("X") , Mode = BindingMode.TwoWay};
+            Binding topBinding = new Binding() { Path = new PropertyPath("Y"), Mode = BindingMode.TwoWay };
 
             FrameworkElement contentControl = (FrameworkElement)element;
             contentControl.SetBinding(Canvas.LeftProperty, leftBinding);
