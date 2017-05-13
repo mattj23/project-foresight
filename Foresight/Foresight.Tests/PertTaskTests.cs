@@ -71,6 +71,34 @@ namespace Foresight.Tests
         }
 
         [Test]
+        public void UnlinkAncestor()
+        {
+            task5.UnlinkFromAncestor(task3);
+            CollectionAssert.DoesNotContain(task3.Descendants, task5);
+            CollectionAssert.DoesNotContain(task5.Ancestors, task3);
+            Assert.Throws<ArgumentException>(() => { task8.UnlinkFromAncestor(task1); });
+        }
+
+        [Test]
+        public void UnlinkDescendant()
+        {
+            task5.UnlinkFromDescendant(task6);
+            CollectionAssert.DoesNotContain(task6.Ancestors, task5);
+            CollectionAssert.DoesNotContain(task5.Descendants, task6);
+            Assert.Throws<ArgumentException>(()=>{task8.UnlinkFromDescendant(task1);});
+        }
+
+        [Test]
+        public void UnlinkAll()
+        {
+            task5.UnlinkAll();
+            CollectionAssert.DoesNotContain(task3.Descendants, task5);
+            CollectionAssert.DoesNotContain(task4.Descendants, task5);
+            CollectionAssert.DoesNotContain(task6.Ancestors, task5);
+            CollectionAssert.DoesNotContain(task7.Ancestors, task5);
+        }
+
+        [Test]
         public void AllAncestors()
         {
             var ancestors = task5.AllAncestors.ToList();
@@ -78,6 +106,7 @@ namespace Foresight.Tests
 
             CollectionAssert.AreEquivalent(expected, ancestors);
         }
+
 
         [Test]
         public void AllDescendants()

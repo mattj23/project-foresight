@@ -53,8 +53,12 @@ namespace Foresight
             return tasks;
         }
 
+        public Guid Id { get; set; }
+
         public string Name { get; set; }
         public string Description { get; set; }
+
+        public string Category { get; set; }
 
         public IReadOnlyCollection<PertTask> Ancestors => new ReadOnlyCollection<PertTask>(this._ancestors.ToList());
         public IReadOnlyCollection<PertTask> Descendants => new ReadOnlyCollection<PertTask>(this._descendants.ToList());
@@ -71,6 +75,7 @@ namespace Foresight
 
         public PertTask()
         {
+            this.Id = Guid.NewGuid();
             this.Employees = new HashSet<Employee>();
             this._ancestors = new HashSet<PertTask>();
             this._descendants = new HashSet<PertTask>();
@@ -97,6 +102,44 @@ namespace Foresight
             descendant._ancestors.Add(this);
         }
 
+        public void UnlinkFromAncestor(PertTask ancestor)
+        {
+            if (this._ancestors.Contains(ancestor))
+            {
+                ancestor._descendants.Remove(this);
+                this._ancestors.Remove(ancestor);
+            }
+            else
+            {
+                throw new ArgumentException($"Task '{this.Name}' does not have task '{ancestor.Name}' as an ancestor.");
+            }
+        }
+
+        public void UnlinkFromDescendant(PertTask descendant)
+        {
+            if (this._descendants.Contains(descendant))
+            {
+                this._descendants.Remove(descendant);
+                descendant._ancestors.Remove(this);
+            }
+            else
+            {
+                throw new ArgumentException($"Task '{this.Name}' does not have task '{descendant.Name}' as a descendant.");
+            }
+        }
+
+        public void UnlinkAll()
+        {
+            foreach (var ancestor in this._ancestors.ToList())
+            {
+                this.UnlinkFromAncestor(ancestor);
+            }
+
+            foreach (var descendant in this._descendants.ToList())
+            {
+                this.UnlinkFromDescendant(descendant);
+            }
+        }
 
     }
 }
