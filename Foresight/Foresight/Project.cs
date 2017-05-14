@@ -13,6 +13,8 @@ namespace Foresight
         public string Name { get; set; }
         public string Description { get; set; }
 
+        public Organization Organization { get; set; }
+
         public ReadOnlyCollection<PertTask> Tasks => new ReadOnlyCollection<PertTask>(this._tasks.ToList());
 
         private HashSet<PertTask> _tasks;
@@ -22,6 +24,7 @@ namespace Foresight
         public Project()
         {
             this._tasks = new HashSet<PertTask>();
+            this.Organization = new Organization();
         }
 
         public void AddTask(PertTask task)

@@ -1,6 +1,11 @@
 {
   "Name": "Hello world!",
   "Description": null,
+  "Organization": {
+    "Name": null,
+    "ResourceGroups": [],
+    "Employees": []
+  },
   "Tasks": [
     {
       "Id": "3c67496a-0d49-49a6-bc36-410dbe2cc388",

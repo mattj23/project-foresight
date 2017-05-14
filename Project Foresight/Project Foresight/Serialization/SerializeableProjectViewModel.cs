@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
+using Foresight;
 using Foresight.Serialization;
 using Project_Foresight.ViewModels;
 
@@ -16,6 +17,7 @@ namespace Project_Foresight.Serialization
             {
                 Name = viewModel.Name,
                 Description = viewModel.Description,
+                Organization = viewModel.Organization.Model
             };
 
             working.Tasks = viewModel.Tasks.Select(x => SerializeablePertTask.FromPertTask(x.Model)).ToList();
@@ -30,10 +32,15 @@ namespace Project_Foresight.Serialization
 
         public static ProjectViewModel ToProjectViewModel(SerializeableProjectViewModel working)
         {
+            if (working.Organization == null)
+            {
+                working.Organization = new Organization();
+            }
             var project = new ProjectViewModel
             {
                 Name = working.Name,
                 Description = working.Description,
+                Organization = new OrganizationViewModel(working.Organization)
             };
 
             foreach (SerializeablePertTask task in working.Tasks)
@@ -60,6 +67,7 @@ namespace Project_Foresight.Serialization
 
         public string Name { get; set; }
         public string Description { get; set; }
+        public Organization Organization { get; set; }
 
         public List<SerializeablePertTask> Tasks { get; set; }
         public Dictionary<Guid, Point> TaskPositions { get; set; }

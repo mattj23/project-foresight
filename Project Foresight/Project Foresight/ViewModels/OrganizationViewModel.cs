@@ -27,10 +27,7 @@ namespace Project_Foresight.ViewModels
         public ObservableCollection<EmployeeViewModel> Employees { get; }
         public ObservableCollection<ResourceGroupViewModel> ResourceGroups { get; }
 
-        public OrganizationViewModel() : this(new Organization())
-        {
-            
-        }
+        public OrganizationViewModel() : this(new Organization()) { }
 
         public OrganizationViewModel(Organization model)
         {
