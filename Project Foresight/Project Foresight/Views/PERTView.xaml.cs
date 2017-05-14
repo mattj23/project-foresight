@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Project_Foresight.Tools;
 using Project_Foresight.ViewModels;
 
 namespace Project_Foresight.Views
@@ -36,6 +37,24 @@ namespace Project_Foresight.Views
         public static readonly DependencyProperty ShiftYProperty = DependencyProperty.Register(
             "ShiftY", typeof(double), typeof(PERTView), new PropertyMetadata(default(double)));
 
+        public static readonly DependencyProperty IsRadialMenuOpenProperty = DependencyProperty.Register(
+            "IsRadialMenuOpen", typeof(bool), typeof(PERTView), new PropertyMetadata(default(bool)));
+
+        public static readonly DependencyProperty RadialMarginProperty = DependencyProperty.Register(
+            "RadialMargin", typeof(Thickness), typeof(PERTView), new PropertyMetadata(default(Thickness)));
+
+        public Thickness RadialMargin
+        {
+            get { return (Thickness) GetValue(RadialMarginProperty); }
+            set { SetValue(RadialMarginProperty, value); }
+        }
+
+        public bool IsRadialMenuOpen
+        {
+            get { return (bool) GetValue(IsRadialMenuOpenProperty); }
+            set { SetValue(IsRadialMenuOpenProperty, value); }
+        }
+
         public double ShiftY
         {
             get { return (double) GetValue(ShiftYProperty); }
@@ -59,6 +78,8 @@ namespace Project_Foresight.Views
             get { return (ProjectViewModel) GetValue(ViewModelProperty); }
             set { SetValue(ViewModelProperty, value); }
         }
+
+        public ICommand CloseRadialMenu => new RelayCommand(() => IsRadialMenuOpen = false);
 
         private double _minZoom = 0.5;
         private double _maxZoom = 3.0;
@@ -89,16 +110,24 @@ namespace Project_Foresight.Views
 
         private void ControlOnMouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed || e.RightButton == MouseButtonState.Pressed)
+            // Close the radial menu if it's open
+            if (e.LeftButton == MouseButtonState.Pressed || e.MiddleButton == MouseButtonState.Pressed)
             {
-                // Click handler for viewmodel
-                // this.ViewModel.InvokeMouseDownEvent(e.GetPosition(this.ViewCanvas));
+                if (this.IsRadialMenuOpen)
+                    this.IsRadialMenuOpen = false;
             }
 
             if (e.MiddleButton == MouseButtonState.Pressed)
             {
                 this._dragStartShift = new Point(this.ShiftX, this.ShiftY);
                 this._dragStartMouse = e.GetPosition(this.ViewArea);
+            }
+
+            if (e.RightButton == MouseButtonState.Pressed)
+            {
+                this.IsRadialMenuOpen = true;
+                var mousePosition = e.GetPosition(this.ViewArea);
+                this.RadialMargin = new Thickness(mousePosition.X - (this.RadialMenu.Width / 2.0), mousePosition.Y - (this.RadialMenu.Height / 2.0), 0, 0);
             }
         }
 
@@ -121,6 +150,12 @@ namespace Project_Foresight.Views
         {
             // Validation logic goes here
             return shift;
+        }
+
+        private void AddTask_OnClick(object sender, RoutedEventArgs e)
+        {
+            var position = System.Windows.Input.Mouse.GetPosition(ViewCanvas);
+            this.ViewModel.AddTask(new TaskViewModel {Name = "New Task", Description = "Description", X = position.X, Y=position.Y});
         }
     }
 }
