@@ -15,6 +15,7 @@ namespace Project_Foresight.ViewModels
 
         private Foresight.Project _project = null;
         private TaskViewModel _selectedTask;
+        private OrganizationViewModel _organization;
 
         public string Name
         {
@@ -32,6 +33,17 @@ namespace Project_Foresight.ViewModels
             set
             {
                 this._project.Description = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public OrganizationViewModel Organization
+        {
+            get { return _organization; }
+            set
+            {
+                if (Equals(value, _organization)) return;
+                _organization = value;
                 OnPropertyChanged();
             }
         }
@@ -84,6 +96,10 @@ namespace Project_Foresight.ViewModels
             this.Tasks = new ObservableCollection<TaskViewModel>();
             this.TasksById = new Dictionary<Guid, TaskViewModel>();
             this.Links = new ObservableCollection<LinkViewModel>();
+
+            if (this._project.Organization == null)
+                this._project.Organization = new Organization();
+            this.Organization = new OrganizationViewModel(this._project.Organization);
         }
 
         public void AddTask(TaskViewModel task)
