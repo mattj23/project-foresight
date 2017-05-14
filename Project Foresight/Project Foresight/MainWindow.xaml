@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:Project_Foresight"
         DataContext="{StaticResource MainViewModel}"
         mc:Ignorable="d"
-        Title="Project Foresight" Height="350" Width="525">
+        Title="Project Foresight" Height="1000" Width="1800">
     <Grid>
         <views:PERTView ViewModel="{Binding Project}"></views:PERTView>
     </Grid>

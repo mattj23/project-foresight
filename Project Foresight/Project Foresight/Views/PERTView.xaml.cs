@@ -22,6 +22,15 @@ namespace Project_Foresight.Views
     /// </summary>
     public partial class PERTView : UserControl
     {
+        public enum PertViewMode
+        {
+            Normal,
+            AddTask,
+            AddLink,
+            RemoveTask,
+            RemoveLink
+        }
+
         private Point _dragStartMouse;
         private Point _dragStartShift;
 
@@ -42,6 +51,24 @@ namespace Project_Foresight.Views
 
         public static readonly DependencyProperty RadialMarginProperty = DependencyProperty.Register(
             "RadialMargin", typeof(Thickness), typeof(PERTView), new PropertyMetadata(default(Thickness)));
+
+        public static readonly DependencyProperty ModeProperty = DependencyProperty.Register(
+            "Mode", typeof(PertViewMode), typeof(PERTView), new PropertyMetadata(default(PertViewMode)));
+
+        public static readonly DependencyProperty CanvasMousePointProperty = DependencyProperty.Register(
+            "CanvasMousePoint", typeof(Point), typeof(PERTView), new PropertyMetadata(default(Point)));
+
+        public Point CanvasMousePoint
+        {
+            get { return (Point) GetValue(CanvasMousePointProperty); }
+            set { SetValue(CanvasMousePointProperty, value); }
+        }
+
+        public PertViewMode Mode
+        {
+            get { return (PertViewMode) GetValue(ModeProperty); }
+            set { SetValue(ModeProperty, value); }
+        }
 
         public Thickness RadialMargin
         {
@@ -79,7 +106,37 @@ namespace Project_Foresight.Views
             set { SetValue(ViewModelProperty, value); }
         }
 
-        public ICommand CloseRadialMenu => new RelayCommand(() => IsRadialMenuOpen = false);
+
+        public ICommand CloseRadialMenu => new RelayCommand(() =>
+        {
+            this.Mode = PertViewMode.Normal;
+            IsRadialMenuOpen = false;
+        });
+        public ICommand ActivateNormalMode => new RelayCommand(() =>
+        {
+            this.Mode = PertViewMode.Normal;
+            this.IsRadialMenuOpen = false;
+        });
+        public ICommand ActivateAddLinkMode => new RelayCommand(() =>
+        {
+            this.Mode = PertViewMode.AddLink;
+            this.IsRadialMenuOpen = false;
+        });
+        public ICommand ActivateRemoveLinkMode => new RelayCommand(() => 
+        {
+            this.Mode = PertViewMode.RemoveLink;
+            this.IsRadialMenuOpen = false;
+        });
+        public ICommand ActivateAddTaskMode => new RelayCommand(() =>
+        {
+            this.Mode = PertViewMode.AddTask;
+            this.IsRadialMenuOpen = false;
+        });
+        public ICommand ActivateRemoveTaskMode => new RelayCommand(() =>
+        {
+            this.Mode = PertViewMode.RemoveTask;
+            this.IsRadialMenuOpen = false;
+        });
 
         private double _minZoom = 0.5;
         private double _maxZoom = 3.0;
@@ -129,10 +186,24 @@ namespace Project_Foresight.Views
                 var mousePosition = e.GetPosition(this.ViewArea);
                 this.RadialMargin = new Thickness(mousePosition.X - (this.RadialMenu.Width / 2.0), mousePosition.Y - (this.RadialMenu.Height / 2.0), 0, 0);
             }
+
+            // Add task logic
+            if (this.Mode == PertViewMode.AddTask && e.LeftButton == MouseButtonState.Pressed)
+            {
+                this.ViewModel.AddTask(new TaskViewModel
+                {
+                    Name = "New Task/Stage",
+                    Description = "- - -", 
+                    X = this.CanvasMousePoint.X,
+                    Y = this.CanvasMousePoint.Y
+                });
+            }
         }
 
         private void ControlOnMouseMove(object sender, MouseEventArgs e)
         {
+            this.CanvasMousePoint = e.GetPosition(this.ViewCanvas);
+
             if (e.MiddleButton == MouseButtonState.Pressed)
             {
                 this.ShiftX = this.ValidateXShift(e.GetPosition(this.ViewArea).X - this._dragStartMouse.X + this._dragStartShift.X);

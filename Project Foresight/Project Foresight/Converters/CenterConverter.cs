@@ -25,4 +25,20 @@ namespace Project_Foresight.Converters
             throw new NotImplementedException();
         }
     }
+
+    public class CenterShiftConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            double width = double.Parse(parameter.ToString());
+            if (parameter != null && value != null)
+                return (double)value - width / 2;
+            return null;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
