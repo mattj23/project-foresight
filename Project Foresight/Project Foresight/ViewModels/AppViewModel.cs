@@ -26,6 +26,8 @@ namespace Project_Foresight.ViewModels
             this.Project.AddTask(new TaskViewModel {X = 0, Y = 0, Name = "Test Task 1!"});
             this.Project.AddTask(new TaskViewModel { X = 200, Y = 0, Name = "Test Task 2!" });
 
+            this.Project.Links.Add(new LinkViewModel {Start = this.Project.Tasks[0], End = this.Project.Tasks[1]});
+
         }
 
 

@@ -35,7 +35,9 @@ namespace Project_Foresight.ViewModels
         }
 
 
+
         public ObservableCollection<TaskViewModel> Tasks { get; set; }
+        public ObservableCollection<LinkViewModel> Links { get; set; }
 
         private Dictionary<Guid, TaskViewModel> TasksById { get; set; }
 
@@ -44,6 +46,7 @@ namespace Project_Foresight.ViewModels
             this._project = new Project();
             this.Tasks = new ObservableCollection<TaskViewModel>();
             this.TasksById = new Dictionary<Guid, TaskViewModel>();
+            this.Links = new ObservableCollection<LinkViewModel>();
         }
 
         public void AddTask(TaskViewModel task)

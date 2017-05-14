@@ -4,8 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Project_Foresight.Views"
+             xmlns:conv="clr-namespace:Project_Foresight.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <conv:CenterConverter x:Key="CenterConverter" />
+    </UserControl.Resources>
     <Grid DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PERTView}}}">
         <Border x:Name="ViewArea" 
                 BorderBrush="Black"
@@ -25,7 +29,38 @@
 
                         </TransformGroup>
                     </Border.RenderTransform>
+                    
+                    
                     <Canvas x:Name="ViewCanvas">
+                        
+                        <ItemsControl ItemsSource="{Binding ViewModel.Links}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Line X1="{Binding Start.X}"
+                                          X2="{Binding End.X}"
+                                          Y1="{Binding Start.Y}"
+                                          Y2="{Binding End.Y}"
+                                          StrokeThickness="2">
+                                        <Line.Stroke>
+                                            <LinearGradientBrush>
+                                                <GradientStop Offset="0" Color="Red" />
+                                                <GradientStop Offset="0.4" Color="Red" />
+                                                <GradientStop Offset="0.6" Color="Blue" />
+                                                <GradientStop Offset="1" Color="Blue" />
+                                            </LinearGradientBrush>
+                                        </Line.Stroke>   
+                                    </Line>
+                                    
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        
                         <local:CanvasItemsControl ItemsSource="{Binding ViewModel.Tasks}">
                             <local:CanvasItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -37,6 +72,12 @@
                                 <DataTemplate>
                                     <local:TaskView ViewModel="{Binding}"
                                                     LayoutElement="{Binding ElementName=ViewCanvas}">
+                                        <local:TaskView.Margin>
+                                            <MultiBinding Converter="{StaticResource CenterConverter}">
+                                                <Binding RelativeSource="{RelativeSource Mode=Self}" Path="ActualWidth"/>
+                                                <Binding RelativeSource="{RelativeSource Mode=Self}" Path="ActualHeight"/>
+                                            </MultiBinding>
+                                        </local:TaskView.Margin>
                                         
                                     </local:TaskView>
                                 </DataTemplate>
