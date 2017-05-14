@@ -66,6 +66,8 @@ namespace Project_Foresight.Views
                 _mouseDownPoint = e.GetPosition(this.LayoutElement);
                 this.BringToFront();
                 _isDragging = true;
+
+                this.ViewModel.Parent.SelectedTask = this.ViewModel;
             }
         }
 

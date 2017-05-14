@@ -15,6 +15,9 @@ namespace Project_Foresight.ViewModels
         private double _y;
         private double _x;
         private double _zIndex;
+        private bool _isSelected;
+        private bool _isSelectedAncestor;
+        private bool _isSelectedDescendant;
 
         public string Name
         {
@@ -65,6 +68,39 @@ namespace Project_Foresight.ViewModels
             {
                 if (value.Equals(_zIndex)) return;
                 _zIndex = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set
+            {
+                if (value == _isSelected) return;
+                _isSelected = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsSelectedAncestor
+        {
+            get { return _isSelectedAncestor; }
+            set
+            {
+                if (value == _isSelectedAncestor) return;
+                _isSelectedAncestor = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsSelectedDescendant
+        {
+            get { return _isSelectedDescendant; }
+            set
+            {
+                if (value == _isSelectedDescendant) return;
+                _isSelectedDescendant = value;
                 OnPropertyChanged();
             }
         }

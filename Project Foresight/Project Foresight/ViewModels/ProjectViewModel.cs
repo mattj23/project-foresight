@@ -13,6 +13,7 @@ namespace Project_Foresight.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
 
         private Foresight.Project _project = null;
+        private TaskViewModel _selectedTask;
 
         public string Name
         {
@@ -34,7 +35,42 @@ namespace Project_Foresight.ViewModels
             }
         }
 
+        public TaskViewModel SelectedTask
+        {
+            get { return _selectedTask; }
+            set
+            {
+                if (Equals(value, _selectedTask)) return;
 
+                // Unset the selected flags
+                if (_selectedTask != null)
+                {
+                    _selectedTask.IsSelected = false;
+                    foreach (var selectedTaskAncestor in _selectedTask.Ancestors)
+                    {
+                        this.TasksById[selectedTaskAncestor].IsSelectedAncestor = false;
+                    }
+                    foreach (var selectedTaskDescendant in _selectedTask.Descendants)
+                    {
+                        this.TasksById[selectedTaskDescendant].IsSelectedDescendant = false;
+                    }
+                }
+
+                _selectedTask = value;
+
+                _selectedTask.IsSelected = true;
+                foreach (var selectedTaskAncestor in _selectedTask.Ancestors)
+                {
+                    this.TasksById[selectedTaskAncestor].IsSelectedAncestor = true;
+                }
+                foreach (var selectedTaskDescendant in _selectedTask.Descendants)
+                {
+                    this.TasksById[selectedTaskDescendant].IsSelectedDescendant = true;
+                }
+
+                OnPropertyChanged();
+            }
+        }
 
         public ObservableCollection<TaskViewModel> Tasks { get; set; }
         public ObservableCollection<LinkViewModel> Links { get; set; }

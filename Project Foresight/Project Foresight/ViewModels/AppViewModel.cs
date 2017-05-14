@@ -23,9 +23,13 @@ namespace Project_Foresight.ViewModels
         public AppViewModel()
         {
             this.Project = new ProjectViewModel {Name = "Hello world!"};
-            this.Project.AddTask(new TaskViewModel {X = 0, Y = 0, Name = "Test Task 1!"});
-            this.Project.AddTask(new TaskViewModel { X = 200, Y = 0, Name = "Test Task 2!" });
 
+            var t1 = new TaskViewModel {X = 0, Y = 0, Name = "Test Task 1!"};
+            var t2 = new TaskViewModel {X = 200, Y = 0, Name = "Test Task 2!"};
+            this.Project.AddTask(t1);
+            this.Project.AddTask(t2);
+            
+            t1.LinkToDescendant(t2);
             this.Project.Links.Add(new LinkViewModel {Start = this.Project.Tasks[0], End = this.Project.Tasks[1]});
 
         }
