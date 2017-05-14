@@ -48,6 +48,7 @@ namespace Project_Foresight.ViewModels
 
         public void AddTask(TaskViewModel task)
         {
+            task.Parent = this;
             this._project.AddTask(task.Model);
             this.Tasks.Add(task);
             this.TasksById.Add(task.Id, task);

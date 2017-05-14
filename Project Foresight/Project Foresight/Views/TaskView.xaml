@@ -15,6 +15,7 @@
             Background="WhiteSmoke"
             MouseDown="UIElement_OnMouseDown"
             MouseMove="UIElement_OnMouseMove"
+            MouseUp="UIElement_OnMouseUp"
             Padding="5">
         <Grid>
             <TextBlock Text="{Binding ViewModel.Name}"></TextBlock>

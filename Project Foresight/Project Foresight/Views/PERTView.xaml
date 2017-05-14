@@ -35,7 +35,8 @@
 
                             <local:CanvasItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <local:TaskView ViewModel="{Binding}">
+                                    <local:TaskView ViewModel="{Binding}"
+                                                    LayoutElement="{Binding ElementName=ViewCanvas}">
                                         
                                     </local:TaskView>
                                 </DataTemplate>

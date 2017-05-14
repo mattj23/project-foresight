@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Packaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,9 +23,19 @@ namespace Project_Foresight.Views
     public partial class TaskView : UserControl
     {
         private Point _mouseDownPoint;
+        private bool _isDragging;
 
         public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
             "ViewModel", typeof(TaskViewModel), typeof(TaskView), new PropertyMetadata(default(TaskViewModel)));
+
+        public static readonly DependencyProperty LayoutElementProperty = DependencyProperty.Register(
+            "LayoutElement", typeof(IInputElement), typeof(TaskView), new PropertyMetadata(default(IInputElement)));
+
+        public IInputElement LayoutElement
+        {
+            get { return (IInputElement) GetValue(LayoutElementProperty); }
+            set { SetValue(LayoutElementProperty, value); }
+        }
 
         public TaskViewModel ViewModel
         {
@@ -38,10 +49,9 @@ namespace Project_Foresight.Views
 
         private void UIElement_OnMouseMove(object sender, MouseEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed)
+            if (_isDragging && e.LeftButton == MouseButtonState.Pressed)
             {
-                Canvas canvas = sender as Canvas;
-                Point canvasPoint = e.GetPosition(canvas);
+                Point canvasPoint = e.GetPosition(this.LayoutElement);
 
                 this.ViewModel.X += (canvasPoint.X - _mouseDownPoint.X);
                 this.ViewModel.Y += (canvasPoint.Y - _mouseDownPoint.Y);
@@ -51,11 +61,24 @@ namespace Project_Foresight.Views
 
         private void UIElement_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
-            Canvas canvas = sender as Canvas;
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                _mouseDownPoint = e.GetPosition(canvas);
+                _mouseDownPoint = e.GetPosition(this.LayoutElement);
+                this.BringToFront();
+                _isDragging = true;
             }
+        }
+
+        private void UIElement_OnMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (_isDragging)
+                _isDragging = false;
+        }
+
+        private void BringToFront()
+        {
+            var maxZ = this.ViewModel.Parent.Tasks.Select(x => x.ZIndex).Max();
+            this.ViewModel.ZIndex = maxZ + 1;
         }
     }
 }

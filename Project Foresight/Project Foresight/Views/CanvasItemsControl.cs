@@ -12,11 +12,13 @@ namespace Project_Foresight.Views
         {
             Binding leftBinding = new Binding() { Path = new PropertyPath("X") , Mode = BindingMode.TwoWay};
             Binding topBinding = new Binding() { Path = new PropertyPath("Y"), Mode = BindingMode.TwoWay };
+            Binding zIndexBinding = new Binding() { Path = new PropertyPath("ZIndex") };
+
 
             FrameworkElement contentControl = (FrameworkElement)element;
             contentControl.SetBinding(Canvas.LeftProperty, leftBinding);
             contentControl.SetBinding(Canvas.TopProperty, topBinding);
-
+            contentControl.SetBinding(Canvas.ZIndexProperty, zIndexBinding);
             base.PrepareContainerForItemOverride(element, item);
         }
     }

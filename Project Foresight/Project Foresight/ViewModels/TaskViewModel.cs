@@ -14,6 +14,7 @@ namespace Project_Foresight.ViewModels
         private Foresight.PertTask _task = null;
         private double _y;
         private double _x;
+        private double _zIndex;
 
         public string Name
         {
@@ -56,6 +57,19 @@ namespace Project_Foresight.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        public double ZIndex
+        {
+            get { return _zIndex; }
+            set
+            {
+                if (value.Equals(_zIndex)) return;
+                _zIndex = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ProjectViewModel Parent { get; set; }
 
         public PertTask Model => this._task;
 
