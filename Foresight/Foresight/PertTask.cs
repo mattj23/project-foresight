@@ -79,6 +79,7 @@ namespace Foresight
             this.Employees = new HashSet<Employee>();
             this._ancestors = new HashSet<PertTask>();
             this._descendants = new HashSet<PertTask>();
+            this.TimeEstimate = new Estimate();
         }
 
         public void LinkToAncestor(PertTask ancestor)

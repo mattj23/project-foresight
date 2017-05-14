@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Project_Foresight.Views"
              mc:Ignorable="d"
-             Width="200"
+             Width="250"
              MinHeight="50">
     <UserControl.Resources>
         <Style x:Key="HiddenEditField" TargetType="{x:Type TextBox}">
@@ -21,18 +21,20 @@
         </Style>
     </UserControl.Resources>
     <Grid DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TaskView}}}">
+        <!-- Selection highlight border-->
         <Border CornerRadius="5"
-                Opacity="0.5"
-                BorderThickness="10">
+                Opacity="0.5">
             <Border.Style>
                 <Style TargetType="Border">
                     <Setter Property="BorderBrush" Value="Orange"/>
                     <Setter Property="Visibility" Value="Collapsed"/>
+                    <Setter Property="BorderThickness" Value="5" />
                     <Style.Triggers>
                         
                         <DataTrigger Binding="{Binding ViewModel.IsSelected}" Value="True">
                             <Setter Property="Visibility" Value="Visible" />
                             <Setter Property="BorderBrush" Value="Orange" />
+                            <Setter Property="BorderThickness" Value="15" />
 
                         </DataTrigger>
                         
@@ -49,15 +51,16 @@
                 </Style>
             </Border.Style>
         </Border>
-        <Border 
-            CornerRadius="5"
-            Background="WhiteSmoke"
-            MouseDown="UIElement_OnMouseDown"
-            MouseMove="UIElement_OnMouseMove"
-            MouseUp="UIElement_OnMouseUp"
-            Margin="5"
-            Padding="5">
-<!--
+        
+        <!-- Data contents border -->
+        <Border CornerRadius="5"
+                Background="WhiteSmoke"
+                MouseDown="UIElement_OnMouseDown"
+                MouseMove="UIElement_OnMouseMove"
+                MouseUp="UIElement_OnMouseUp"
+                Margin="10"
+                Padding="5">
+            <!--
         <Border.Effect>
             <DropShadowEffect BlurRadius="10" Opacity="0.5"></DropShadowEffect>
         </Border.Effect>
@@ -66,6 +69,7 @@
                 <Style TargetType="Border">
                     <Setter Property="BorderThickness" Value="3" />
                     <Setter Property="BorderBrush" Value="Black"/>
+                    <!--
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding ViewModel.IsSelected}" Value="True">
                             <Setter Property="BorderThickness" Value="4" />
@@ -77,11 +81,12 @@
                             <Setter Property="BorderBrush" Value="Blue" />
                         </DataTrigger>
 
-                    </Style.Triggers>
+                    </Style.Triggers> -->
                 </Style>
             </Border.Style>
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -101,8 +106,57 @@
                      LostFocus="EditBoxLostFocus"
                      GotFocus="EditBoxGotFocus"
                      TextWrapping="Wrap" />
+                
+                <!-- Time Estimate -->
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBlock Grid.Row="0"
+                               Grid.ColumnSpan="3"
+                               Margin="5">
+                        Time Estimate min/mode/max (days)
+                    </TextBlock>
+
+                    <TextBox Grid.Row="1"
+                             Grid.Column="0"
+                             Text="{Binding ViewModel.TimeEstimate.Min, StringFormat=N1}"
+                             GotFocus="EditBoxGotFocus"
+                             KeyDown="EditBoxKeyDown"
+                             LostFocus="EditBoxLostFocus"
+                             Style="{StaticResource HiddenEditField}"
+                             HorizontalAlignment="Center"
+                             TextAlignment="Center" />
+                    <TextBox Grid.Row="1"
+                             Grid.Column="1"
+                             Text="{Binding ViewModel.TimeEstimate.Mode, StringFormat=N1}"
+                             GotFocus="EditBoxGotFocus"
+                             KeyDown="EditBoxKeyDown"
+                             LostFocus="EditBoxLostFocus"
+                             Style="{StaticResource HiddenEditField}"
+                             HorizontalAlignment="Center"
+                             TextAlignment="Center" />
+                    <TextBox Grid.Row="1"
+                             Grid.Column="2"
+                             Text="{Binding ViewModel.TimeEstimate.Max, StringFormat=N1}"
+                             GotFocus="EditBoxGotFocus"
+                             KeyDown="EditBoxKeyDown"
+                             LostFocus="EditBoxLostFocus"
+                             Style="{StaticResource HiddenEditField}"
+                             HorizontalAlignment="Center"
+                             TextAlignment="Center" />
+                </Grid>
             </Grid>
+            
         </Border>
     </Grid>
     
 </UserControl>
+

@@ -1,10 +1,10 @@
 ﻿namespace Foresight
 {
-    public class Employee
+    public class Employee : IResource
     {
         public string Name { get; set; }
-        public EmployeeType Type { get; set; }
-
-
+        public ResourceGroup Group { get; set; }
+        public double Rate => Group.Rate;
+        public int Available => 1;
     }
 }

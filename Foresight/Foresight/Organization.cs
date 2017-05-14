@@ -5,13 +5,13 @@ namespace Foresight
     public class Organization
     {
         public string Name { get; set; }
-        public List<EmployeeType> EmployeeTypes { get; set; }
+        public List<ResourceGroup> ResourceGroups { get; set; }
 
         public List<Employee> Employees { get; set; }
 
         public Organization()
         {
-            this.EmployeeTypes = new List<EmployeeType>();
+            this.ResourceGroups = new List<ResourceGroup>();
             this.Employees = new List<Employee>();
         }
     }

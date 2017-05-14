@@ -40,7 +40,7 @@ namespace Foresight.Serialization
         /// <returns></returns>
         public static PertTask ToUnlinkedPertTask(SerializeablePertTask item)
         {
-            return new PertTask
+            var working = new PertTask
             {
                 Name = item.Name,
                 Id = item.Id,
@@ -48,6 +48,11 @@ namespace Foresight.Serialization
                 TimeEstimate = item.TimeEstimate,
                 Employees = new HashSet<Employee>()
             };
+
+            if (working.TimeEstimate == null)
+                working.TimeEstimate = new Estimate();
+
+            return working;
         }
         
     }

@@ -66,7 +66,9 @@
     <Compile Include="Tools\DelayedAction.cs" />
     <Compile Include="Tools\RelayCommand.cs" />
     <Compile Include="ViewModels\AppViewModel.cs" />
+    <Compile Include="ViewModels\EstimateViewModel.cs" />
     <Compile Include="ViewModels\LinkViewModel.cs" />
+    <Compile Include="ViewModels\OrganizationViewModel.cs" />
     <Compile Include="ViewModels\ProjectViewModel.cs" />
     <Compile Include="ViewModels\TaskViewModel.cs" />
     <Compile Include="Views\CanvasItemsControl.cs" />

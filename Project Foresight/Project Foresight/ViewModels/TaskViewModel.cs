@@ -20,26 +20,7 @@ namespace Project_Foresight.ViewModels
         private bool _isSelectedAncestor;
         private bool _isSelectedDescendant;
 
-        public string Name
-        {
-            get { return this._task.Name; }
-            set
-            {
-                this._task.Name = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string Description
-        {
-            get { return this._task.Description; }
-            set
-            {
-                this._task.Description = value;
-                OnPropertyChanged();
-            }
-        }
-
+        #region View-related Properties
         public Point CenterPoint => new Point(this.X, this.Y);
 
         public double X
@@ -113,6 +94,31 @@ namespace Project_Foresight.ViewModels
 
         public ProjectViewModel Parent { get; set; }
 
+        #endregion
+
+        #region Model-related Properties
+        public string Name
+        {
+            get { return this._task.Name; }
+            set
+            {
+                this._task.Name = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string Description
+        {
+            get { return this._task.Description; }
+            set
+            {
+                this._task.Description = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public EstimateViewModel TimeEstimate { get; set; }
+
         public PertTask Model => this._task;
 
         public Guid[] Ancestors => this._task.Ancestors.Select(x => x.Id).ToArray();
@@ -125,15 +131,17 @@ namespace Project_Foresight.ViewModels
 
         public Guid Id => this._task.Id;
 
-
+        #endregion
         public TaskViewModel()
         {
             this._task = new PertTask();
+            this.TimeEstimate = new EstimateViewModel(this._task.TimeEstimate);
         }
 
         public TaskViewModel(PertTask taskModel)
         {
             this._task = taskModel;
+            this.TimeEstimate = new EstimateViewModel(this._task.TimeEstimate);
         }
 
         public void LinkToAncestor(TaskViewModel ancestor)
