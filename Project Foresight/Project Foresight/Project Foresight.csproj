@@ -59,6 +59,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\CenterConverter.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Tools\DelayedAction.cs" />
     <Compile Include="Tools\RelayCommand.cs" />
     <Compile Include="ViewModels\AppViewModel.cs" />
     <Compile Include="ViewModels\LinkViewModel.cs" />

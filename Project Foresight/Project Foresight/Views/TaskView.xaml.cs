@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Project_Foresight.Tools;
 using Project_Foresight.ViewModels;
 
 namespace Project_Foresight.Views
@@ -92,11 +93,6 @@ namespace Project_Foresight.Views
             }
         }
 
-        private void EditBoxMouseClick(object sender, MouseButtonEventArgs e)
-        {
-            (sender as TextBox).IsReadOnly = false;
-        }
-
         private void EditBoxLostFocus(object sender, RoutedEventArgs e)
         {
             (sender as TextBox).IsReadOnly = true;
@@ -104,8 +100,10 @@ namespace Project_Foresight.Views
 
         private void EditBoxGotFocus(object sender, RoutedEventArgs e)
         {
-            (sender as TextBox).IsReadOnly = false;
-            (sender as TextBox).SelectAll();
+            var textBox = (TextBox) sender;
+            textBox.IsReadOnly = false;
+
+            DelayedAction.Execute(textBox.SelectAll, 50);
         }
     }
 }
