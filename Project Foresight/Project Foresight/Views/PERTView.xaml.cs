@@ -326,6 +326,7 @@ namespace Project_Foresight.Views
             if (this.Mode == PertViewMode.RemoveTask)
             {
                 e.Handled = true;
+                this.ViewModel.RemoveTask(((TaskView)sender).ViewModel);
             }
         }
     }

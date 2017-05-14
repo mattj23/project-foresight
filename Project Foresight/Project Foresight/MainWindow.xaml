@@ -7,8 +7,22 @@
         xmlns:local="clr-namespace:Project_Foresight"
         DataContext="{StaticResource MainViewModel}"
         mc:Ignorable="d"
+        WindowState="Maximized"
         Title="Project Foresight" Height="1000" Width="1800">
     <Grid>
-        <views:PERTView ViewModel="{Binding Project}"></views:PERTView>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Menu>
+            <MenuItem Header="File">
+                <MenuItem Header="New Project" />
+                <MenuItem Header="Open Project" Command="{Binding OpenCommand}"/>
+                <MenuItem Header="Save Project As" Command="{Binding SaveAsCommand}"/>
+                <MenuItem Header="Save Project" Command="{Binding SaveCommand}"/>
+            </MenuItem>
+        </Menu>
+        <views:PERTView Grid.Row="1"
+            ViewModel="{Binding Project}"></views:PERTView>
     </Grid>
 </Window>

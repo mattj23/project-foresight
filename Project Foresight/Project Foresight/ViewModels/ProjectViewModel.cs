@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Foresight;
 using Project_Foresight.Annotations;
@@ -93,6 +94,11 @@ namespace Project_Foresight.ViewModels
             this.TasksById.Add(task.Id, task);
         }
 
+        public TaskViewModel GetTaskById(Guid id)
+        {
+            return this.TasksById[id];
+        }
+
         public void AddLink(TaskViewModel ancestor, TaskViewModel descendant)
         {
             try
@@ -109,12 +115,32 @@ namespace Project_Foresight.ViewModels
 
         public void RemoveTask(TaskViewModel task)
         {
-            throw new NotImplementedException();
+            // Remove links first
+            foreach (var ancestorId in task.Ancestors)
+                this.RemoveLink(this.TasksById[ancestorId], task);
+
+            foreach (var descendantId in task.Descendants)
+                this.RemoveLink(task, this.TasksById[descendantId]);
+
+            // Remove the task
+            this.TasksById.Remove(task.Id);
+            this.Tasks.Remove(task);
         }
 
         public void RemoveLink(TaskViewModel ancestor, TaskViewModel descendant)
         {
-            throw new NotImplementedException();
+            try
+            {
+                ancestor.UnlinkFromDescendant(descendant);
+                var removeElement = this.Links.FirstOrDefault(x => x.Start == ancestor && x.End == descendant);
+                if (removeElement != null)
+                    this.Links.Remove(removeElement);
+            }
+            catch (ArgumentException e)
+            {
+                Console.WriteLine(e);
+            }
+            
         }
 
         [NotifyPropertyChangedInvocator]

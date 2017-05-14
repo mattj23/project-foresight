@@ -24,7 +24,6 @@ namespace Project_Foresight
         public MainWindow()
         {
             InitializeComponent();
-            this.DataContext = AppViewModel.Global;
         }
     }
 }

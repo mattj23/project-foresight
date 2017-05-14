@@ -1,0 +1,105 @@
+{
+  "Name": "Hello world!",
+  "Description": null,
+  "Tasks": [
+    {
+      "Id": "3c67496a-0d49-49a6-bc36-410dbe2cc388",
+      "Name": "Project Kickoff Meeting",
+      "Description": "Initial project kickoff meeting to begin the design of the machine.",
+      "TimeEstimate": null,
+      "Employees": [],
+      "Ancestors": [],
+      "Descendants": [
+        "5630c449-d537-4b12-9736-ddb7967b60af",
+        "b679ab77-f7c2-49f4-a81b-a1c5227c27cf"
+      ]
+    },
+    {
+      "Id": "b679ab77-f7c2-49f4-a81b-a1c5227c27cf",
+      "Name": "System Mech Design",
+      "Description": "Engineering design of the overall system hardware architecture",
+      "TimeEstimate": null,
+      "Employees": [],
+      "Ancestors": [
+        "3c67496a-0d49-49a6-bc36-410dbe2cc388"
+      ],
+      "Descendants": [
+        "d75f3161-3bf9-414b-a684-e4e54595a7f7",
+        "a8da437c-34f9-4018-b673-75c92f319011"
+      ]
+    },
+    {
+      "Id": "5630c449-d537-4b12-9736-ddb7967b60af",
+      "Name": "System Software Design",
+      "Description": "Engineering design of the overall system software architecture",
+      "TimeEstimate": null,
+      "Employees": [],
+      "Ancestors": [
+        "3c67496a-0d49-49a6-bc36-410dbe2cc388"
+      ],
+      "Descendants": [
+        "54f269b5-e62c-411c-8caf-0b15afe29443",
+        "d75f3161-3bf9-414b-a684-e4e54595a7f7"
+      ]
+    },
+    {
+      "Id": "a8da437c-34f9-4018-b673-75c92f319011",
+      "Name": "New Task/Stage",
+      "Description": "- - -",
+      "TimeEstimate": null,
+      "Employees": [],
+      "Ancestors": [
+        "b679ab77-f7c2-49f4-a81b-a1c5227c27cf"
+      ],
+      "Descendants": [
+        "afe13e97-83f3-4110-8ed2-d6b3e2b887d6"
+      ]
+    },
+    {
+      "Id": "d75f3161-3bf9-414b-a684-e4e54595a7f7",
+      "Name": "New Task/Stage",
+      "Description": "- - -",
+      "TimeEstimate": null,
+      "Employees": [],
+      "Ancestors": [
+        "b679ab77-f7c2-49f4-a81b-a1c5227c27cf",
+        "5630c449-d537-4b12-9736-ddb7967b60af"
+      ],
+      "Descendants": [
+        "54f269b5-e62c-411c-8caf-0b15afe29443"
+      ]
+    },
+    {
+      "Id": "afe13e97-83f3-4110-8ed2-d6b3e2b887d6",
+      "Name": "New Task/Stage",
+      "Description": "- - -",
+      "TimeEstimate": null,
+      "Employees": [],
+      "Ancestors": [
+        "a8da437c-34f9-4018-b673-75c92f319011"
+      ],
+      "Descendants": []
+    },
+    {
+      "Id": "54f269b5-e62c-411c-8caf-0b15afe29443",
+      "Name": "New Task/Stage",
+      "Description": "- - -",
+      "TimeEstimate": null,
+      "Employees": [],
+      "Ancestors": [
+        "5630c449-d537-4b12-9736-ddb7967b60af",
+        "d75f3161-3bf9-414b-a684-e4e54595a7f7"
+      ],
+      "Descendants": []
+    }
+  ],
+  "TaskPositions": {
+    "3c67496a-0d49-49a6-bc36-410dbe2cc388": "272.5,239.54",
+    "b679ab77-f7c2-49f4-a81b-a1c5227c27cf": "556.5,399.54",
+    "5630c449-d537-4b12-9736-ddb7967b60af": "554.5,243.54",
+    "a8da437c-34f9-4018-b673-75c92f319011": "557.5,561.54",
+    "d75f3161-3bf9-414b-a684-e4e54595a7f7": "882.5,392.54",
+    "afe13e97-83f3-4110-8ed2-d6b3e2b887d6": "884.5,560.54",
+    "54f269b5-e62c-411c-8caf-0b15afe29443": "1114.5,236.54"
+  }
+}
