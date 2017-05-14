@@ -82,5 +82,30 @@ namespace Project_Foresight.Views
             var maxZ = this.ViewModel.Parent.Tasks.Select(x => x.ZIndex).Max();
             this.ViewModel.ZIndex = maxZ + 1;
         }
+
+        private void EditBoxKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                Keyboard.ClearFocus();
+                (sender as TextBox).IsReadOnly = true;
+            }
+        }
+
+        private void EditBoxMouseClick(object sender, MouseButtonEventArgs e)
+        {
+            (sender as TextBox).IsReadOnly = false;
+        }
+
+        private void EditBoxLostFocus(object sender, RoutedEventArgs e)
+        {
+            (sender as TextBox).IsReadOnly = true;
+        }
+
+        private void EditBoxGotFocus(object sender, RoutedEventArgs e)
+        {
+            (sender as TextBox).IsReadOnly = false;
+            (sender as TextBox).SelectAll();
+        }
     }
 }

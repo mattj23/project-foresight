@@ -5,9 +5,22 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Project_Foresight.Views"
              mc:Ignorable="d"
-             MinWidth="150"
-             MinHeight="150"
-             d:DesignHeight="300" d:DesignWidth="300">
+             Width="200"
+             MinHeight="50">
+    <UserControl.Resources>
+        <Style x:Key="HiddenEditField" TargetType="{x:Type TextBox}">
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="MinWidth" Value="50" />
+            <Setter Property="IsReadOnly" Value="True" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsReadOnly, RelativeSource={RelativeSource Self}}" Value="True">
+                    <Setter Property="BorderBrush" Value="Transparent" />
+                    <Setter Property="Background" Value="Transparent" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    
     <Border DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TaskView}}}"
             CornerRadius="5"
             Background="WhiteSmoke"
@@ -15,9 +28,11 @@
             MouseMove="UIElement_OnMouseMove"
             MouseUp="UIElement_OnMouseUp"
             Padding="5">
+        <!--
         <Border.Effect>
             <DropShadowEffect BlurRadius="10" Opacity="0.5"></DropShadowEffect>
         </Border.Effect>
+        -->
         <Border.Style>
             <Style TargetType="Border">
                 <Setter Property="BorderThickness" Value="2" />
@@ -37,7 +52,26 @@
             </Style>
         </Border.Style>
         <Grid>
-            <TextBlock Text="{Binding ViewModel.Name}"></TextBlock>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" 
+                     Text="{Binding ViewModel.Name}"
+                     FontWeight="Bold"
+                     GotFocus="EditBoxGotFocus"
+                     KeyDown="EditBoxKeyDown"
+                     LostFocus="EditBoxLostFocus"
+                     Style="{StaticResource HiddenEditField}" />
+            
+            <TextBox Grid.Row="1" 
+                     Text="{Binding ViewModel.Description}"
+                     Style="{StaticResource HiddenEditField}"
+                     KeyDown="EditBoxKeyDown"
+                     LostFocus="EditBoxLostFocus"
+                     GotFocus="EditBoxGotFocus"
+                     TextWrapping="Wrap" />
         </Grid>
     </Border>
 </UserControl>
