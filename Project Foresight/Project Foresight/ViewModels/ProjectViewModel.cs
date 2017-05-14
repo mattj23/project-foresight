@@ -103,7 +103,7 @@ namespace Project_Foresight.ViewModels
             catch (ArgumentException e)
             {
                 Console.WriteLine(e);
-                throw;
+                
             }
         }
 

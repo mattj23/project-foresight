@@ -63,12 +63,14 @@
                                           X2="{Binding End.X}"
                                           Y1="{Binding Start.Y}"
                                           Y2="{Binding End.Y}"
-                                          StrokeThickness="2">
+                                          StrokeThickness="3">
                                         <Line.Stroke>
-                                            <LinearGradientBrush>
+                                            <LinearGradientBrush StartPoint="{Binding Start.CenterPoint}"
+                                                                 EndPoint="{Binding End.CenterPoint}"
+                                                                 MappingMode="Absolute">
                                                 <GradientStop Offset="0" Color="Red" />
-                                                <GradientStop Offset="0.4" Color="Red" />
-                                                <GradientStop Offset="0.6" Color="Blue" />
+                                                <GradientStop Offset="0.45" Color="Red" />
+                                                <GradientStop Offset="0.55" Color="Blue" />
                                                 <GradientStop Offset="1" Color="Blue" />
                                             </LinearGradientBrush>
                                         </Line.Stroke>   

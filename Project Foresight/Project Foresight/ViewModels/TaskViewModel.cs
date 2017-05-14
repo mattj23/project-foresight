@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using Foresight;
 using Project_Foresight.Annotations;
 
@@ -39,6 +40,8 @@ namespace Project_Foresight.ViewModels
             }
         }
 
+        public Point CenterPoint => new Point(this.X, this.Y);
+
         public double X
         {
             get { return _x; }
@@ -47,6 +50,7 @@ namespace Project_Foresight.ViewModels
                 if (value.Equals(_x)) return;
                 _x = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(CenterPoint));
             }
         }
 
@@ -58,6 +62,8 @@ namespace Project_Foresight.ViewModels
                 if (value.Equals(_y)) return;
                 _y = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(CenterPoint));
+
             }
         }
 

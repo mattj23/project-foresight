@@ -20,58 +20,89 @@
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
-    
-    <Border DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TaskView}}}"
+    <Grid DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TaskView}}}">
+        <Border CornerRadius="5"
+                Opacity="0.5"
+                BorderThickness="10">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="BorderBrush" Value="Orange"/>
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        
+                        <DataTrigger Binding="{Binding ViewModel.IsSelected}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter Property="BorderBrush" Value="Orange" />
+
+                        </DataTrigger>
+                        
+                        <DataTrigger Binding="{Binding ViewModel.IsSelectedAncestor}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter Property="BorderBrush" Value="Red" />
+                        </DataTrigger>
+                        
+                        <DataTrigger Binding="{Binding ViewModel.IsSelectedDescendant}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter Property="BorderBrush" Value="Blue" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+        </Border>
+        <Border 
             CornerRadius="5"
             Background="WhiteSmoke"
             MouseDown="UIElement_OnMouseDown"
             MouseMove="UIElement_OnMouseMove"
             MouseUp="UIElement_OnMouseUp"
+            Margin="5"
             Padding="5">
-        <!--
+<!--
         <Border.Effect>
             <DropShadowEffect BlurRadius="10" Opacity="0.5"></DropShadowEffect>
         </Border.Effect>
-        -->
-        <Border.Style>
-            <Style TargetType="Border">
-                <Setter Property="BorderThickness" Value="2" />
-                <Setter Property="BorderBrush" Value="Black"/>
-                <Style.Triggers>
-                    <DataTrigger Binding="{Binding ViewModel.IsSelected}" Value="True">
-                        <Setter Property="BorderThickness" Value="4" />
-                    </DataTrigger>
-                    <DataTrigger Binding="{Binding ViewModel.IsSelectedAncestor}" Value="True">
-                        <Setter Property="BorderBrush" Value="Red" />
-                    </DataTrigger>
-                    <DataTrigger Binding="{Binding ViewModel.IsSelectedDescendant}" Value="True">
-                        <Setter Property="BorderBrush" Value="Blue" />
-                    </DataTrigger>
+-->
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="BorderThickness" Value="3" />
+                    <Setter Property="BorderBrush" Value="Black"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ViewModel.IsSelected}" Value="True">
+                            <Setter Property="BorderThickness" Value="4" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ViewModel.IsSelectedAncestor}" Value="True">
+                            <Setter Property="BorderBrush" Value="Red" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ViewModel.IsSelectedDescendant}" Value="True">
+                            <Setter Property="BorderBrush" Value="Blue" />
+                        </DataTrigger>
 
-                </Style.Triggers>
-            </Style>
-        </Border.Style>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <TextBox Grid.Row="0" 
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBox Grid.Row="0" 
                      Text="{Binding ViewModel.Name}"
                      FontWeight="Bold"
                      GotFocus="EditBoxGotFocus"
                      KeyDown="EditBoxKeyDown"
                      LostFocus="EditBoxLostFocus"
                      Style="{StaticResource HiddenEditField}" />
-            
-            <TextBox Grid.Row="1" 
+
+                <TextBox Grid.Row="1" 
                      Text="{Binding ViewModel.Description}"
                      Style="{StaticResource HiddenEditField}"
                      KeyDown="EditBoxKeyDown"
                      LostFocus="EditBoxLostFocus"
                      GotFocus="EditBoxGotFocus"
                      TextWrapping="Wrap" />
-        </Grid>
-    </Border>
+            </Grid>
+        </Border>
+    </Grid>
+    
 </UserControl>
