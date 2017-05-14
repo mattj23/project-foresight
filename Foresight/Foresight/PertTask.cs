@@ -88,6 +88,8 @@ namespace Foresight
                 throw new ArgumentException("Cannot link a task to itself");
             if (ancestor.AllAncestors.Contains(this))
                 throw new ArgumentException($"Making task '{ancestor.Name}' an ancestor of task '{this.Name}' would create a cyclic project network.");
+            if (this._ancestors.Contains(ancestor))
+                throw new ArgumentException($"Task '{ancestor.Name}' is already an ancestor of task '{this.Name}'.");
             this._ancestors.Add(ancestor);
             ancestor._descendants.Add(this);
         }
@@ -98,6 +100,8 @@ namespace Foresight
                 throw new ArgumentException("Cannot link a task to itself");
             if (descendant.AllDescendants.Contains(this))
                 throw new ArgumentException($"Making task '{descendant.Name}' a descendant of task '{this.Name}' would create a cyclic project network.");
+            if (this._descendants.Contains(descendant))
+                throw new ArgumentException($"Task '{descendant.Name}' is already an ancestor of task '{this.Name}'.");
             this._descendants.Add(descendant);
             descendant._ancestors.Add(this);
         }

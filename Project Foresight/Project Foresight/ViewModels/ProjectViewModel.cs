@@ -93,6 +93,30 @@ namespace Project_Foresight.ViewModels
             this.TasksById.Add(task.Id, task);
         }
 
+        public void AddLink(TaskViewModel ancestor, TaskViewModel descendant)
+        {
+            try
+            {
+                ancestor.LinkToDescendant(descendant);
+                Links.Add(new LinkViewModel {Start = ancestor, End = descendant});
+            }
+            catch (ArgumentException e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        public void RemoveTask(TaskViewModel task)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveLink(TaskViewModel ancestor, TaskViewModel descendant)
+        {
+            throw new NotImplementedException();
+        }
+
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

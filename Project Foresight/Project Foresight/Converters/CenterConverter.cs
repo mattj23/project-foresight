@@ -31,7 +31,7 @@ namespace Project_Foresight.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             double width = double.Parse(parameter.ToString());
-            if (parameter != null && value != null)
+            if (value != null)
                 return (double)value - width / 2;
             return null;
         }

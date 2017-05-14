@@ -26,6 +26,8 @@ namespace Project_Foresight.Views
         private Point _mouseDownPoint;
         private bool _isDragging;
 
+        public MouseButtonEventHandler ClickHandler;
+
         public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
             "ViewModel", typeof(TaskViewModel), typeof(TaskView), new PropertyMetadata(default(TaskViewModel)));
 
@@ -58,6 +60,7 @@ namespace Project_Foresight.Views
                 this.ViewModel.Y += (canvasPoint.Y - _mouseDownPoint.Y);
                 this._mouseDownPoint = canvasPoint;
             }
+
         }
 
         private void UIElement_OnMouseDown(object sender, MouseButtonEventArgs e)

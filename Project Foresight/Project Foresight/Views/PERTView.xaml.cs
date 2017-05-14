@@ -34,6 +34,7 @@ namespace Project_Foresight.Views
         private Point _dragStartMouse;
         private Point _dragStartShift;
 
+        #region Dependency Properties
         public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
             "ViewModel", typeof(ProjectViewModel), typeof(PERTView), new PropertyMetadata(default(ProjectViewModel)));
 
@@ -57,6 +58,32 @@ namespace Project_Foresight.Views
 
         public static readonly DependencyProperty CanvasMousePointProperty = DependencyProperty.Register(
             "CanvasMousePoint", typeof(Point), typeof(PERTView), new PropertyMetadata(default(Point)));
+
+        public static readonly DependencyProperty ToolTipTextProperty = DependencyProperty.Register(
+            "ToolTipText", typeof(string), typeof(PERTView), new PropertyMetadata(default(string)));
+
+        public static readonly DependencyProperty IsLinkEditDisplayedProperty = DependencyProperty.Register(
+            "IsLinkEditDisplayed", typeof(bool), typeof(PERTView), new PropertyMetadata(default(bool)));
+
+        public static readonly DependencyProperty LinkEditTaskProperty = DependencyProperty.Register(
+            "LinkEditTask", typeof(TaskViewModel), typeof(PERTView), new PropertyMetadata(default(TaskViewModel)));
+
+        public TaskViewModel LinkEditTask
+        {
+            get { return (TaskViewModel) GetValue(LinkEditTaskProperty); }
+            set { SetValue(LinkEditTaskProperty, value); }
+        }
+        public bool IsLinkEditDisplayed
+        {
+            get { return (bool) GetValue(IsLinkEditDisplayedProperty); }
+            set { SetValue(IsLinkEditDisplayedProperty, value); }
+        }
+
+        public string ToolTipText
+        {
+            get { return (string) GetValue(ToolTipTextProperty); }
+            set { SetValue(ToolTipTextProperty, value); }
+        }
 
         public Point CanvasMousePoint
         {
@@ -106,36 +133,51 @@ namespace Project_Foresight.Views
             set { SetValue(ViewModelProperty, value); }
         }
 
+        #endregion  
 
         public ICommand CloseRadialMenu => new RelayCommand(() =>
         {
             this.Mode = PertViewMode.Normal;
             IsRadialMenuOpen = false;
+            this.ToolTipText = "";
+            this.LinkEditReset();
         });
         public ICommand ActivateNormalMode => new RelayCommand(() =>
         {
             this.Mode = PertViewMode.Normal;
             this.IsRadialMenuOpen = false;
+            this.LinkEditReset();
+            this.ToolTipText = "";
         });
         public ICommand ActivateAddLinkMode => new RelayCommand(() =>
         {
             this.Mode = PertViewMode.AddLink;
             this.IsRadialMenuOpen = false;
+            this.ToolTipText = "Click to add link";
+            this.LinkEditReset();
         });
         public ICommand ActivateRemoveLinkMode => new RelayCommand(() => 
         {
             this.Mode = PertViewMode.RemoveLink;
+            this.ToolTipText = "Click to place new task";
             this.IsRadialMenuOpen = false;
+            this.ToolTipText = "Click to remove link";
+            this.LinkEditReset();
+
         });
         public ICommand ActivateAddTaskMode => new RelayCommand(() =>
         {
             this.Mode = PertViewMode.AddTask;
             this.IsRadialMenuOpen = false;
+            this.LinkEditReset();
+            this.ToolTipText = "Click to place new task";
         });
         public ICommand ActivateRemoveTaskMode => new RelayCommand(() =>
         {
             this.Mode = PertViewMode.RemoveTask;
             this.IsRadialMenuOpen = false;
+            this.ToolTipText = "Click to remove task";
+            this.LinkEditReset();
         });
 
         private double _minZoom = 0.5;
@@ -145,8 +187,52 @@ namespace Project_Foresight.Views
         {
             InitializeComponent();
             this.Zoom = 1;
+            this.ToolTipText = "";
         }
 
+
+        private void LinkEditReset()
+        {
+            this.LinkEditTask = null;
+            this.IsLinkEditDisplayed = false;
+            
+            if (this.Mode == PertViewMode.AddLink)
+                this.ToolTipText = "Click to select the prerequisite task to create a new link";
+
+            if (this.Mode == PertViewMode.RemoveLink)
+                this.ToolTipText = "Click to select the prerequisite task in the link to remove";
+        }
+
+        private void LinkEditClick(TaskViewModel task)
+        {
+            if (this.LinkEditTask == null)
+            {
+                // This is the first click
+                this.LinkEditTask = task;
+                this.IsLinkEditDisplayed = true;
+
+                if (this.Mode == PertViewMode.AddLink)
+                    this.ToolTipText = "Click to select the dependant task to create a new link";
+
+                if (this.Mode == PertViewMode.RemoveLink)
+                    this.ToolTipText = "Click to select the dependant task in the link to remove";
+            }
+            else
+            {
+                // This is the second click
+                if (this.Mode == PertViewMode.AddLink)
+                {
+                    this.ViewModel.AddLink(this.LinkEditTask, task);
+                    this.LinkEditReset();
+                }
+                else if (this.Mode == PertViewMode.RemoveLink)
+                {
+                    this.ViewModel.RemoveLink(this.LinkEditTask, task);
+                    this.LinkEditReset();
+                }
+            }
+
+        }
 
         private void ControlOnMouseWheel(object sender, MouseWheelEventArgs e)
         {
@@ -227,6 +313,20 @@ namespace Project_Foresight.Views
         {
             var position = System.Windows.Input.Mouse.GetPosition(ViewCanvas);
             this.ViewModel.AddTask(new TaskViewModel {Name = "New Task", Description = "Description", X = position.X, Y=position.Y});
+        }
+
+        private void TaskView_OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (this.Mode == PertViewMode.AddLink || this.Mode == PertViewMode.RemoveLink)
+            {
+                e.Handled = true;
+                this.LinkEditClick(((TaskView)sender).ViewModel);
+            }
+
+            if (this.Mode == PertViewMode.RemoveTask)
+            {
+                e.Handled = true;
+            }
         }
     }
 }

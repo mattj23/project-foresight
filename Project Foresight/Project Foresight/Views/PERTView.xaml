@@ -88,7 +88,8 @@
                             <local:CanvasItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <local:TaskView ViewModel="{Binding}"
-                                                    LayoutElement="{Binding ElementName=ViewCanvas}">
+                                                    LayoutElement="{Binding ElementName=ViewCanvas}"
+                                                    PreviewMouseDown="TaskView_OnPreviewMouseDown">
                                         <local:TaskView.Margin>
                                             <MultiBinding Converter="{StaticResource CenterConverter}">
                                                 <Binding RelativeSource="{RelativeSource Mode=Self}" Path="ActualWidth"/>
@@ -122,6 +123,51 @@
                             </Border.Style>
                         </Border>
 
+                        <Line X1="{Binding LinkEditTask.X}"
+                              X2="{Binding CanvasMousePoint.X}"
+                              Y1="{Binding LinkEditTask.Y}"
+                              Y2="{Binding CanvasMousePoint.Y}"
+                              Stroke="Gray"
+                              StrokeThickness="2"
+                              StrokeDashArray="2 2">
+                            <Line.Style>
+                                <Style TargetType="Line">
+                                    <Setter Property="Visibility" Value="Hidden" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsLinkEditDisplayed}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Line.Style>
+                        </Line>
+                        
+                        <!-- Mouse Tooltip -->
+                        <Border BorderBrush="Black"
+                                BorderThickness="1"
+                                CornerRadius="5"
+                                Background="LightYellow"
+                                Padding="7"
+                                Canvas.Left="{Binding CanvasMousePoint.X}"
+                                Canvas.Top="{Binding CanvasMousePoint.Y}">
+                            <Border.RenderTransform>
+                                <TranslateTransform X="15"
+                                                    Y="15"/>
+                            </Border.RenderTransform>
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ToolTipText}" Value="">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock Text="{Binding ToolTipText}"
+                                       TextWrapping="Wrap"
+                                       MaxWidth="100"></TextBlock>
+                        </Border>
                     </Canvas>
                 </Border>
 

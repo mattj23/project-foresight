@@ -130,5 +130,17 @@ namespace Foresight.Tests
             Assert.Throws<ArgumentException>(() => { task5.LinkToDescendant(task5); });
             Assert.Throws<ArgumentException>(() => { task5.LinkToDescendant(task1); });
         }
+
+        [Test]
+        public void NoDuplicateAncestorLinks()
+        {
+            Assert.Throws<ArgumentException>(() => { task5.LinkToAncestor(task4); });
+        }
+
+        [Test]
+        public void NoDuplicateDescendantLinks()
+        {
+            Assert.Throws<ArgumentException>(() => { task5.LinkToDescendant(task6); });
+        }
     }
 }
