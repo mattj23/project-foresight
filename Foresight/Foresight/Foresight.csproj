@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Employee.cs" />
-    <Compile Include="ResourceClass.cs" />
+    <Compile Include="ResourceGroup.cs" />
     <Compile Include="Estimate.cs" />
     <Compile Include="IResource.cs" />
     <Compile Include="Project.cs" />
