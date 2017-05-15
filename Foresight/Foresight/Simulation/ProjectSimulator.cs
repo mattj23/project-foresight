@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Foresight.Estimators;
+using Foresight.Tools;
 
 namespace Foresight.Simulation
 {
@@ -19,6 +20,7 @@ namespace Foresight.Simulation
 
 
         private Dictionary<Guid, SimulatedTaskData> _taskDataById;
+        private Dictionary<Guid, double> _nodePathTimes;
 
         private List<PertTask> _availableTasks;     // Tasks which are available to make progress on
 
@@ -35,7 +37,8 @@ namespace Foresight.Simulation
                 _taskDataById.Add(baseProjectTask.Id, new SimulatedTaskData(baseProjectTask, estimator));
             }
 
-            
+            // Generate the most likely node path times
+            _nodePathTimes = PathTools.NetworkModePathLengths(_baseProject.Tasks);
 
         }
 
@@ -56,13 +59,79 @@ namespace Foresight.Simulation
             double masterClock = 0;
             while (_availableTasks.Any())
             {
-                // Progress!
+                // Simulate a day's worth of progress
 
+                // Find all tasks that don't require resources
+                foreach (var task in _availableTasks.Where(x => !x.Resources.Any()))
+                {
+                    var taskData = _taskDataById[task.Id];
+
+                    // Make progress on the task
+                    taskData.AddTime(1.0, masterClock);
+                    if (taskData.IsComplete)
+                        this.SimulateTaskCompletion(task);
+                }
+
+                // Construct the resource availability for this day
+                var resources = new Dictionary<string, double>();
+                foreach (var employeeResource in this._baseProject.Organization.Employees)
+                {
+                    resources.Add(employeeResource.Name, 1.0);
+                }
+                //TODO: Add base resource groups
+
+                // Current schedule prioritization: first, the most resources necessary
+                // Second, the longest critical path
+                // Find activities that require the most in the way of resources
+                var resourceTasks = _availableTasks.Where(x => x.Resources.Any())
+                    .OrderBy(x => x.Resources.Count)
+                    .ThenBy(x => _nodePathTimes[x.Id])
+                    .Reverse()
+                    .ToList();
+
+                foreach (var task in resourceTasks)
+                {
+                    var taskData = _taskDataById[task.Id];
+                    // Check to find the least available amount of the unified resources
+                    double availability = task.Resources.Select(x => resources[x.Name]).Min();
+
+                    // Add that amount and remove it from each resource
+                    double spentTime = taskData.AddTime(availability, masterClock);
+                    foreach (IResource resource in task.Resources)
+                    {
+                        resources[resource.Name] -= spentTime;
+                    }
+
+                    // Check the completion state 
+                    if (taskData.IsComplete)
+                        this.SimulateTaskCompletion(task);
+                }
+
+                masterClock += 1;
             }
 
             
             
             return result;
+        }
+
+
+        /// <summary>
+        /// Perform the necessary housekeeping when a task is completed, including removing it from the 
+        /// available tasks and adding its descendants to the available list
+        /// </summary>
+        /// <param name="task"></param>
+        private void SimulateTaskCompletion(PertTask task)
+        {
+            var taskData = _taskDataById[task.Id];
+            if (!taskData.IsComplete)
+                throw new ArgumentException($"Task '{task.Name}' was passed to completion method but was not actually complete");
+
+            _availableTasks.Remove(task);
+            foreach (var taskDescendant in task.Descendants)
+            {
+                _availableTasks.Add(taskDescendant);
+            }
         }
     }
 }

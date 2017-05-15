@@ -87,6 +87,11 @@ namespace Foresight.Tools
 
             return results;
         }
+
+        public static Dictionary<Guid, double> NetworkModePathLengths(IEnumerable<PertTask> tasks)
+        {
+            return NetworkPathLengths(tasks, new EstimateModeReader());
+        }
     }
 
 }
