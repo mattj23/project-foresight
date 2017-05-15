@@ -22,8 +22,22 @@ namespace Foresight.Tools
                     workingTasks.Enqueue(pertTask);
             }
 
+            /* If we go through an entire queue without making any progress, the algorithm 
+             * is currently stuck.  This object reference is used to detect that condition.  
+             *    -> If the algorithm finds a node that cannot be resolved because its descendants
+             *       don't all exist in the results dictionary, and the firstNoprogressTask reference
+             *       is null, then we take the current unresolvable task and store it in the fNT ref
+             *    -> If the algorithm finds a node that ~can~ be resolved, it sets the fNT reference
+             *       back to null, and the next task that can't be resolved will take its place
+             *    -> If the algorithm gets to a node that can't be resolved and it's ~already~ stored
+             *       in the fNT reference, then we've managed to go all the way through the queue and
+             *       loop back around without resolving a single task.  That means we're stuck and we
+             *       shoud throw an error. */
+            PertTask firstNoprogressTask = null;
+
             while (workingTasks.Any())
             {
+                
                 // For each cycle we check each task to see if it has no unresolved descendants.  Each 
                 // task located can be assigned a value based on the largest weight of its descendants
                 // added to its own weight, at which time it's stored in the results dictionary
@@ -52,13 +66,21 @@ namespace Foresight.Tools
                 if (hasUnresolvedDescendant)
                 {
                     workingTasks.Enqueue(task);
+                    
+                    if (firstNoprogressTask == task)
+                        throw new ArgumentException("It seems some descendant activites were not included in the original list and the path length algorithm has stuck");
+
+                    if (firstNoprogressTask == null)
+                        firstNoprogressTask = task;
                 }
                 else
                 {
+                    firstNoprogressTask = null;
                     results.Add(task.Id, valueReader.GetValue(task.TimeEstimate) + maxDescendantWeight);
                     foreach (var taskAncestor in task.Ancestors)
                     {
-                        workingTasks.Enqueue(taskAncestor);
+                        if (!workingTasks.Contains(taskAncestor))
+                            workingTasks.Enqueue(taskAncestor);
                     }
                 }
             }

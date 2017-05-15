@@ -51,5 +51,12 @@ namespace Foresight
             Mode = mode;
             Max = max;
         }
+
+        public Estimate(double mode)
+        {
+            Min = mode;
+            Mode = mode;
+            Max = mode;
+        }
     }
 }
