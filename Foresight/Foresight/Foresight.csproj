@@ -62,6 +62,7 @@
     <Compile Include="Serialization\SerializableProject.cs" />
     <Compile Include="Serialization\SerializeablePertTask.cs" />
     <Compile Include="Simulation\ProjectSimulator.cs" />
+    <Compile Include="Simulation\WorkTimeUsage.cs" />
     <Compile Include="Simulation\SimulatedTaskData.cs" />
     <Compile Include="Simulation\SimulationResult.cs" />
     <Compile Include="Tools\EstimateModeReader.cs" />

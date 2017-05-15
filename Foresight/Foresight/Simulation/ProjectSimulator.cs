@@ -100,6 +100,7 @@ namespace Foresight.Simulation
                     foreach (IResource resource in task.Resources)
                     {
                         resources[resource.Name] -= spentTime;
+                        result.RecordResourceUsage(resource.Name, task.Id, masterClock, spentTime);
                     }
 
                     // Check the completion state 
@@ -107,11 +108,10 @@ namespace Foresight.Simulation
                         this.SimulateTaskCompletion(task);
                 }
 
+                result.TotalCompletionDays = masterClock;
                 masterClock += 1;
             }
 
-            
-            
             return result;
         }
 
