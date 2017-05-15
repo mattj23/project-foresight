@@ -26,7 +26,16 @@
         "Available": 5
       }
     ],
-    "Employees": []
+    "Employees": [
+      {
+        "Name": "Donald Boberson",
+        "ResourceGroupName": "Commander in Chief Engineer"
+      },
+      {
+        "Name": "Ivanka Boberson",
+        "ResourceGroupName": "Lackey"
+      }
+    ]
   },
   "Tasks": [
     {

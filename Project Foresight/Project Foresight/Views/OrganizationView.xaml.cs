@@ -73,5 +73,10 @@ namespace Project_Foresight.Views
         {
             this.ViewModel.ResourceGroups.Remove(this.SelectedResourceGroupViewModel);
         }
+
+        private void ResourceGroupComboSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ;
+        }
     }
 }

@@ -8,7 +8,7 @@
              d:DesignHeight="700" d:DesignWidth="400">
     <Grid DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:OrganizationView}}}">
         <Grid.Resources>
-            <CollectionViewSource x:Key="ResourceGroups" Source="{Binding ViewModel.ResourceGroups}" />
+            <CollectionViewSource x:Key="ResourceGroups" Source="{Binding ViewModel.ResourceGroupNames}" />
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -110,9 +110,31 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                 <DataGridComboBoxColumn Header="Resource Type"
-                                        SelectedItemBinding="{Binding Group}"
-                                        ItemsSource="{Binding Source={StaticResource ResourceGroups}}">
-                </DataGridComboBoxColumn>
+                                        SelectedValueBinding="{Binding ResourceGroupName, UpdateSourceTrigger=PropertyChanged}"
+                                        ItemsSource="{Binding Source={StaticResource ResourceGroups}}" />
+<!--                <DataGridTemplateColumn Header="Resource Type">-->
+<!--                    <DataGridTemplateColumn.CellTemplate>-->
+<!--                        <DataTemplate>-->
+<!--                            <TextBlock Text="{Binding Group.Name}"></TextBlock>-->
+<!--                        </DataTemplate>-->
+<!--                    </DataGridTemplateColumn.CellTemplate>-->
+<!--                    -->
+<!--                    <DataGridTemplateColumn.CellEditingTemplate>-->
+<!--                        <DataTemplate>-->
+<!--                            <ComboBox ItemsSource="{Binding Source={StaticResource ResourceGroups}}"-->
+<!--                                      Tag="{Binding}"-->
+<!--                                      SelectionChanged="ResourceGroupComboSelectionChanged"-->
+<!--                                      SelectedItem="{Binding Group, Mode=TwoWay}">-->
+<!--                                <ComboBox.ItemTemplate>-->
+<!--                                    <DataTemplate>-->
+<!--                                        <TextBlock Text="{Binding Name}" />-->
+<!--                                    </DataTemplate>-->
+<!--                                </ComboBox.ItemTemplate>-->
+<!--                            </ComboBox>-->
+<!--                        </DataTemplate>-->
+<!--                    </DataGridTemplateColumn.CellEditingTemplate>-->
+<!--                </DataGridTemplateColumn>-->
+                
             </DataGrid.Columns>
         </DataGrid>
 
@@ -131,3 +153,4 @@
         </StackPanel>
     </Grid>
 </UserControl>
+

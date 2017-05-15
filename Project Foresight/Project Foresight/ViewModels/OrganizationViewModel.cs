@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Foresight;
 using Project_Foresight.Annotations;
@@ -37,6 +38,8 @@ namespace Project_Foresight.ViewModels
         public ObservableCollection<EmployeeViewModel> Employees { get; }
         public ObservableCollection<ResourceGroupViewModel> ResourceGroups { get; }
 
+        public ObservableCollection<string> ResourceGroupNames { get; }
+
         public OrganizationViewModel() : this(new Organization()) { }
 
         public OrganizationViewModel(Organization model)
@@ -44,17 +47,39 @@ namespace Project_Foresight.ViewModels
             this.Model = model;
             this.Employees = new ObservableCollection<EmployeeViewModel>();
             this.ResourceGroups = new ObservableCollection<ResourceGroupViewModel>();
+            this.ResourceGroupNames = new ObservableCollection<string>();
 
             // Synchronize the employees and resource groups
             foreach (var modelResourceGroup in this.Model.ResourceGroups)
                 this.ResourceGroups.Add(new ResourceGroupViewModel(modelResourceGroup));
 
             foreach (var modelEmployee in this.Model.Employees)
-                this.Employees.Add(new EmployeeViewModel(modelEmployee));
+            {
+                this.AddEmployeeToModel(modelEmployee);
+            }
 
             // Subscribe to the ObservableCollection to keep the model synchronized
             this.Employees.CollectionChanged += EmployeesOnCollectionChanged;
             this.ResourceGroups.CollectionChanged += ResourceGroupsOnCollectionChanged;
+            this.SynchResourceNames();
+        }
+
+        private void AddEmployeeToModel(Employee employeeModel)
+        {
+            var newEmployee = new EmployeeViewModel(employeeModel);
+            this.Employees.Add(newEmployee);
+            newEmployee.PropertyChanged += EmployeeOnPropertyChanged;
+        }
+
+        private void EmployeeOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "ResourceGroupName")
+            {
+                var employeeViewModel = sender as EmployeeViewModel;
+                employeeViewModel.Group =
+                    this.ResourceGroups.FirstOrDefault(x => x.Name == employeeViewModel.ResourceGroupName);
+            }
+
         }
 
 
@@ -78,6 +103,19 @@ namespace Project_Foresight.ViewModels
                     }
                 }
             }
+
+            this.SynchResourceNames();
+        }
+
+        private void SynchResourceNames()
+        {
+            this.ResourceGroupNames.Clear();
+            var sortedNames = this.ResourceGroups.Select(x => x.Name).ToList();
+            sortedNames.Sort();
+            foreach (var name in sortedNames)
+            {
+                this.ResourceGroupNames.Add(name);
+            }
         }
 
         private void EmployeesOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs n)
@@ -86,7 +124,7 @@ namespace Project_Foresight.ViewModels
             {
                 foreach (object newItem in n.NewItems)
                 {
-                    this.Model.Employees.Add((newItem as EmployeeViewModel).Model);
+                    this.AddEmployeeToModel((newItem as EmployeeViewModel).Model);
                 }
             }
 
@@ -96,7 +134,9 @@ namespace Project_Foresight.ViewModels
                 {
                     if (!this.Employees.Contains(oldItem as EmployeeViewModel))
                     {
-                        this.Model.Employees.Remove((oldItem as EmployeeViewModel).Model);
+                        var oldViewModel = oldItem as EmployeeViewModel;
+                        oldViewModel.PropertyChanged -= EmployeeOnPropertyChanged;
+                        this.Model.Employees.Remove(oldViewModel.Model);
                     }
                 }
             }

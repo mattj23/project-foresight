@@ -8,6 +8,7 @@ namespace Project_Foresight.ViewModels
     public class EmployeeViewModel : INotifyPropertyChanged, IResource
     {
         private ResourceGroupViewModel _group;
+        private string _resourceGroupName;
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Employee Model { get; }
@@ -33,6 +34,19 @@ namespace Project_Foresight.ViewModels
             {
                 if (Equals(value, _group)) return;
                 _group = value;
+                this.Model.Group = this.Group.Model;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(Rate));
+            }
+        }
+
+        public string ResourceGroupName
+        {
+            get { return _resourceGroupName; }
+            set
+            {
+                if (value == _resourceGroupName) return;
+                _resourceGroupName = value;
                 OnPropertyChanged();
             }
         }
@@ -51,6 +65,7 @@ namespace Project_Foresight.ViewModels
         {
             this.Model = model;
             this.Group = new ResourceGroupViewModel(model.Group);
+            this.ResourceGroupName = this.Group.Name;
         }
 
         [NotifyPropertyChangedInvocator]

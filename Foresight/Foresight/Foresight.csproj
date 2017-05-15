@@ -51,6 +51,8 @@
     <Compile Include="Organization.cs" />
     <Compile Include="PertTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Serialization\SerializableEmployee.cs" />
+    <Compile Include="Serialization\SerializableOrganization.cs" />
     <Compile Include="Serialization\SerializableProject.cs" />
     <Compile Include="Serialization\SerializeablePertTask.cs" />
   </ItemGroup>

@@ -10,8 +10,7 @@ namespace Foresight.Serialization
         public string Name { get; set; }
         public string Description { get; set; }
 
-        // We use the model here, since it should be serializable already
-        public Organization Organization { get; set; }
+        public SerializableOrganization Organization { get; set; }
 
         public List<SerializeablePertTask> Tasks { get; set; }
 
@@ -22,7 +21,7 @@ namespace Foresight.Serialization
                 Name = item.Name,
                 Description = item.Description,
                 Tasks = item.Tasks.Select(SerializeablePertTask.FromPertTask).ToList(),
-                Organization = item.Organization
+                Organization = SerializableOrganization.FromOrganization(item.Organization)
             };
         }
 
@@ -32,7 +31,7 @@ namespace Foresight.Serialization
             {
                 Name = item.Name,
                 Description = item.Description,
-                Organization = item.Organization
+                Organization = SerializableOrganization.ToOrganization(item.Organization)
             };
 
             // Add all the tasks to the project tasks, but without linking
