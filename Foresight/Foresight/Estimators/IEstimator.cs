@@ -6,8 +6,5 @@ namespace Foresight.Estimators
     {
         double RandomValue(Estimate estimate);
 
-        double InverseCdf(Estimate estimate, double value);
-
-        double Cdf(Estimate estimate, double x);
     }
 }
