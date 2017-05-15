@@ -15,7 +15,7 @@ namespace Project_Foresight.ViewModels
         {
             get
             {
-                return this.Model.Name;
+                return this.Model?.Name;
             }
             set
             {

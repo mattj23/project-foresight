@@ -34,7 +34,7 @@ namespace Project_Foresight.ViewModels
             {
                 if (Equals(value, _group)) return;
                 _group = value;
-                this.Model.Group = this.Group.Model;
+                this.Model.Group = this.Group?.Model;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(Rate));
             }

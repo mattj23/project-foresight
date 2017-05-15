@@ -63,9 +63,9 @@
       "Name": "System Mech Design",
       "Description": "Engineering design of the overall system hardware architecture",
       "TimeEstimate": {
-        "Min": 0.0,
-        "Max": 0.0,
-        "Mode": 0.0
+        "Min": 1.0,
+        "Max": 8.0,
+        "Mode": 1.5
       },
       "Ancestors": [
         "3c67496a-0d49-49a6-bc36-410dbe2cc388"
@@ -177,9 +177,9 @@
   "TaskPositions": {
     "3c67496a-0d49-49a6-bc36-410dbe2cc388": "181.5,184.54",
     "b679ab77-f7c2-49f4-a81b-a1c5227c27cf": "557.5,400.54",
-    "5630c449-d537-4b12-9736-ddb7967b60af": "554.5,146.54",
+    "5630c449-d537-4b12-9736-ddb7967b60af": "560.872616354207,105.755255333074",
     "a8da437c-34f9-4018-b673-75c92f319011": "561.5,669.54",
-    "d75f3161-3bf9-414b-a684-e4e54595a7f7": "882.5,392.54",
+    "d75f3161-3bf9-414b-a684-e4e54595a7f7": "900.34332579178,400.187139625049",
     "afe13e97-83f3-4110-8ed2-d6b3e2b887d6": "919.5,655.54",
     "54f269b5-e62c-411c-8caf-0b15afe29443": "1174.5,147.54"
   }

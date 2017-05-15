@@ -66,8 +66,32 @@ namespace Project_Foresight.Views
             {
                 Point canvasPoint = e.GetPosition(this.LayoutElement);
 
-                this.ViewModel.X += (canvasPoint.X - _mouseDownPoint.X);
-                this.ViewModel.Y += (canvasPoint.Y - _mouseDownPoint.Y);
+                double shiftX = (canvasPoint.X - _mouseDownPoint.X);
+                double shiftY = (canvasPoint.Y - _mouseDownPoint.Y);
+                this.ViewModel.X += shiftX;
+                this.ViewModel.Y += shiftY;
+
+                if (Keyboard.IsKeyDown(Key.LeftShift))
+                {
+                    foreach (Guid descendantId in this.ViewModel.AllDescendants)
+                    {
+                        var descendant = this.ViewModel.Parent.GetTaskById(descendantId);
+                        descendant.X += shiftX;
+                        descendant.Y += shiftY;
+                    }
+                }
+
+                if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                {
+                    foreach (Guid ancestorId in this.ViewModel.AllAncestors)
+                    {
+                        var ancestor = this.ViewModel.Parent.GetTaskById(ancestorId);
+                        ancestor.X += shiftX;
+                        ancestor.Y += shiftY;
+                    }
+                }
+
+
                 this._mouseDownPoint = canvasPoint;
             }
 

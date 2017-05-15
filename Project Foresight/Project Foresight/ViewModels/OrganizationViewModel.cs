@@ -40,6 +40,8 @@ namespace Project_Foresight.ViewModels
 
         public ObservableCollection<string> ResourceGroupNames { get; }
 
+        public ObservableCollection<string> ResourceNames { get; set; }
+
         public OrganizationViewModel() : this(new Organization()) { }
 
         public OrganizationViewModel(Organization model)
@@ -47,6 +49,7 @@ namespace Project_Foresight.ViewModels
             this.Model = model;
             this.Employees = new ObservableCollection<EmployeeViewModel>();
             this.ResourceGroups = new ObservableCollection<ResourceGroupViewModel>();
+            this.ResourceNames = new ObservableCollection<string>();
             this.ResourceGroupNames = new ObservableCollection<string>();
 
             // Synchronize the employees and resource groups
@@ -103,14 +106,27 @@ namespace Project_Foresight.ViewModels
             this.SynchResourceNames();
         }
 
+        /// <summary>
+        /// Synchronize the Group names and all resource names
+        /// </summary>
         private void SynchResourceNames()
         {
             this.ResourceGroupNames.Clear();
-            var sortedNames = this.ResourceGroups.Select(x => x.Name).ToList().Concat(this.Employees.Select(x => x.Name).ToList()).ToList();
-            sortedNames.Sort();
-            foreach (var name in sortedNames)
+            this.ResourceNames.Clear();
+
+            var sortedResourceGroupNames = this.ResourceGroups.Select(x => x.Name).ToList();
+            var sortedResourceNames =
+                sortedResourceGroupNames.Concat(this.Employees.Select(x => x.Name).ToList()).ToList();
+            sortedResourceNames.Sort();
+            sortedResourceGroupNames.Sort();
+            foreach (var name in sortedResourceGroupNames)
             {
                 this.ResourceGroupNames.Add(name);
+            }
+
+            foreach (var name in sortedResourceNames)
+            {
+                this.ResourceNames.Add(name);
             }
         }
 

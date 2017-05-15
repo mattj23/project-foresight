@@ -187,7 +187,7 @@
                 </ItemsControl>
                 
                 <ListBox Grid.Row="4"
-                         ItemsSource="{Binding ViewModel.Parent.Organization.ResourceGroupNames}"
+                         ItemsSource="{Binding ViewModel.Parent.Organization.ResourceNames}"
                          MouseDoubleClick="SelectorDoubleClick">
                     <ListBox.Style>
                         <Style TargetType="ListBox">

@@ -112,29 +112,7 @@
                 <DataGridComboBoxColumn Header="Resource Type"
                                         SelectedValueBinding="{Binding ResourceGroupName, UpdateSourceTrigger=PropertyChanged}"
                                         ItemsSource="{Binding Source={StaticResource ResourceGroups}}" />
-<!--                <DataGridTemplateColumn Header="Resource Type">-->
-<!--                    <DataGridTemplateColumn.CellTemplate>-->
-<!--                        <DataTemplate>-->
-<!--                            <TextBlock Text="{Binding Group.Name}"></TextBlock>-->
-<!--                        </DataTemplate>-->
-<!--                    </DataGridTemplateColumn.CellTemplate>-->
-<!--                    -->
-<!--                    <DataGridTemplateColumn.CellEditingTemplate>-->
-<!--                        <DataTemplate>-->
-<!--                            <ComboBox ItemsSource="{Binding Source={StaticResource ResourceGroups}}"-->
-<!--                                      Tag="{Binding}"-->
-<!--                                      SelectionChanged="ResourceGroupComboSelectionChanged"-->
-<!--                                      SelectedItem="{Binding Group, Mode=TwoWay}">-->
-<!--                                <ComboBox.ItemTemplate>-->
-<!--                                    <DataTemplate>-->
-<!--                                        <TextBlock Text="{Binding Name}" />-->
-<!--                                    </DataTemplate>-->
-<!--                                </ComboBox.ItemTemplate>-->
-<!--                            </ComboBox>-->
-<!--                        </DataTemplate>-->
-<!--                    </DataGridTemplateColumn.CellEditingTemplate>-->
-<!--                </DataGridTemplateColumn>-->
-                
+
             </DataGrid.Columns>
         </DataGrid>
 
