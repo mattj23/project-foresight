@@ -146,5 +146,9 @@ namespace Foresight
             }
         }
 
+        public override string ToString()
+        {
+            return $"<ForeSight.PertTask '{this.Name}'>";
+        }
     }
 }

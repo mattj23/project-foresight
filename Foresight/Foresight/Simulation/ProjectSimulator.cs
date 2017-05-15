@@ -62,7 +62,7 @@ namespace Foresight.Simulation
                 // Simulate a day's worth of progress
 
                 // Find all tasks that don't require resources
-                foreach (var task in _availableTasks.Where(x => !x.Resources.Any()))
+                foreach (var task in _availableTasks.Where(x => !x.Resources.Any()).ToList())
                 {
                     var taskData = _taskDataById[task.Id];
 
@@ -95,6 +95,9 @@ namespace Foresight.Simulation
                     // Check to find the least available amount of the unified resources
                     double availability = task.Resources.Select(x => resources[x.Name]).Min();
 
+                    if (availability == 0)
+                        continue;
+
                     // Add that amount and remove it from each resource
                     double spentTime = taskData.AddTime(availability, masterClock);
                     foreach (IResource resource in task.Resources)
@@ -108,10 +111,10 @@ namespace Foresight.Simulation
                         this.SimulateTaskCompletion(task);
                 }
 
-                result.TotalCompletionDays = masterClock;
                 masterClock += 1;
             }
 
+            result.TotalCompletionDays = masterClock;
             return result;
         }
 
@@ -130,8 +133,24 @@ namespace Foresight.Simulation
             _availableTasks.Remove(task);
             foreach (var taskDescendant in task.Descendants)
             {
-                _availableTasks.Add(taskDescendant);
+                if (AreTaskAncestorsDone(taskDescendant))
+                    _availableTasks.Add(taskDescendant);
             }
+        }
+
+        /// <summary>
+        /// Check to make sure that all of a task's ancestors are ready
+        /// </summary>
+        /// <param name="task"></param>
+        /// <returns></returns>
+        private bool AreTaskAncestorsDone(PertTask task)
+        {
+            foreach (var taskAncestor in task.Ancestors)
+            {
+                if (!_taskDataById[taskAncestor.Id].IsComplete)
+                    return false;
+            }
+            return true;
         }
     }
 }
