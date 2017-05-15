@@ -74,6 +74,9 @@
     <Compile Include="ViewModels\ResourceGroupViewModel.cs" />
     <Compile Include="ViewModels\TaskViewModel.cs" />
     <Compile Include="Views\CanvasItemsControl.cs" />
+    <Compile Include="Views\OrganizationView.xaml.cs">
+      <DependentUpon>OrganizationView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PERTView.xaml.cs">
       <DependentUpon>PERTView.xaml</DependentUpon>
     </Compile>
@@ -92,6 +95,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\OrganizationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PERTView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

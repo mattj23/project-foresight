@@ -44,6 +44,11 @@ namespace Project_Foresight.ViewModels
             }
         }
 
+        public override string ToString()
+        {
+            return this.Name;
+        }
+
         public ResourceGroupViewModel()
         {
             this.Model = new ResourceGroup();

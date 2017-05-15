@@ -22,7 +22,22 @@
                 <MenuItem Header="Save Project" Command="{Binding SaveCommand}"/>
             </MenuItem>
         </Menu>
-        <views:PERTView Grid.Row="1"
-            ViewModel="{Binding Project}"></views:PERTView>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <views:OrganizationView ViewModel="{Binding Project.Organization}"
+                                    Width="400">
+                
+            </views:OrganizationView>
+
+            <views:PERTView Grid.Column="1"
+                            ViewModel="{Binding Project}" />
+
+        </Grid>
     </Grid>
 </Window>
+

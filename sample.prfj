@@ -2,8 +2,30 @@
   "Name": "Hello world!",
   "Description": null,
   "Organization": {
-    "Name": null,
-    "ResourceGroups": [],
+    "Name": "BobCo Engineering",
+    "Description": "BobCo Engineering is a sub-world-class engineering firm that specializes in jobs that nobody else in their right mind would even consider taking on.",
+    "ResourceGroups": [
+      {
+        "Name": "Commander in Chief Engineer",
+        "Rate": 450.0,
+        "Available": 0
+      },
+      {
+        "Name": "Lackey",
+        "Rate": 118.0,
+        "Available": 0
+      },
+      {
+        "Name": "Overpaid Family Member",
+        "Rate": 300.0,
+        "Available": 0
+      },
+      {
+        "Name": "Research Denier",
+        "Rate": 50.0,
+        "Available": 5
+      }
+    ],
     "Employees": []
   },
   "Tasks": [

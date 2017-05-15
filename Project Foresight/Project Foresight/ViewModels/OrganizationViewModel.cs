@@ -24,6 +24,16 @@ namespace Project_Foresight.ViewModels
             }
         }
 
+        public string Description
+        {
+            get { return this.Model.Description; }
+            set
+            {
+                this.Model.Description = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ObservableCollection<EmployeeViewModel> Employees { get; }
         public ObservableCollection<ResourceGroupViewModel> ResourceGroups { get; }
 
@@ -47,32 +57,47 @@ namespace Project_Foresight.ViewModels
             this.ResourceGroups.CollectionChanged += ResourceGroupsOnCollectionChanged;
         }
 
+
         private void ResourceGroupsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs n)
         {
-            foreach (object newItem in n.NewItems)
+            if (n.NewItems != null)
             {
-                this.Model.ResourceGroups.Add((newItem as ResourceGroupViewModel).Model);
-            }
-            foreach (object oldItem in n.OldItems)
-            {
-                if (!this.ResourceGroups.Contains(oldItem as ResourceGroupViewModel))
+                foreach (object newItem in n.NewItems)
                 {
-                    this.Model.ResourceGroups.Remove((oldItem as ResourceGroupViewModel).Model);
+                    this.Model.ResourceGroups.Add((newItem as ResourceGroupViewModel).Model);
+                }
+            }
+
+            if (n.OldItems != null)
+            {
+                foreach (object oldItem in n.OldItems)
+                {
+                    if (!this.ResourceGroups.Contains(oldItem as ResourceGroupViewModel))
+                    {
+                        this.Model.ResourceGroups.Remove((oldItem as ResourceGroupViewModel).Model);
+                    }
                 }
             }
         }
 
         private void EmployeesOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs n)
         {
-            foreach (object newItem in n.NewItems)
+            if (n.NewItems != null)
             {
-                this.Model.Employees.Add((newItem as EmployeeViewModel).Model);
-            }
-            foreach (object oldItem in n.OldItems)
-            {
-                if (!this.Employees.Contains(oldItem as EmployeeViewModel))
+                foreach (object newItem in n.NewItems)
                 {
-                    this.Model.Employees.Remove((oldItem as EmployeeViewModel).Model);
+                    this.Model.Employees.Add((newItem as EmployeeViewModel).Model);
+                }
+            }
+
+            if (n.OldItems != null)
+            {
+                foreach (object oldItem in n.OldItems)
+                {
+                    if (!this.Employees.Contains(oldItem as EmployeeViewModel))
+                    {
+                        this.Model.Employees.Remove((oldItem as EmployeeViewModel).Model);
+                    }
                 }
             }
         }
