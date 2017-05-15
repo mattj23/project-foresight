@@ -40,15 +40,8 @@
 
                         </TransformGroup>
                     </Border.RenderTransform>
-                    <Border.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Add Task" Click="AddTask_OnClick"></MenuItem>
-                        </ContextMenu>
-                    </Border.ContextMenu>
 
                     <Canvas x:Name="ViewCanvas">
-                        
-                        
                         
                         <ItemsControl ItemsSource="{Binding ViewModel.Links}">
                             <ItemsControl.ItemsPanel>
