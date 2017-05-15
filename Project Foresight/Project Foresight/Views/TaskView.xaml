@@ -90,10 +90,11 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <TextBox Grid.Row="0" 
                      Text="{Binding ViewModel.Name}"
-                     FontWeight="Bold"
+                     FontWeight="ExtraBlack"
                      GotFocus="EditBoxGotFocus"
                      KeyDown="EditBoxKeyDown"
                      LostFocus="EditBoxLostFocus"
@@ -121,8 +122,9 @@
                     
                     <TextBlock Grid.Row="0"
                                Grid.ColumnSpan="3"
+                               FontWeight="Black"
                                Margin="5">
-                        Time Estimate min/mode/max (days)
+                        Time Estimate (days)
                     </TextBlock>
 
                     <TextBox Grid.Row="1"
@@ -153,10 +155,57 @@
                              HorizontalAlignment="Center"
                              TextAlignment="Center" />
                 </Grid>
+                
+                <!-- Resources -->
+                <DockPanel Grid.Row="3">
+                    <Button DockPanel.Dock="Right" 
+                            Click="AddResourceOnClick">
+                        <TextBlock Text="+" Margin="5 0"></TextBlock>
+                    </Button>
+                    <TextBlock Margin="5"
+                               FontWeight="Black">
+                        Resources
+                    </TextBlock>
+                    
+                </DockPanel>
+                
+                <ItemsControl Grid.Row="4" 
+                              Margin="10"
+                              ItemsSource="{Binding ViewModel.Resources}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel>
+                                <Button DockPanel.Dock="Right"
+                                        Tag="{Binding}"
+                                        Click="DeleteResourceOnClick">
+                                    <TextBlock Text="-" Margin="5 -2" />
+                                </Button>
+                                <TextBlock Text="{Binding Name}"/>
+                            </DockPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                
+                <ListBox Grid.Row="4"
+                         ItemsSource="{Binding ViewModel.Parent.Organization.ResourceGroupNames}"
+                         MouseDoubleClick="SelectorDoubleClick">
+                    <ListBox.Style>
+                        <Style TargetType="ListBox">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSelectingResource}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListBox.Style>
+                </ListBox>
             </Grid>
             
         </Border>
     </Grid>
     
 </UserControl>
+
+
 

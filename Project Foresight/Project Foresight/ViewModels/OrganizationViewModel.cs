@@ -53,9 +53,11 @@ namespace Project_Foresight.ViewModels
             foreach (var modelResourceGroup in this.Model.ResourceGroups)
                 this.ResourceGroups.Add(new ResourceGroupViewModel(modelResourceGroup));
 
-            foreach (var modelEmployee in this.Model.Employees)
+            foreach (var employeeModel in this.Model.Employees)
             {
-                this.AddEmployeeToModel(modelEmployee);
+                var newEmployee = new EmployeeViewModel(employeeModel);
+                this.Employees.Add(newEmployee);
+                newEmployee.PropertyChanged += EmployeeOnPropertyChanged;
             }
 
             // Subscribe to the ObservableCollection to keep the model synchronized
@@ -64,12 +66,6 @@ namespace Project_Foresight.ViewModels
             this.SynchResourceNames();
         }
 
-        private void AddEmployeeToModel(Employee employeeModel)
-        {
-            var newEmployee = new EmployeeViewModel(employeeModel);
-            this.Employees.Add(newEmployee);
-            newEmployee.PropertyChanged += EmployeeOnPropertyChanged;
-        }
 
         private void EmployeeOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -110,7 +106,7 @@ namespace Project_Foresight.ViewModels
         private void SynchResourceNames()
         {
             this.ResourceGroupNames.Clear();
-            var sortedNames = this.ResourceGroups.Select(x => x.Name).ToList();
+            var sortedNames = this.ResourceGroups.Select(x => x.Name).ToList().Concat(this.Employees.Select(x => x.Name).ToList()).ToList();
             sortedNames.Sort();
             foreach (var name in sortedNames)
             {
@@ -124,7 +120,9 @@ namespace Project_Foresight.ViewModels
             {
                 foreach (object newItem in n.NewItems)
                 {
-                    this.AddEmployeeToModel((newItem as EmployeeViewModel).Model);
+                    var employeeViewModel = (EmployeeViewModel) newItem;
+                    this.Model.Employees.Add(employeeViewModel.Model);
+                    employeeViewModel.PropertyChanged += EmployeeOnPropertyChanged;
                 }
             }
 
@@ -142,6 +140,13 @@ namespace Project_Foresight.ViewModels
             }
         }
 
+        public IResource FindResourceByName(string name)
+        {
+            var employeeResource = this.Employees.FirstOrDefault(x => x.Name == name);
+            if (employeeResource != null)
+                return employeeResource;
+            return this.ResourceGroups.FirstOrDefault(x => x.Name == name);
+        }
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

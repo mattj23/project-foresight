@@ -34,6 +34,10 @@
       {
         "Name": "Ivanka Boberson",
         "ResourceGroupName": "Overpaid Family Member"
+      },
+      {
+        "Name": "Jared Pushner",
+        "ResourceGroupName": "Lackey"
       }
     ]
   },
@@ -47,12 +51,12 @@
         "Max": 1.0,
         "Mode": 0.5
       },
-      "Employees": [],
       "Ancestors": [],
       "Descendants": [
         "5630c449-d537-4b12-9736-ddb7967b60af",
         "b679ab77-f7c2-49f4-a81b-a1c5227c27cf"
-      ]
+      ],
+      "ResourceNames": []
     },
     {
       "Id": "b679ab77-f7c2-49f4-a81b-a1c5227c27cf",
@@ -63,13 +67,16 @@
         "Max": 0.0,
         "Mode": 0.0
       },
-      "Employees": [],
       "Ancestors": [
         "3c67496a-0d49-49a6-bc36-410dbe2cc388"
       ],
       "Descendants": [
         "d75f3161-3bf9-414b-a684-e4e54595a7f7",
         "a8da437c-34f9-4018-b673-75c92f319011"
+      ],
+      "ResourceNames": [
+        "Commander in Chief Engineer",
+        "Overpaid Family Member"
       ]
     },
     {
@@ -81,13 +88,15 @@
         "Max": 0.0,
         "Mode": 0.0
       },
-      "Employees": [],
       "Ancestors": [
         "3c67496a-0d49-49a6-bc36-410dbe2cc388"
       ],
       "Descendants": [
         "54f269b5-e62c-411c-8caf-0b15afe29443",
         "d75f3161-3bf9-414b-a684-e4e54595a7f7"
+      ],
+      "ResourceNames": [
+        "Ivanka Boberson"
       ]
     },
     {
@@ -99,12 +108,14 @@
         "Max": 0.0,
         "Mode": 0.0
       },
-      "Employees": [],
       "Ancestors": [
         "b679ab77-f7c2-49f4-a81b-a1c5227c27cf"
       ],
       "Descendants": [
         "afe13e97-83f3-4110-8ed2-d6b3e2b887d6"
+      ],
+      "ResourceNames": [
+        "Commander in Chief Engineer"
       ]
     },
     {
@@ -116,13 +127,15 @@
         "Max": 0.0,
         "Mode": 0.0
       },
-      "Employees": [],
       "Ancestors": [
         "b679ab77-f7c2-49f4-a81b-a1c5227c27cf",
         "5630c449-d537-4b12-9736-ddb7967b60af"
       ],
       "Descendants": [
         "54f269b5-e62c-411c-8caf-0b15afe29443"
+      ],
+      "ResourceNames": [
+        "Commander in Chief Engineer"
       ]
     },
     {
@@ -134,11 +147,13 @@
         "Max": 0.0,
         "Mode": 0.0
       },
-      "Employees": [],
       "Ancestors": [
         "a8da437c-34f9-4018-b673-75c92f319011"
       ],
-      "Descendants": []
+      "Descendants": [],
+      "ResourceNames": [
+        "Overpaid Family Member"
+      ]
     },
     {
       "Id": "54f269b5-e62c-411c-8caf-0b15afe29443",
@@ -149,21 +164,23 @@
         "Max": 0.0,
         "Mode": 0.0
       },
-      "Employees": [],
       "Ancestors": [
         "5630c449-d537-4b12-9736-ddb7967b60af",
         "d75f3161-3bf9-414b-a684-e4e54595a7f7"
       ],
-      "Descendants": []
+      "Descendants": [],
+      "ResourceNames": [
+        "Lackey"
+      ]
     }
   ],
   "TaskPositions": {
-    "3c67496a-0d49-49a6-bc36-410dbe2cc388": "272.5,239.54",
-    "b679ab77-f7c2-49f4-a81b-a1c5227c27cf": "556.5,399.54",
-    "5630c449-d537-4b12-9736-ddb7967b60af": "554.5,243.54",
-    "a8da437c-34f9-4018-b673-75c92f319011": "557.5,561.54",
+    "3c67496a-0d49-49a6-bc36-410dbe2cc388": "181.5,184.54",
+    "b679ab77-f7c2-49f4-a81b-a1c5227c27cf": "557.5,400.54",
+    "5630c449-d537-4b12-9736-ddb7967b60af": "554.5,146.54",
+    "a8da437c-34f9-4018-b673-75c92f319011": "561.5,669.54",
     "d75f3161-3bf9-414b-a684-e4e54595a7f7": "882.5,392.54",
-    "afe13e97-83f3-4110-8ed2-d6b3e2b887d6": "884.5,560.54",
-    "54f269b5-e62c-411c-8caf-0b15afe29443": "1114.5,236.54"
+    "afe13e97-83f3-4110-8ed2-d6b3e2b887d6": "919.5,655.54",
+    "54f269b5-e62c-411c-8caf-0b15afe29443": "1174.5,147.54"
   }
 }

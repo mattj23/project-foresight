@@ -52,12 +52,24 @@ namespace Project_Foresight.Serialization
             foreach (SerializeablePertTask serializeablePertTask in working.Tasks)
             {
                 var actualTask = project.GetTaskById(serializeablePertTask.Id);
+
+                // The position in the diagram
                 actualTask.X = working.TaskPositions[actualTask.Id].X;
                 actualTask.Y = working.TaskPositions[actualTask.Id].Y;
+
+                // Create the project network links
                 foreach (Guid descendantId in serializeablePertTask.Descendants)
                 {
                     var descendantTask = project.GetTaskById(descendantId);
                     project.AddLink(actualTask, descendantTask);
+                }
+
+                // Work out the resources
+                foreach (var resourceName in serializeablePertTask.ResourceNames)
+                {
+                    var locatedResource = project.Organization.FindResourceByName(resourceName);
+                    if (locatedResource != null)
+                        actualTask.Resources.Add(locatedResource);
                 }
             }
 

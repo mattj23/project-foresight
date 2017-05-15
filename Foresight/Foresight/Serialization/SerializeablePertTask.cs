@@ -12,10 +12,10 @@ namespace Foresight.Serialization
 
         public Estimate TimeEstimate { get; set; }
 
-        public List<string> Employees { get; set; }
-
         public List<Guid> Ancestors { get; set; }
         public List<Guid> Descendants { get; set; }
+
+        public List<string> ResourceNames { get; set; }
 
         public static SerializeablePertTask FromPertTask(PertTask item)
         {
@@ -25,15 +25,15 @@ namespace Foresight.Serialization
                 Id = item.Id,
                 Description = item.Description,
                 TimeEstimate = item.TimeEstimate,
-                Employees = item.Employees.Select(x => x.Name).ToList(),
                 Ancestors = item.Ancestors.Select(x => x.Id).ToList(),
-                Descendants = item.Descendants.Select(x => x.Id).ToList()
+                Descendants = item.Descendants.Select(x => x.Id).ToList(),
+                ResourceNames = item.Resources.Select(x => x.Name).ToList(),
             };
 
         }
 
         /// <summary>
-        /// Converts a SerializeablePertTask into a PertTask, but without the employee
+        /// Converts a SerializeablePertTask into a PertTask, but without the resource
         /// list or any linking
         /// </summary>
         /// <param name="item"></param>
@@ -46,7 +46,7 @@ namespace Foresight.Serialization
                 Id = item.Id,
                 Description = item.Description,
                 TimeEstimate = item.TimeEstimate,
-                Employees = new HashSet<Employee>()
+                Resources = new HashSet<IResource>()
             };
 
             if (working.TimeEstimate == null)

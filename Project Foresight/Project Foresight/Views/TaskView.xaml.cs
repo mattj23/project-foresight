@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Foresight;
 using Project_Foresight.Tools;
 using Project_Foresight.ViewModels;
 
@@ -33,6 +34,15 @@ namespace Project_Foresight.Views
 
         public static readonly DependencyProperty LayoutElementProperty = DependencyProperty.Register(
             "LayoutElement", typeof(IInputElement), typeof(TaskView), new PropertyMetadata(default(IInputElement)));
+
+        public static readonly DependencyProperty IsSelectingResourceProperty = DependencyProperty.Register(
+            "IsSelectingResource", typeof(bool), typeof(TaskView), new PropertyMetadata(default(bool)));
+
+        public bool IsSelectingResource
+        {
+            get { return (bool) GetValue(IsSelectingResourceProperty); }
+            set { SetValue(IsSelectingResourceProperty, value); }
+        }
 
         public IInputElement LayoutElement
         {
@@ -107,6 +117,27 @@ namespace Project_Foresight.Views
             textBox.IsReadOnly = false;
 
             DelayedAction.Execute(textBox.SelectAll, 50);
+        }
+
+        private void AddResourceOnClick(object sender, RoutedEventArgs e)
+        {
+            this.IsSelectingResource = true;
+            this.BringToFront();
+        }
+
+        private void SelectorDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var selectedName = (sender as ListBox).SelectedItem as string;
+            var locatedResource = this.ViewModel.Parent.Organization.FindResourceByName(selectedName);
+            if (locatedResource != null)
+                this.ViewModel.Resources.Add(locatedResource);
+            this.IsSelectingResource = false;
+        }
+
+        private void DeleteResourceOnClick(object sender, RoutedEventArgs e)
+        {
+            var resource = ((Button) sender).Tag as IResource;
+            this.ViewModel.Resources.Remove(resource);
         }
     }
 }

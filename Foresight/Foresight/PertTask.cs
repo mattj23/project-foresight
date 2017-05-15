@@ -68,7 +68,7 @@ namespace Foresight
         public IReadOnlyCollection<PertTask> AllDescendants => new ReadOnlyCollection<PertTask>(AllDescendantsOf(this).ToList());
 
         public Estimate TimeEstimate { get; set; }
-        public HashSet<Employee> Employees { get; set; }
+        public HashSet<IResource> Resources { get; set; }
 
         private readonly HashSet<PertTask> _ancestors;
         private readonly HashSet<PertTask> _descendants;
@@ -76,7 +76,7 @@ namespace Foresight
         public PertTask()
         {
             this.Id = Guid.NewGuid();
-            this.Employees = new HashSet<Employee>();
+            this.Resources = new HashSet<IResource>();
             this._ancestors = new HashSet<PertTask>();
             this._descendants = new HashSet<PertTask>();
             this.TimeEstimate = new Estimate();

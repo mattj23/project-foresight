@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -117,7 +118,9 @@ namespace Project_Foresight.ViewModels
             }
         }
 
-        public EstimateViewModel TimeEstimate { get; set; }
+        public ObservableCollection<IResource> Resources { get; }
+
+        public EstimateViewModel TimeEstimate { get; }
 
         public PertTask Model => this._task;
 
@@ -132,16 +135,38 @@ namespace Project_Foresight.ViewModels
         public Guid Id => this._task.Id;
 
         #endregion
-        public TaskViewModel()
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public TaskViewModel() : this(new PertTask())
         {
-            this._task = new PertTask();
-            this.TimeEstimate = new EstimateViewModel(this._task.TimeEstimate);
         }
 
         public TaskViewModel(PertTask taskModel)
         {
             this._task = taskModel;
+            this.Resources = new ObservableCollection<IResource>();
+            foreach (var modelResource in this.Model.Resources)
+            {
+                this.Resources.Add(modelResource);
+            }
+            this.Resources.CollectionChanged += Resources_CollectionChanged;
             this.TimeEstimate = new EstimateViewModel(this._task.TimeEstimate);
+        }
+
+        private void Resources_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            this.SynchronizeResources();
+        }
+
+        private void SynchronizeResources()
+        {
+            this.Model.Resources.Clear();
+            foreach (var resource in this.Resources)
+            {
+                this.Model.Resources.Add(resource);
+            }
         }
 
         public void LinkToAncestor(TaskViewModel ancestor)
