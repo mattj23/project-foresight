@@ -64,6 +64,9 @@
     <Compile Include="Simulation\ProjectSimulator.cs" />
     <Compile Include="Simulation\SimulatedTaskData.cs" />
     <Compile Include="Simulation\SimulationResult.cs" />
+    <Compile Include="Tools\EstimateModeReader.cs" />
+    <Compile Include="Tools\IEstimateValueReader.cs" />
+    <Compile Include="Tools\PathTools.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
