@@ -14,14 +14,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Menu>
-            <MenuItem Header="File">
-                <MenuItem Header="New Project" />
-                <MenuItem Header="Open Project" Command="{Binding OpenCommand}"/>
-                <MenuItem Header="Save Project As" Command="{Binding SaveAsCommand}"/>
-                <MenuItem Header="Save Project" Command="{Binding SaveCommand}"/>
-            </MenuItem>
-        </Menu>
+        
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -29,15 +22,41 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <views:OrganizationView ViewModel="{Binding Project.Organization}"
-                                    Width="400">
-                
-            </views:OrganizationView>
+            
 
             <views:PERTView Grid.Column="1"
                             ViewModel="{Binding Project}" />
 
+            <!-- Expanding Side Panel -->
+            <Expander Grid.Column="0"
+                      ExpandDirection="Left"
+                      Background="LightBlue">
+                <Expander.Header>
+                    <TextBlock FontWeight="Bold">
+                        <TextBlock.LayoutTransform>
+                            <RotateTransform Angle="90" />
+                        </TextBlock.LayoutTransform>
+                        Project and Organizational Information
+                    </TextBlock>
+                </Expander.Header>
+                <views:OrganizationView ViewModel="{Binding Project.Organization}"
+                                        Background="WhiteSmoke"
+                                        Width="400">
+
+                </views:OrganizationView>
+                
+            </Expander>
+            
         </Grid>
+
+        <Menu Grid.Row="0">
+            <MenuItem Header="File">
+                <MenuItem Header="New Project" />
+                <MenuItem Header="Open Project" Command="{Binding OpenCommand}"/>
+                <MenuItem Header="Save Project As" Command="{Binding SaveAsCommand}"/>
+                <MenuItem Header="Save Project" Command="{Binding SaveCommand}"/>
+            </MenuItem>
+        </Menu>
     </Grid>
 </Window>
 
