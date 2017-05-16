@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Policy;
 using Foresight.Simulation;
 using LiveCharts;
 using LiveCharts.Defaults;
@@ -19,6 +20,7 @@ namespace Project_Foresight.ViewModels
         private double _simulationTime;
         private int _iterationCount;
         private ProbabilityDensityData _selectedDensityChart;
+        private bool _isGenerated;
         public event PropertyChangedEventHandler PropertyChanged;
 
         public AppViewModel Parent { get; set; }
@@ -45,6 +47,16 @@ namespace Project_Foresight.ViewModels
             }
         }
 
+        public bool IsGenerated
+        {
+            get { return _isGenerated; }
+            set
+            {
+                if (value == _isGenerated) return;
+                _isGenerated = value;
+                OnPropertyChanged();
+            }
+        }
 
         // Chart Objects
         public ObservableCollection<ProbabilityDensityData> ProbabilityItems { get; set; }
@@ -76,7 +88,8 @@ namespace Project_Foresight.ViewModels
             double[] resourceCosts = new double[this.IterationCount];
 
             var resourceTime = new Dictionary<string, double[]>();
-            
+            var taskStartTimes = new Dictionary<Guid, double[]>();
+            var taskEndTimes = new Dictionary<Guid, double[]>();
 
             var simulator = new ProjectSimulator(this.Parent.Project.Model);
             for (int i = 0; i < this.IterationCount; i++)
@@ -90,6 +103,17 @@ namespace Project_Foresight.ViewModels
                     if (!resourceTime.ContainsKey(resourceName))
                         resourceTime.Add(resourceName, new double[this.IterationCount]);
                     resourceTime[resourceName][i] = result.ResourceUtilization[resourceName].Select(x => x.Amount).Sum();
+                }
+
+                foreach (var taskId in result.TaskStartTime.Keys)
+                {
+                    if (!taskStartTimes.ContainsKey(taskId))
+                        taskStartTimes.Add(taskId, new double[this.IterationCount]);
+                    taskStartTimes[taskId][i] = result.TaskStartTime[taskId];
+
+                    if (!taskEndTimes.ContainsKey(taskId))
+                        taskEndTimes.Add(taskId, new double[this.IterationCount]);
+                    taskEndTimes[taskId][i] = result.TaskEndTime[taskId];
                 }
             }
 
@@ -121,6 +145,42 @@ namespace Project_Foresight.ViewModels
                 });
             }
 
+            // Task start and end times
+            foreach (var taskStart in taskStartTimes)
+            {
+                var task = this.Parent.Project.GetTaskById(taskStart.Key);
+                var data = new ProbabilityDensityData(taskStart.Value, task.Name)
+                {
+                    Category = "Task Start Day",
+                    XLabel = "Days",
+                    ValueFormatter = x => $"Day {x:N0}"
+                };
+                ProbabilityItems.Add(data);
+                task.SimulatedData = new TaskSimulationData
+                {
+                    MedianStart = data.MedianValue,
+                    HighStart = data.UpperConfidence,
+                    LowStart =  data.LowerConfidence
+                };
+            }
+
+            foreach (var taskStart in taskEndTimes)
+            {
+                var task = this.Parent.Project.GetTaskById(taskStart.Key);
+                var data = new ProbabilityDensityData(taskStart.Value, task.Name)
+                {
+                    Category = "Task End Day",
+                    XLabel = "Days",
+                    ValueFormatter = x => $"Day {x:N0}"
+                };
+                ProbabilityItems.Add(data);
+                task.SimulatedData.MedianEnd = data.MedianValue;
+                task.SimulatedData.HighEnd = data.UpperConfidence;
+                task.SimulatedData.LowEnd = data.LowerConfidence;
+            }
+
+            // Set simulated data
+            this.Parent.Project.IsSimulationDataValid = true;
 
             clock.Stop();
             this.SimulationTime = clock.Elapsed.TotalSeconds;

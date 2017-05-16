@@ -24,6 +24,9 @@ namespace Foresight.Simulation
         public bool IsComplete => this.RemainingTime <= 0;
         public double RemainingTime => this._requiredTime - this._spentTime;
 
+        /// <summary>
+        /// Item1 is the day the work was done, Item2 is the decimal day amount of work logged on the task
+        /// </summary>
         public List<Tuple<double, double>> WorkLog => _workLog;
 
         private List<Tuple<double, double>> _workLog;

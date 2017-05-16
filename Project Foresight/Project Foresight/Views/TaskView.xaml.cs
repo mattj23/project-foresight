@@ -145,7 +145,7 @@ namespace Project_Foresight.Views
 
         private void AddResourceOnClick(object sender, RoutedEventArgs e)
         {
-            this.IsSelectingResource = true;
+            this.IsSelectingResource = !this.IsSelectingResource;
             this.BringToFront();
         }
 

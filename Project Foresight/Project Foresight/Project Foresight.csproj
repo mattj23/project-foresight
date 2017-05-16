@@ -83,6 +83,7 @@
     <Compile Include="ViewModels\ProjectViewModel.cs" />
     <Compile Include="ViewModels\ResourceGroupViewModel.cs" />
     <Compile Include="ViewModels\SimulationToolViewModel.cs" />
+    <Compile Include="ViewModels\TaskSimulationData.cs" />
     <Compile Include="ViewModels\TaskViewModel.cs" />
     <Compile Include="Views\CanvasItemsControl.cs" />
     <Compile Include="Views\OrganizationView.xaml.cs">

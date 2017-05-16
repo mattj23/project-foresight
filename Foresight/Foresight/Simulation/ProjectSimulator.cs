@@ -114,6 +114,16 @@ namespace Foresight.Simulation
                 masterClock += 1;
             }
 
+            foreach (var baseProjectTask in _baseProject.Tasks)
+            {
+                var taskData = _taskDataById[baseProjectTask.Id];
+                var startClock = taskData.WorkLog.Select(x => x.Item1).Min();
+                var endClock = taskData.WorkLog.Select(x => x.Item1).Max();
+
+                result.TaskStartTime[baseProjectTask.Id] = startClock;
+                result.TaskEndTime[baseProjectTask.Id] = endClock;
+            }
+
             result.TotalCompletionDays = masterClock;
             return result;
         }

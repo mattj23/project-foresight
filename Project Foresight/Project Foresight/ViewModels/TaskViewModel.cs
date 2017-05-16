@@ -12,6 +12,7 @@ namespace Project_Foresight.ViewModels
     public class TaskViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+        public event EventHandler DependentDataChanged;
 
         private Foresight.PertTask _task = null;
         private double _y;
@@ -20,6 +21,7 @@ namespace Project_Foresight.ViewModels
         private bool _isSelected;
         private bool _isSelectedAncestor;
         private bool _isSelectedDescendant;
+        private TaskSimulationData _simulatedData;
 
         #region View-related Properties
         public Point CenterPoint => new Point(this.X, this.Y);
@@ -95,6 +97,17 @@ namespace Project_Foresight.ViewModels
 
         public ProjectViewModel Parent { get; set; }
 
+        public TaskSimulationData SimulatedData
+        {
+            get { return _simulatedData; }
+            set
+            {
+                if (Equals(value, _simulatedData)) return;
+                _simulatedData = value;
+                OnPropertyChanged();
+            }
+        }
+
         #endregion
 
         #region Model-related Properties
@@ -153,10 +166,18 @@ namespace Project_Foresight.ViewModels
             }
             this.Resources.CollectionChanged += Resources_CollectionChanged;
             this.TimeEstimate = new EstimateViewModel(this._task.TimeEstimate);
+            this.TimeEstimate.PropertyChanged += TimeEstimate_PropertyChanged;
+        }
+
+        private void TimeEstimate_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            this.DependentDataChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void Resources_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
+            this.DependentDataChanged?.Invoke(this, EventArgs.Empty);
+
             this.SynchronizeResources();
         }
 
@@ -172,20 +193,25 @@ namespace Project_Foresight.ViewModels
         public void LinkToAncestor(TaskViewModel ancestor)
         {
             this._task.LinkToAncestor(ancestor._task);
+            this.DependentDataChanged?.Invoke(this, EventArgs.Empty);
+
         }
 
         public void LinkToDescendant(TaskViewModel descendant)
         {
+                this.DependentDataChanged?.Invoke(this, EventArgs.Empty);
             this._task.LinkToDescendant(descendant._task);
         }
 
         public void UnlinkFromAncestor(TaskViewModel ancestor)
         {
+                this.DependentDataChanged?.Invoke(this, EventArgs.Empty);
             this._task.UnlinkFromAncestor(ancestor._task);
         }
 
         public void UnlinkFromDescendant(TaskViewModel descendant)
         {
+                this.DependentDataChanged?.Invoke(this, EventArgs.Empty);
             this._task.UnlinkFromDescendant(descendant._task);
         }
 

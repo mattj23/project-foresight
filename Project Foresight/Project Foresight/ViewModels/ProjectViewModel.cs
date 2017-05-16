@@ -16,6 +16,7 @@ namespace Project_Foresight.ViewModels
         private Foresight.Project _project = null;
         private TaskViewModel _selectedTask;
         private OrganizationViewModel _organization;
+        private bool _isSimulationDataValid;
 
         public Project Model => _project;
 
@@ -87,6 +88,17 @@ namespace Project_Foresight.ViewModels
             }
         }
 
+        public bool IsSimulationDataValid
+        {
+            get { return _isSimulationDataValid; }
+            set
+            {
+                if (value == _isSimulationDataValid) return;
+                _isSimulationDataValid = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ObservableCollection<TaskViewModel> Tasks { get; set; }
         public ObservableCollection<LinkViewModel> Links { get; set; }
 
@@ -107,9 +119,15 @@ namespace Project_Foresight.ViewModels
         public void AddTask(TaskViewModel task)
         {
             task.Parent = this;
+            task.DependentDataChanged += Task_DependentDataChanged;
             this._project.AddTask(task.Model);
             this.Tasks.Add(task);
             this.TasksById.Add(task.Id, task);
+        }
+
+        private void Task_DependentDataChanged(object sender, EventArgs e)
+        {
+            this.IsSimulationDataValid = false;
         }
 
         public TaskViewModel GetTaskById(Guid id)
@@ -123,16 +141,18 @@ namespace Project_Foresight.ViewModels
             {
                 ancestor.LinkToDescendant(descendant);
                 Links.Add(new LinkViewModel {Start = ancestor, End = descendant});
+                this.IsSimulationDataValid = false;
             }
             catch (ArgumentException e)
             {
                 Console.WriteLine(e);
-                
             }
         }
 
         public void RemoveTask(TaskViewModel task)
         {
+            this.IsSimulationDataValid = false;
+
             // Remove links first
             foreach (var ancestorId in task.Ancestors)
                 this.RemoveLink(this.TasksById[ancestorId], task);
@@ -149,6 +169,7 @@ namespace Project_Foresight.ViewModels
         {
             try
             {
+                this.IsSimulationDataValid = false;
                 ancestor.UnlinkFromDescendant(descendant);
                 var removeElement = this.Links.FirstOrDefault(x => x.Start == ancestor && x.End == descendant);
                 if (removeElement != null)

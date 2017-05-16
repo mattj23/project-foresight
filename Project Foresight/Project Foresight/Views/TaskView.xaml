@@ -90,6 +90,8 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <TextBox Grid.Row="0" 
@@ -107,7 +109,7 @@
                      LostFocus="EditBoxLostFocus"
                      GotFocus="EditBoxGotFocus"
                      TextWrapping="Wrap" />
-                
+
                 <!-- Time Estimate -->
                 <Grid Grid.Row="2">
                     <Grid.RowDefinitions>
@@ -119,7 +121,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    
+
                     <TextBlock Grid.Row="0"
                                Grid.ColumnSpan="3"
                                FontWeight="Black"
@@ -155,7 +157,7 @@
                              HorizontalAlignment="Center"
                              TextAlignment="Center" />
                 </Grid>
-                
+
                 <!-- Resources -->
                 <DockPanel Grid.Row="3">
                     <Button DockPanel.Dock="Right" 
@@ -166,9 +168,9 @@
                                FontWeight="Black">
                         Resources
                     </TextBlock>
-                    
+
                 </DockPanel>
-                
+
                 <ItemsControl Grid.Row="4" 
                               Margin="10"
                               ItemsSource="{Binding ViewModel.Resources}">
@@ -185,7 +187,7 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                
+
                 <ListBox Grid.Row="4"
                          ItemsSource="{Binding ViewModel.Parent.Organization.ResourceNames}"
                          MouseDoubleClick="SelectorDoubleClick">
@@ -200,8 +202,42 @@
                         </Style>
                     </ListBox.Style>
                 </ListBox>
+
             </Grid>
-            
+        </Border>
+        <Border BorderThickness="3"
+                BorderBrush="Black"
+                Background="Yellow"
+                CornerRadius="5"
+                Padding="3"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Right">
+            <Border.ToolTip>
+                The Monte-Carlo median start date and end date for this task.
+            </Border.ToolTip>
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ViewModel.Parent.IsSimulationDataValid}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="2" 
+                           Text="{Binding ViewModel.SimulatedData.MedianStart}" />
+                <TextBlock Margin="2"
+                           Text="->" />
+                <TextBlock Margin="2" 
+                           Text="{Binding ViewModel.SimulatedData.MedianEnd}" />
+                
+            </StackPanel>
+            <Border.RenderTransform>
+                <TranslateTransform X="10"
+                                    Y="5"></TranslateTransform>
+            </Border.RenderTransform>
         </Border>
     </Grid>
     

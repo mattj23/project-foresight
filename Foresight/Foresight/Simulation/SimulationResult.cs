@@ -12,10 +12,15 @@ namespace Foresight.Simulation
 
         public Dictionary<string, List<WorkTimeUsage>> ResourceUtilization { get; set; }
 
+        public Dictionary<Guid, Double> TaskStartTime { get; set; }
+        public Dictionary<Guid, Double> TaskEndTime { get; set; }
+
         public SimulationResult(Project baseProject)
         {
             this._referenceProject = baseProject;
             this.ResourceUtilization = new Dictionary<string, List<WorkTimeUsage>>();
+            this.TaskStartTime = new Dictionary<Guid, double>();
+            this.TaskEndTime = new Dictionary<Guid, double>();
         }
 
         public void RecordResourceUsage(string resourceName, Guid taskId, double simulationClock, double days)
