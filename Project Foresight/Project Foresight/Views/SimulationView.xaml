@@ -10,17 +10,18 @@
              d:DesignHeight="900" d:DesignWidth="1200">
     <Grid DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:SimulationView}}}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="400" />
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" MinWidth="500" />
+            <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
         
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
+            <!-- Simulation Panel -->
             <Border Grid.Row="0"
                     BorderBrush="Black"
                     Margin="3"
@@ -71,26 +72,9 @@
                                Margin="5"
                                Text="{Binding ViewModel.SimulationTime, StringFormat={}{0:N2} s}" />
 
-                    <TextBlock Grid.Row="4" 
-                               Grid.Column="0"
-                               Margin="5"
-                               Text="Mean Project Completion Time"/>
-                    <TextBlock Grid.Row="4"
-                               Grid.Column="1"
-                               Margin="5"
-                               Text="{Binding ViewModel.MeanCompletionTime, StringFormat={}{0:N1} days}" />
-
-                    <TextBlock Grid.Row="5" 
-                               Grid.Column="0"
-                               Margin="5"
-                               Text="Mean Resource Cost"/>
-                    <TextBlock Grid.Row="5"
-                               Grid.Column="1"
-                               Margin="5"
-                               Text="{Binding ViewModel.MeanResourceCost, StringFormat=c}" />
-
                     <Button Grid.Row="6"
-                            Grid.Column="1"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
                             Margin="5"
                             Click="RunSimulationClick">
                         <TextBlock Margin="5">
@@ -100,6 +84,64 @@
                 </Grid>
             </Border>
 
+            
+            <!-- Simulation Results -->
+            <Border Grid.Row="1"
+                    BorderBrush="Black"
+                    Margin="3"
+                    Padding="3"
+                    BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBlock FontWeight="Bold"
+                               Margin="3">
+                        Simulation Results
+                    </TextBlock>
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding ViewModel.ProbabilityItems}"
+                              SelectedItem="{Binding ViewModel.SelectedDensityChart}"
+                              IsReadOnly="True"
+                              GridLinesVisibility="None"
+                              AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Output Characteristic" 
+                                                Binding="{Binding SeriesTitle}"
+                                                FontWeight="ExtraBold"/>
+                            <DataGridTextColumn Header="5th Percentile"
+                                                Binding="{Binding FormattedLower}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextAlignment" Value="Center"/>
+                                        <Setter Property="Foreground" Value="DarkGray"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Median Value"
+                                                Binding="{Binding FormattedMedian}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="95th Percentile"
+                                                Binding="{Binding FormattedUpper}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextAlignment" Value="Center"/>
+                                        <Setter Property="Foreground" Value="DarkGray"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                        
+                    </DataGrid>
+                </Grid>
+                
+                </Border>
         </Grid>
         
         <lvc:CartesianChart Grid.Column="1" 
@@ -111,11 +153,13 @@
             <lvc:CartesianChart.AxisX>
                 <lvc:Axis Title="{Binding ViewModel.SelectedDensityChart.XLabel}"
                           MaxValue="{Binding ViewModel.SelectedDensityChart.XMax}"
-                          MinValue="{Binding ViewModel.SelectedDensityChart.XMin}">
-                    
+                          MinValue="{Binding ViewModel.SelectedDensityChart.XMin}"
+                          LabelFormatter="{Binding ViewModel.SelectedDensityChart.ValueFormatter}">
+                           
                 </lvc:Axis>
             </lvc:CartesianChart.AxisX>
             
         </lvc:CartesianChart>
     </Grid>
 </UserControl>
+

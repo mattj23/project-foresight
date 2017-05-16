@@ -18,12 +18,6 @@ namespace Project_Foresight.ViewModels
     {
         private double _simulationTime;
         private int _iterationCount;
-        private double _meanResourceCost;
-        private double _meanCompletionTime;
-        private double _probabilityChartXMax;
-        private double _probabilityChartXMin;
-        private string _probabilityChartXLabel;
-        private string _probabilityChartTitle;
         private ProbabilityDensityData _selectedDensityChart;
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -51,30 +45,9 @@ namespace Project_Foresight.ViewModels
             }
         }
 
-        public double MeanCompletionTime
-        {
-            get { return _meanCompletionTime; }
-            set
-            {
-                if (value.Equals(_meanCompletionTime)) return;
-                _meanCompletionTime = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public double MeanResourceCost
-        {
-            get { return _meanResourceCost; }
-            set
-            {
-                if (value.Equals(_meanResourceCost)) return;
-                _meanResourceCost = value;
-                OnPropertyChanged();
-            }
-        }
 
         // Chart Objects
-        public ObservableCollection<ProbabilityDensityData> DensityCharts { get; set; }
+        public ObservableCollection<ProbabilityDensityData> ProbabilityItems { get; set; }
 
         public ProbabilityDensityData SelectedDensityChart
         {
@@ -91,7 +64,7 @@ namespace Project_Foresight.ViewModels
         {
             this.Parent = appViewModel;
             this.IterationCount = 10000;
-            this.DensityCharts = new ObservableCollection<ProbabilityDensityData>();
+            this.ProbabilityItems = new ObservableCollection<ProbabilityDensityData>();
         }
 
         public void RunMonteCarloSimulation()
@@ -110,13 +83,10 @@ namespace Project_Foresight.ViewModels
                 resourceCosts[i] = result.TotalResourceCost();
             }
 
-            this.MeanCompletionTime = completionTimes.Sum() / this.IterationCount;
-            this.MeanResourceCost = resourceCosts.Sum() / this.IterationCount;
-
-            DensityCharts.Clear();
-            DensityCharts.Add(new ProbabilityDensityData(completionTimes, "Project Duration") {XLabel =  "Days"});
-            DensityCharts.Add(new ProbabilityDensityData(resourceCosts, "Resource Costs") {XLabel =  "Dollars"});
-            this.SelectedDensityChart = DensityCharts[0];
+            ProbabilityItems.Clear();
+            ProbabilityItems.Add(new ProbabilityDensityData(completionTimes, "Project Duration") {XLabel =  "Days"});
+            ProbabilityItems.Add(new ProbabilityDensityData(resourceCosts, "Resource Costs") {XLabel =  "Dollars", ValueFormatter = x => x.ToString("c0")});
+            this.SelectedDensityChart = ProbabilityItems[0];
 
             clock.Stop();
             this.SimulationTime = clock.Elapsed.TotalSeconds;
