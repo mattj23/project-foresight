@@ -25,6 +25,7 @@ namespace Project_Foresight.Views
         public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
             "ViewModel", typeof(SimulationToolViewModel), typeof(SimulationView), new PropertyMetadata(default(SimulationToolViewModel)));
 
+
         public SimulationToolViewModel ViewModel
         {
             get { return (SimulationToolViewModel) GetValue(ViewModelProperty); }

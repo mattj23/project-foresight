@@ -8,7 +8,40 @@
              
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="1200">
+    <UserControl.Resources>
+        <Style x:Key="GroupHeaderStyle"
+               TargetType="{x:Type GroupItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                        <StackPanel>
+                            <Expander x:Name="GroupExpander"
+                                      IsExpanded="True"
+                                      Background="Azure">
+                                <Expander.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Name}"
+                                               FontWeight="Bold"/>
+                                    </StackPanel>
+                                </Expander.Header>
+                                <ItemsPresenter />
+                            </Expander>
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+    </UserControl.Resources>
     <Grid DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:SimulationView}}}">
+        <Grid.Resources>
+            <CollectionViewSource Source="{Binding ViewModel.ProbabilityItems}"
+                                  x:Key="ProbabilityResultsViewSource">
+                <CollectionViewSource.GroupDescriptions>
+                    <PropertyGroupDescription PropertyName="Category" />
+                </CollectionViewSource.GroupDescriptions>
+            </CollectionViewSource>
+        </Grid.Resources>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" MinWidth="500" />
             <ColumnDefinition Width="3*"/>
@@ -100,18 +133,31 @@
                                Margin="3">
                         Simulation Results
                     </TextBlock>
+                    
                     <DataGrid Grid.Row="1"
-                              ItemsSource="{Binding ViewModel.ProbabilityItems}"
                               SelectedItem="{Binding ViewModel.SelectedDensityChart}"
+                              ItemsSource="{Binding Source={StaticResource ProbabilityResultsViewSource}}"
                               IsReadOnly="True"
                               SelectionUnit="FullRow"
                               SelectionMode="Single"
                               GridLinesVisibility="None"
                               AutoGenerateColumns="False">
+
+                        <!-- Code for the grouping -->
+                        <DataGrid.GroupStyle>
+                            <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
+                                <GroupStyle.Panel>
+                                    <ItemsPanelTemplate>
+                                        <DataGridRowsPresenter />
+                                    </ItemsPanelTemplate>
+                                </GroupStyle.Panel>
+                            </GroupStyle>
+                        </DataGrid.GroupStyle>
+                        
+                        <!-- Column definitions -->
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Output Characteristic" 
-                                                Binding="{Binding SeriesTitle}"
-                                                FontWeight="ExtraBold"/>
+                                                Binding="{Binding SeriesTitle}"/>
                             <DataGridTextColumn Header="5th Percentile"
                                                 Binding="{Binding FormattedLower}">
                                 <DataGridTextColumn.ElementStyle>
