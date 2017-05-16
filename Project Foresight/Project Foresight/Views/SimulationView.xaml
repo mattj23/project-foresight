@@ -104,6 +104,8 @@
                               ItemsSource="{Binding ViewModel.ProbabilityItems}"
                               SelectedItem="{Binding ViewModel.SelectedDensityChart}"
                               IsReadOnly="True"
+                              SelectionUnit="FullRow"
+                              SelectionMode="Single"
                               GridLinesVisibility="None"
                               AutoGenerateColumns="False">
                         <DataGrid.Columns>

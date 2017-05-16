@@ -75,18 +75,52 @@ namespace Project_Foresight.ViewModels
             double[] completionTimes = new double[this.IterationCount];
             double[] resourceCosts = new double[this.IterationCount];
 
+            var resourceTime = new Dictionary<string, double[]>();
+            
+
             var simulator = new ProjectSimulator(this.Parent.Project.Model);
             for (int i = 0; i < this.IterationCount; i++)
             {
                 var result = simulator.Simulate();
                 completionTimes[i] = result.TotalCompletionDays;
                 resourceCosts[i] = result.TotalResourceCost();
+
+                foreach (string resourceName in result.ResourceUtilization.Keys)
+                {
+                    if (!resourceTime.ContainsKey(resourceName))
+                        resourceTime.Add(resourceName, new double[this.IterationCount]);
+                    resourceTime[resourceName][i] = result.ResourceUtilization[resourceName].Select(x => x.Amount).Sum();
+                }
             }
 
             ProbabilityItems.Clear();
-            ProbabilityItems.Add(new ProbabilityDensityData(completionTimes, "Project Duration") {XLabel =  "Days"});
-            ProbabilityItems.Add(new ProbabilityDensityData(resourceCosts, "Resource Costs") {XLabel =  "Dollars", ValueFormatter = x => x.ToString("c0")});
+
+            // Main simulation results
+            ProbabilityItems.Add(new ProbabilityDensityData(completionTimes, "Project Duration")
+            {
+                XLabel =  "Days",
+                Category = "Main",
+                ValueFormatter = x => $"{x:N0} days"
+            });
+            ProbabilityItems.Add(new ProbabilityDensityData(resourceCosts, "Resource Costs")
+            {
+                XLabel =  "Dollars",
+                Category = "Main",
+                ValueFormatter = x => (x > 1000) ? $"${x/1000:N0}k" : x.ToString("C0")
+            });
             this.SelectedDensityChart = ProbabilityItems[0];
+
+            // Resource Committment results
+            foreach (var resourceTimeData in resourceTime)
+            {
+                ProbabilityItems.Add(new ProbabilityDensityData(resourceTimeData.Value, $"{resourceTimeData.Key} (time)")
+                {
+                    Category = "Resource Commitment",
+                    XLabel = "Days",
+                    ValueFormatter = x => $"{x:N0} days"
+                });
+            }
+
 
             clock.Stop();
             this.SimulationTime = clock.Elapsed.TotalSeconds;

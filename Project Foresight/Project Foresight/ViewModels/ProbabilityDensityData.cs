@@ -17,6 +17,17 @@ namespace Project_Foresight.ViewModels
         public string XLabel { get; set; }
         public string SeriesTitle { get; set; }
 
+        public string Category
+        {
+            get { return _category; }
+            set
+            {
+                if (value == _category) return;
+                _category = value;
+                OnPropertyChanged();
+            }
+        }
+
         public double XMax
         {
             get { return _xMax; }
@@ -106,6 +117,7 @@ namespace Project_Foresight.ViewModels
         private double _upperConfidence;
         private double _lowerConfidence;
         private double _medianValue;
+        private string _category;
 
         public ProbabilityDensityData(IEnumerable<double> rawData, string seriesTitle)
         {
