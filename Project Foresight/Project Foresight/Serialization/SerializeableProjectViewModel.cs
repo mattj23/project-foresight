@@ -42,6 +42,7 @@ namespace Project_Foresight.Serialization
                 Description = working.Description,
                 Organization = new OrganizationViewModel(SerializableOrganization.ToOrganization(working.Organization))
             };
+            project.Model.Organization = project.Organization.Model;
 
             foreach (SerializeablePertTask task in working.Tasks)
             {

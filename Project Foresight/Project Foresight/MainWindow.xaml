@@ -23,9 +23,15 @@
             </Grid.ColumnDefinitions>
 
             
-
-            <views:PERTView Grid.Column="1"
-                            ViewModel="{Binding Project}" />
+            <TabControl Grid.Column="1">
+                <TabItem Header="PERT Network">
+            <views:PERTView ViewModel="{Binding Project}" />
+                    
+                </TabItem>
+                <TabItem Header="Project Simulation">
+                    <views:SimulationView ViewModel="{Binding SimulationTool}" />
+                </TabItem>
+            </TabControl>
 
             <!-- Expanding Side Panel -->
             <Expander Grid.Column="0"

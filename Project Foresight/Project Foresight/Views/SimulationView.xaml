@@ -1,0 +1,103 @@
+﻿<UserControl x:Class="Project_Foresight.Views.SimulationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Project_Foresight.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="1200">
+    <Grid DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:SimulationView}}}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="400" />
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Border Grid.Row="0"
+                    BorderBrush="Black"
+                    Margin="3"
+                    Padding="3"
+                    BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock FontWeight="Bold"
+                               Grid.ColumnSpan="2"
+                               Margin="3">Monte Carlo Simulation</TextBlock>
+
+                    <TextBlock Grid.Row="1" 
+                               Grid.Column="0"
+                               Margin="5"
+                               Text="Project Task Count"/>
+                    <TextBlock Grid.Row="1"
+                               Grid.Column="1"
+                               Margin="5"
+                               Text="{Binding ViewModel.Parent.Project.Tasks.Count}" />
+
+                    <TextBlock Grid.Row="2" 
+                               Grid.Column="0"
+                               Margin="5"
+                               Text="Number of Iterations"/>
+                    <TextBlock Grid.Row="2"
+                               Grid.Column="1"
+                               Margin="5"
+                               Text="{Binding ViewModel.IterationCount}" />
+
+                    <TextBlock Grid.Row="3" 
+                               Grid.Column="0"
+                               Margin="5"
+                               Text="Simulation Time"/>
+                    <TextBlock Grid.Row="3"
+                               Grid.Column="1"
+                               Margin="5"
+                               Text="{Binding ViewModel.SimulationTime, StringFormat={}{0} s}" />
+
+                    <TextBlock Grid.Row="4" 
+                               Grid.Column="0"
+                               Margin="5"
+                               Text="Mean Project Completion Time"/>
+                    <TextBlock Grid.Row="4"
+                               Grid.Column="1"
+                               Margin="5"
+                               Text="{Binding ViewModel.MeanCompletionTime, StringFormat={}{0} days}" />
+
+                    <TextBlock Grid.Row="5" 
+                               Grid.Column="0"
+                               Margin="5"
+                               Text="Mean Resource Cost"/>
+                    <TextBlock Grid.Row="5"
+                               Grid.Column="1"
+                               Margin="5"
+                               Text="{Binding ViewModel.MeanResourceCost, StringFormat=c}" />
+
+                    <Button Grid.Row="6"
+                            Grid.Column="1"
+                            Margin="5"
+                            Click="RunSimulationClick">
+                        <TextBlock Margin="5">
+                            Run Simulation
+                        </TextBlock>
+                    </Button>
+                </Grid>
+            </Border>
+
+        </Grid>
+    </Grid>
+</UserControl>

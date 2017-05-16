@@ -43,10 +43,13 @@ namespace Project_Foresight.ViewModels
         public ICommand SaveAsCommand => new RelayCommand(SaveProjectAs);
         public ICommand OpenCommand => new RelayCommand(OpenProject);
 
+        public SimulationToolViewModel SimulationTool { get; set; }
+
         public AppViewModel()
         {
             this.LoadedProjectPath = "";
             this.Project = new ProjectViewModel {Name = "Hello world!"};
+            this.SimulationTool = new SimulationToolViewModel(this);
 
         }
 

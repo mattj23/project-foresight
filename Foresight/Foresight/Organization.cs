@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Foresight
 {
@@ -16,6 +17,16 @@ namespace Foresight
         {
             this.ResourceGroups = new List<ResourceGroup>();
             this.Employees = new List<Employee>();
+        }
+
+        public IResource GetResourceByName(string resourceName)
+        {
+            var employee = this.Employees.FirstOrDefault(x => x.Name == resourceName);
+            if (employee != null)
+                return employee;
+
+            var resourceGroup = this.ResourceGroups.FirstOrDefault(x => x.Name == resourceName);
+            return resourceGroup;
         }
     }
 }

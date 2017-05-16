@@ -17,6 +17,8 @@ namespace Project_Foresight.ViewModels
         private TaskViewModel _selectedTask;
         private OrganizationViewModel _organization;
 
+        public Project Model => _project;
+
         public string Name
         {
             get { return this._project.Name; }

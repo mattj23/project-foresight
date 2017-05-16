@@ -44,7 +44,7 @@ namespace Foresight.Simulation
 
         public SimulationResult Simulate()
         {
-            var result = new SimulationResult();
+            var result = new SimulationResult(this._baseProject);
 
             // Prime the simulation by resetting all of the tasks and locating the tasks with no ancestors
             _availableTasks.Clear();
