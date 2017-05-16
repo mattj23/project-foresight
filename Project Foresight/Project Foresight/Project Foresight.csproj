@@ -77,6 +77,7 @@
     <Compile Include="ViewModels\AppViewModel.cs" />
     <Compile Include="ViewModels\EmployeeViewModel.cs" />
     <Compile Include="ViewModels\EstimateViewModel.cs" />
+    <Compile Include="ViewModels\FixedCostViewModel.cs" />
     <Compile Include="ViewModels\LinkViewModel.cs" />
     <Compile Include="ViewModels\OrganizationViewModel.cs" />
     <Compile Include="ViewModels\ProbabilityDensityData.cs" />
@@ -86,6 +87,9 @@
     <Compile Include="ViewModels\TaskSimulationData.cs" />
     <Compile Include="ViewModels\TaskViewModel.cs" />
     <Compile Include="Views\CanvasItemsControl.cs" />
+    <Compile Include="Views\FixedCostView.xaml.cs">
+      <DependentUpon>FixedCostView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\OrganizationView.xaml.cs">
       <DependentUpon>OrganizationView.xaml</DependentUpon>
     </Compile>
@@ -110,6 +114,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\FixedCostView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\OrganizationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

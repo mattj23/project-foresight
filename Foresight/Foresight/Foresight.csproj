@@ -50,6 +50,7 @@
     <Compile Include="Estimators\IEstimator.cs" />
     <Compile Include="Estimators\SkewNormalEstimator.cs" />
     <Compile Include="Estimators\TriangularEstimator.cs" />
+    <Compile Include="FixedCost.cs" />
     <Compile Include="ResourceGroup.cs" />
     <Compile Include="Estimate.cs" />
     <Compile Include="IResource.cs" />

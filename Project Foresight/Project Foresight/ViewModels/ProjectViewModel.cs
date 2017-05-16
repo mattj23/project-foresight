@@ -12,6 +12,7 @@ namespace Project_Foresight.ViewModels
     public class ProjectViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+        public event EventHandler SimulationInvalidated;
 
         private Foresight.Project _project = null;
         private TaskViewModel _selectedTask;
@@ -95,12 +96,16 @@ namespace Project_Foresight.ViewModels
             {
                 if (value == _isSimulationDataValid) return;
                 _isSimulationDataValid = value;
+
+                if (!_isSimulationDataValid)
+                    SimulationInvalidated?.Invoke(this, EventArgs.Empty);
                 OnPropertyChanged();
             }
         }
 
-        public ObservableCollection<TaskViewModel> Tasks { get; set; }
-        public ObservableCollection<LinkViewModel> Links { get; set; }
+        public ObservableCollection<TaskViewModel> Tasks { get;  }
+        public ObservableCollection<LinkViewModel> Links { get;  }
+        public ObservableCollection<FixedCostViewModel> FixedCosts { get;  }
 
         private Dictionary<Guid, TaskViewModel> TasksById { get; set; }
 
@@ -110,10 +115,34 @@ namespace Project_Foresight.ViewModels
             this.Tasks = new ObservableCollection<TaskViewModel>();
             this.TasksById = new Dictionary<Guid, TaskViewModel>();
             this.Links = new ObservableCollection<LinkViewModel>();
-
+            this.FixedCosts = new ObservableCollection<FixedCostViewModel>();
+            this.FixedCosts.CollectionChanged += FixedCosts_CollectionChanged;
             if (this._project.Organization == null)
                 this._project.Organization = new Organization();
             this.Organization = new OrganizationViewModel(this._project.Organization);
+        }
+
+        private void FixedCosts_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                // Synchronize any new items with the underlying project
+                foreach (var fixedCost in e.NewItems)
+                {
+                    this.Model.FixedCosts.Add(((FixedCostViewModel) fixedCost).Model);
+                }
+            }
+            if (e.OldItems != null)
+            {
+                // Synchronize any old items with the underlying project
+                foreach (var fixedCost in e.OldItems)
+                {
+                    var fixedCostVm = (FixedCostViewModel) fixedCost;
+                    if (!this.FixedCosts.Contains(fixedCostVm))
+                        this.Model.FixedCosts.Remove(fixedCostVm.Model);
+                }
+
+            }
         }
 
         public void AddTask(TaskViewModel task)

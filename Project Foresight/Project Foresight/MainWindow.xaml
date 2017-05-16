@@ -22,12 +22,18 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            
+
             <TabControl Grid.Column="1">
                 <TabItem Header="PERT Network">
-            <views:PERTView ViewModel="{Binding Project}" />
-                    
+                    <views:PERTView ViewModel="{Binding Project}" />
                 </TabItem>
+                
+                <TabItem Header="Project Costs">
+                    <views:FixedCostView ViewModel="{Binding Project}">
+                        
+                    </views:FixedCostView>
+                </TabItem>
+                
                 <TabItem Header="Project Simulation">
                     <views:SimulationView ViewModel="{Binding SimulationTool}" />
                 </TabItem>

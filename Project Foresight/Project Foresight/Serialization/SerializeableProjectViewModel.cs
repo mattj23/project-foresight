@@ -17,7 +17,8 @@ namespace Project_Foresight.Serialization
             {
                 Name = viewModel.Name,
                 Description = viewModel.Description,
-                Organization = SerializableOrganization.FromOrganization(viewModel.Organization.Model)
+                Organization = SerializableOrganization.FromOrganization(viewModel.Organization.Model),
+                FixedCosts = viewModel.FixedCosts.Select(x => x.Model).ToList()
             };
 
             working.Tasks = viewModel.Tasks.Select(x => SerializeablePertTask.FromPertTask(x.Model)).ToList();
@@ -43,6 +44,13 @@ namespace Project_Foresight.Serialization
                 Organization = new OrganizationViewModel(SerializableOrganization.ToOrganization(working.Organization))
             };
             project.Model.Organization = project.Organization.Model;
+
+            if (working.FixedCosts == null)
+                working.FixedCosts = new List<FixedCost>();
+            foreach (var cost in working.FixedCosts)
+            {
+                project.FixedCosts.Add(new FixedCostViewModel(cost));
+            }
 
             foreach (SerializeablePertTask task in working.Tasks)
             {
@@ -84,5 +92,7 @@ namespace Project_Foresight.Serialization
 
         public List<SerializeablePertTask> Tasks { get; set; }
         public Dictionary<Guid, Point> TaskPositions { get; set; }
+
+        public List<FixedCost> FixedCosts { get; set; }
     }
 }
