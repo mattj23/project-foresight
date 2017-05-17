@@ -157,7 +157,15 @@
                         <!-- Column definitions -->
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Output Characteristic" 
-                                                Binding="{Binding SeriesTitle}"/>
+                                                Binding="{Binding SeriesTitle}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Margin" Value=" 20 0" />
+                                        <Setter Property="TextAlignment" Value="Left"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            
                             <DataGridTextColumn Header="5th Percentile"
                                                 Binding="{Binding FormattedLower}">
                                 <DataGridTextColumn.ElementStyle>
@@ -196,13 +204,17 @@
                             Series="{Binding ViewModel.SelectedDensityChart.ChartCollection}">
             <lvc:CartesianChart.AxisY>
                 <lvc:Axis Title="Probability Density"
+                          FontSize="14"
+                          Foreground="Black"
                           MinValue="0" />
             </lvc:CartesianChart.AxisY>
             <lvc:CartesianChart.AxisX>
                 <lvc:Axis Title="{Binding ViewModel.SelectedDensityChart.XLabel}"
                           MaxValue="{Binding ViewModel.SelectedDensityChart.XMax}"
                           MinValue="{Binding ViewModel.SelectedDensityChart.XMin}"
-                          LabelFormatter="{Binding ViewModel.SelectedDensityChart.ValueFormatter}">
+                          LabelFormatter="{Binding ViewModel.SelectedDensityChart.ValueFormatter}"
+                          FontSize="14"
+                          Foreground="Black">
                            
                 </lvc:Axis>
             </lvc:CartesianChart.AxisX>

@@ -17,7 +17,7 @@ namespace Foresight.Simulation
     public class ProjectSimulator
     {
         private Project _baseProject;
-
+        private IEstimator _estimator;
 
         private Dictionary<Guid, SimulatedTaskData> _taskDataById;
         private Dictionary<Guid, double> _nodePathTimes;
@@ -27,14 +27,14 @@ namespace Foresight.Simulation
         public ProjectSimulator(Project project)
         {
             this._baseProject = project;
-            var estimator = new TriangularEstimator();
+            this._estimator = new TriangularEstimator();
 
             // Generate the task simulation data 
             _availableTasks = new List<PertTask>();
             _taskDataById = new Dictionary<Guid, SimulatedTaskData>();
             foreach (var baseProjectTask in this._baseProject.Tasks)
             {
-                _taskDataById.Add(baseProjectTask.Id, new SimulatedTaskData(baseProjectTask, estimator));
+                _taskDataById.Add(baseProjectTask.Id, new SimulatedTaskData(baseProjectTask, _estimator));
             }
 
             // Generate the most likely node path times
@@ -53,6 +53,12 @@ namespace Foresight.Simulation
                 simulatedTaskData.Value.Reset();
                 if (!simulatedTaskData.Value.Task.Ancestors.Any())
                     _availableTasks.Add(simulatedTaskData.Value.Task);
+            }
+
+            // Randomly generate the fixed material costs
+            foreach (var fixedCost in _baseProject.FixedCosts)
+            {
+                result.FixedCostValues.Add(fixedCost.Id, this._estimator.RandomValue(fixedCost.CostEstimate));
             }
 
             // Go day by day and make progress until nothing is left  

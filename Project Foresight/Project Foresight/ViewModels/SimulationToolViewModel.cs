@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Policy;
+using Foresight;
 using Foresight.Simulation;
 using LiveCharts;
 using LiveCharts.Defaults;
@@ -81,23 +82,32 @@ namespace Project_Foresight.ViewModels
 
         public void RunMonteCarloSimulation()
         {
+            // Update this with a local deep copy
+            Project workingProject = this.Parent.Project.Model;
+
             Stopwatch clock = new Stopwatch();
             clock.Start();
             
             double[] completionTimes = new double[this.IterationCount];
             double[] resourceCosts = new double[this.IterationCount];
+            double[] fixedCosts = new double[this.IterationCount];
 
             var resourceTime = new Dictionary<string, double[]>();
             var taskStartTimes = new Dictionary<Guid, double[]>();
             var taskEndTimes = new Dictionary<Guid, double[]>();
+            var fixedCostsByCategory = new Dictionary<string, double[]>();
 
-            var simulator = new ProjectSimulator(this.Parent.Project.Model);
+            // Store the base project's fixed cost categories
+            var categories = new HashSet<string>(workingProject.FixedCosts.Select(x => x.Category));
+
+            var simulator = new ProjectSimulator(workingProject);
             for (int i = 0; i < this.IterationCount; i++)
             {
                 var result = simulator.Simulate();
                 completionTimes[i] = result.TotalCompletionDays;
                 resourceCosts[i] = result.TotalResourceCost();
 
+                // Aggregate the usage times for each resource, by name
                 foreach (string resourceName in result.ResourceUtilization.Keys)
                 {
                     if (!resourceTime.ContainsKey(resourceName))
@@ -105,6 +115,7 @@ namespace Project_Foresight.ViewModels
                     resourceTime[resourceName][i] = result.ResourceUtilization[resourceName].Select(x => x.Amount).Sum();
                 }
 
+                // Aggregate the distribution of start and end times for each task
                 foreach (var taskId in result.TaskStartTime.Keys)
                 {
                     if (!taskStartTimes.ContainsKey(taskId))
@@ -115,6 +126,25 @@ namespace Project_Foresight.ViewModels
                         taskEndTimes.Add(taskId, new double[this.IterationCount]);
                     taskEndTimes[taskId][i] = result.TaskEndTime[taskId];
                 }
+
+                // Aggregate the fixed costs
+                double totalFixedCost = 0;
+                foreach (string category in categories)
+                {
+                    // Get the keys of the fixed costs in this category
+                    var keys = workingProject.FixedCosts.Where(x => x.Category == category).Select(x => x.Id).ToList();
+                    
+                    // Get the total cost of these keys
+                    double categoryCost = keys.Select(x => result.FixedCostValues[x]).Sum();
+                    totalFixedCost += categoryCost;
+
+                    if (!fixedCostsByCategory.ContainsKey(category))
+                        fixedCostsByCategory.Add(category, new double[this.IterationCount]);
+
+                    fixedCostsByCategory[category][i] = categoryCost;
+                }
+                fixedCosts[i] = totalFixedCost;
+
             }
 
             ProbabilityItems.Clear();
@@ -128,20 +158,38 @@ namespace Project_Foresight.ViewModels
             });
             ProbabilityItems.Add(new ProbabilityDensityData(resourceCosts, "Resource Costs")
             {
-                XLabel =  "Dollars",
+                XLabel = "Dollars",
                 Category = "Main",
-                ValueFormatter = x => (x > 1000) ? $"${x/1000:N0}k" : x.ToString("C0")
+                ValueFormatter = x => (x > 1000) ? $"${x / 1000:N0}k" : x.ToString("C0")
             });
+            ProbabilityItems.Add(new ProbabilityDensityData(fixedCosts, "Fixed Project Costs")
+            {
+                XLabel = "Dollars",
+                Category = "Main",
+                ValueFormatter = x => (x > 1000) ? $"${x / 1000:N0}k" : x.ToString("C0")
+            });
+
             this.SelectedDensityChart = ProbabilityItems[0];
 
             // Resource Committment results
             foreach (var resourceTimeData in resourceTime)
             {
-                ProbabilityItems.Add(new ProbabilityDensityData(resourceTimeData.Value, $"{resourceTimeData.Key} (time)")
+                ProbabilityItems.Add(new ProbabilityDensityData(resourceTimeData.Value, $"{resourceTimeData.Key}")
                 {
                     Category = "Resource Commitment",
                     XLabel = "Days",
                     ValueFormatter = x => $"{x:N0} days"
+                });
+            }
+
+            // Fixed cost category
+            foreach (var fixedCost in fixedCostsByCategory)
+            {
+                ProbabilityItems.Add(new ProbabilityDensityData(fixedCost.Value, $"{fixedCost.Key}")
+                {
+                    XLabel = "Dollars",
+                    Category = "Project Fixed Costs",
+                    ValueFormatter = x => (x > 1000) ? $"${x / 1000:N0}k" : x.ToString("C0")
                 });
             }
 

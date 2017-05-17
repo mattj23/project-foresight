@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Foresight;
 using Project_Foresight.Annotations;
@@ -43,6 +44,8 @@ namespace Project_Foresight.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        public Guid Id => this.Model.Id;
 
         public FixedCostViewModel() :this(new FixedCost()) { }
 
