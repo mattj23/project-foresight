@@ -152,6 +152,7 @@ namespace Project_Foresight.ViewModels
             this._project.AddTask(task.Model);
             this.Tasks.Add(task);
             this.TasksById.Add(task.Id, task);
+            this.IsSimulationDataValid = false;
         }
 
         private void Task_DependentDataChanged(object sender, EventArgs e)
@@ -192,6 +193,7 @@ namespace Project_Foresight.ViewModels
             // Remove the task
             this.TasksById.Remove(task.Id);
             this.Tasks.Remove(task);
+            this.Model.RemoveTask(task.Model);
         }
 
         public void RemoveLink(TaskViewModel ancestor, TaskViewModel descendant)
