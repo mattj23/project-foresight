@@ -180,7 +180,7 @@ namespace Project_Foresight.Views
             this.LinkEditReset();
         });
 
-        private double _minZoom = 0.5;
+        private double _minZoom = 0.1;
         private double _maxZoom = 3.0;
 
         public PERTView()
