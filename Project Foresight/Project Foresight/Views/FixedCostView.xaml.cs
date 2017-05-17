@@ -75,5 +75,14 @@ namespace Project_Foresight.Views
             string category = ((Button) sender).Tag as string;
             this.AddItemInCategory(category);
         }
+
+        private void RemoveSelectedClick(object sender, RoutedEventArgs e)
+        {
+            var removeList = FixedCostDataGrid.SelectedItems.Cast<FixedCostViewModel>().ToList();
+            foreach (var fixedCostViewModel in removeList)
+            {
+                this.ViewModel.FixedCosts.Remove(fixedCostViewModel);
+            }
+        }
     }
 }

@@ -9,6 +9,11 @@
         mc:Ignorable="d"
         WindowState="Maximized"
         Title="Project Foresight" Height="1000" Width="1800">
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding SaveCommand}" Key="S" Modifiers="Control" />
+        <KeyBinding Command="{Binding OpenCommand}" Key="O" Modifiers="Control" />
+        <KeyBinding Command="{Binding RunSimulationCommand}" Key="R" Modifiers="Control" />
+    </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -23,7 +28,8 @@
             </Grid.ColumnDefinitions>
 
 
-            <TabControl Grid.Column="1">
+            <TabControl Grid.Column="1"
+                        Background="WhiteSmoke">
                 <TabItem Header="PERT Network">
                     <views:PERTView ViewModel="{Binding Project}" />
                 </TabItem>
@@ -61,12 +67,19 @@
             
         </Grid>
 
-        <Menu Grid.Row="0">
+        <Menu Grid.Row="0"
+              Background="WhiteSmoke">
             <MenuItem Header="File">
                 <MenuItem Header="New Project" />
                 <MenuItem Header="Open Project" Command="{Binding OpenCommand}"/>
                 <MenuItem Header="Save Project As" Command="{Binding SaveAsCommand}"/>
                 <MenuItem Header="Save Project" Command="{Binding SaveCommand}"/>
+                <Separator />
+                <MenuItem Header="Quit" Command="{Binding QuitCommand}"></MenuItem>
+            </MenuItem>
+            
+            <MenuItem Header="Simulation">
+                <MenuItem Header="Run Simulation" Command="{Binding RunSimulationCommand}" />
             </MenuItem>
         </Menu>
     </Grid>

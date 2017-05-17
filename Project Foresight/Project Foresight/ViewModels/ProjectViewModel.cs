@@ -103,9 +103,9 @@ namespace Project_Foresight.ViewModels
             }
         }
 
-        public ObservableCollection<TaskViewModel> Tasks { get;  }
-        public ObservableCollection<LinkViewModel> Links { get;  }
-        public ObservableCollection<FixedCostViewModel> FixedCosts { get;  }
+        public ObservableCollection<TaskViewModel> Tasks { get; set; }
+        public ObservableCollection<LinkViewModel> Links { get; set; }
+        public ObservableCollection<FixedCostViewModel> FixedCosts { get; set; }
 
         private Dictionary<Guid, TaskViewModel> TasksById { get; set; }
 

@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
 using Microsoft.Win32;
 using Newtonsoft.Json;
@@ -42,6 +43,10 @@ namespace Project_Foresight.ViewModels
         public ICommand SaveCommand => new RelayCommand(SaveProject);
         public ICommand SaveAsCommand => new RelayCommand(SaveProjectAs);
         public ICommand OpenCommand => new RelayCommand(OpenProject);
+
+        public ICommand QuitCommand => new RelayCommand(Application.Current.Shutdown);
+
+        public ICommand RunSimulationCommand => new RelayCommand(this.SimulationTool.RunMonteCarloSimulation);
 
         public SimulationToolViewModel SimulationTool { get; set; }
 

@@ -10,7 +10,7 @@ namespace Project_Foresight.ViewModels
         private EstimateViewModel _costEstimate;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public FixedCost Model { get; }
+        public FixedCost Model { get; set; }
 
         public string Name
         {

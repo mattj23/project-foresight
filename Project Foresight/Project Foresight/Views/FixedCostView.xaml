@@ -42,7 +42,6 @@
         DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:FixedCostView}}}">
         <Grid.Resources>
             <CollectionViewSource Source="{Binding ViewModel.FixedCosts}"
-                                  x:Name="FixedCostCollectionViewSource"
                                   x:Key="FixedCostsViewSource">
                 <CollectionViewSource.GroupDescriptions>
                     <PropertyGroupDescription PropertyName="Category" />
@@ -72,9 +71,13 @@
                 </TextBlock>
             </Button>
             <Separator />
+            <Button Click="RemoveSelectedClick">
+                <TextBlock>Remove Selected</TextBlock>
+            </Button>
         </ToolBar>
 
         <DataGrid Grid.Row="2"
+                  x:Name="FixedCostDataGrid"
                   ItemsSource="{Binding Source={StaticResource FixedCostsViewSource}}"
                   SelectedItem="{Binding SelectedCostItem}"
                   CanUserAddRows="False"
@@ -96,25 +99,35 @@
             
             <!-- Columns -->
             <DataGrid.Columns>
-<!--                <DataGridTextColumn Header="Category" Binding="{Binding Category}" />-->
-                <DataGridTextColumn Header="Cost Name" Binding="{Binding Name, Mode=TwoWay}" />
-                <DataGridTextColumn Header="Min" Binding="{Binding CostEstimate.Min, StringFormat=C0, Mode=TwoWay}">
+                <DataGridTextColumn Header="Cost Name" Binding="{Binding Name, UpdateSourceTrigger=LostFocus}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
+                            <Setter Property="Margin" Value="15 3"/>
+                            <Setter Property="TextAlignment" Value="Left"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Min" Binding="{Binding CostEstimate.Min, StringFormat=C0, UpdateSourceTrigger=LostFocus}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Margin" Value="5 3"/>
                             <Setter Property="TextAlignment" Value="Center"/>
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Mode" Binding="{Binding CostEstimate.Mode, StringFormat=C0, Mode=TwoWay}" >
+                <DataGridTextColumn Header="Mode" Binding="{Binding CostEstimate.Mode, StringFormat=C0, UpdateSourceTrigger=LostFocus}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
+                            <Setter Property="Margin" Value="5 3"/>
+
                             <Setter Property="TextAlignment" Value="Center"/>
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Max" Binding="{Binding CostEstimate.Max, StringFormat=C0, Mode=TwoWay}" >
+                <DataGridTextColumn Header="Max" Binding="{Binding CostEstimate.Max, StringFormat=C0, UpdateSourceTrigger=LostFocus}" >
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
+                            <Setter Property="Margin" Value="5 3"/>
                             <Setter Property="TextAlignment" Value="Center"/>
                         </Style>
                     </DataGridTextColumn.ElementStyle>
@@ -122,8 +135,13 @@
             </DataGrid.Columns>
 
         </DataGrid>
+
     </Grid>
 </UserControl>
+
+
+
+
 
 
 
