@@ -182,9 +182,9 @@ namespace Project_Foresight.Views
 
         private double _minZoom = 0.1;
         private double _maxZoom = 3.0;
-        private bool _isDragging;
         private Point _mouseDownPoint;
         private Point _taskDragStartPoint;
+        private Dictionary<Guid, Point> _relativeDragPoints;
         private TaskViewModel _dragTask;
 
         public PERTView()
@@ -192,6 +192,7 @@ namespace Project_Foresight.Views
             InitializeComponent();
             this.Zoom = 1;
             this.ToolTipText = "";
+            this._relativeDragPoints = new Dictionary<Guid, Point>();
         }
 
 
@@ -355,32 +356,76 @@ namespace Project_Foresight.Views
             // If there there is no specified mode, we select the task and begin dragging
             if (e.LeftButton == MouseButtonState.Pressed && this.ViewModel.IsMouseOverATask)
             {
+                // Select the given task
                 this.ViewModel.SelectedTask = this.ViewModel.MouseOverTask;
+
+                // Prepare for dragging
                 this._mouseDownPoint = e.GetPosition(ViewArea);
-                this._taskDragStartPoint = this.ViewModel.MouseOverTask.CenterPoint;
-                this._isDragging = true;
-                this._dragTask = this.ViewModel.MouseOverTask;
+                this._dragTask = ViewModel.MouseOverTask;
+                this._taskDragStartPoint = this._dragTask.CenterPoint;
+                this._relativeDragPoints.Clear();
+                foreach (var viewModelTask in this.ViewModel.Tasks)
+                {
+                    this._relativeDragPoints.Add(viewModelTask.Id, viewModelTask.CenterPoint);
+                }
             }
         }
 
         private void ViewAreaPreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (_isDragging)
+            if (_dragTask != null)
             {
+                // Compute the shift
                 var currentShift = new Point
                 {
                     X=e.GetPosition(ViewArea).X - _mouseDownPoint.X,
                     Y=e.GetPosition(ViewArea).Y - _mouseDownPoint.Y
                 };
-                this._dragTask.X = this._taskDragStartPoint.X + currentShift.X;
-                this._dragTask.Y = this._taskDragStartPoint.Y + currentShift.Y;
+
+                // Shift the drag task
+                this.ShiftTask(this._dragTask.Id, currentShift);
+
+                // Ancestors 
+                if (Keyboard.IsKeyDown(Key.A))
+                {
+                    if (Keyboard.IsKeyDown(Key.LeftShift))
+                        foreach (var dragTaskAncestor in _dragTask.AllAncestors)
+                        {
+                            this.ShiftTask(dragTaskAncestor, currentShift);
+                        }
+                    else
+                        foreach (var dragTaskAncestor in _dragTask.Ancestors)
+                        {
+                            this.ShiftTask(dragTaskAncestor, currentShift);
+                        }
+                }
+                if (Keyboard.IsKeyDown(Key.D))
+                {
+                    if (Keyboard.IsKeyDown(Key.LeftShift))
+                        foreach (var dragTaskDescendant in _dragTask.AllDescendants)
+                        {
+                            this.ShiftTask(dragTaskDescendant, currentShift);
+                        }
+                    else
+                        foreach (var dragTaskDescendant in _dragTask.Descendants)
+                        {
+                            this.ShiftTask(dragTaskDescendant, currentShift);
+                        }
+                }
 
             }
         }
 
+        private void ShiftTask(Guid taskId, Point shift)
+        {
+            var shiftTask = this.ViewModel.GetTaskById(taskId);
+            shiftTask.X = this._relativeDragPoints[taskId].X + shift.X;
+            shiftTask.Y = this._relativeDragPoints[taskId].Y + shift.Y;
+        }
+
         private void ViewAreaPreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
-            this._isDragging = false;
+            this._dragTask = null;
         }
     }
 }
