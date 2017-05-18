@@ -6,7 +6,9 @@
              xmlns:local="clr-namespace:Project_Foresight.Views"
              mc:Ignorable="d"
              Width="250"
-             MinHeight="50">
+             MinHeight="50"
+             MouseEnter="UserControlMouseEnter"
+             MouseLeave="UserMouseControlExit">
     <UserControl.Resources>
         <Style x:Key="HiddenEditField" TargetType="{x:Type TextBox}">
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -30,23 +32,28 @@
                     <Setter Property="Visibility" Value="Collapsed"/>
                     <Setter Property="BorderThickness" Value="5" />
                     <Style.Triggers>
+                        <DataTrigger Binding="{Binding ViewModel.IsSelectedAncestor}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter Property="BorderBrush" Value="Red" />
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding ViewModel.IsSelectedDescendant}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter Property="BorderBrush" Value="Blue" />
+                        </DataTrigger>
+                        
+                        <DataTrigger Binding="{Binding ViewModel.IsMouseOver}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter Property="BorderBrush" Value="Orange" />
+                        </DataTrigger>
                         
                         <DataTrigger Binding="{Binding ViewModel.IsSelected}" Value="True">
                             <Setter Property="Visibility" Value="Visible" />
                             <Setter Property="BorderBrush" Value="Orange" />
                             <Setter Property="BorderThickness" Value="15" />
+                        </DataTrigger>
+                        
 
-                        </DataTrigger>
-                        
-                        <DataTrigger Binding="{Binding ViewModel.IsSelectedAncestor}" Value="True">
-                            <Setter Property="Visibility" Value="Visible" />
-                            <Setter Property="BorderBrush" Value="Red" />
-                        </DataTrigger>
-                        
-                        <DataTrigger Binding="{Binding ViewModel.IsSelectedDescendant}" Value="True">
-                            <Setter Property="Visibility" Value="Visible" />
-                            <Setter Property="BorderBrush" Value="Blue" />
-                        </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </Border.Style>
@@ -55,9 +62,6 @@
         <!-- Data contents border -->
         <Border CornerRadius="5"
                 Background="WhiteSmoke"
-                MouseDown="UIElement_OnMouseDown"
-                MouseMove="UIElement_OnMouseMove"
-                MouseUp="UIElement_OnMouseUp"
                 Margin="10"
                 Padding="5">
             <!--
@@ -69,19 +73,6 @@
                 <Style TargetType="Border">
                     <Setter Property="BorderThickness" Value="3" />
                     <Setter Property="BorderBrush" Value="Black"/>
-                    <!--
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding ViewModel.IsSelected}" Value="True">
-                            <Setter Property="BorderThickness" Value="4" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding ViewModel.IsSelectedAncestor}" Value="True">
-                            <Setter Property="BorderBrush" Value="Red" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding ViewModel.IsSelectedDescendant}" Value="True">
-                            <Setter Property="BorderBrush" Value="Blue" />
-                        </DataTrigger>
-
-                    </Style.Triggers> -->
                 </Style>
             </Border.Style>
             <Grid>

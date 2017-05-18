@@ -182,6 +182,10 @@ namespace Project_Foresight.Views
 
         private double _minZoom = 0.1;
         private double _maxZoom = 3.0;
+        private bool _isDragging;
+        private Point _mouseDownPoint;
+        private Point _taskDragStartPoint;
+        private TaskViewModel _dragTask;
 
         public PERTView()
         {
@@ -193,6 +197,13 @@ namespace Project_Foresight.Views
 
         private void LinkEditReset()
         {
+            // Because the link edit task uses the IsSelectedAncestor flag to display the red border on the diagram
+            // wiping the 
+            if (this.LinkEditTask != null)
+            {
+                if (!this.ViewModel.SelectedTask.Ancestors.Contains(this.LinkEditTask.Id))
+                    this.LinkEditTask.IsSelectedAncestor = false;
+            }
             this.LinkEditTask = null;
             this.IsLinkEditDisplayed = false;
             
@@ -211,6 +222,9 @@ namespace Project_Foresight.Views
                 this.LinkEditTask = task;
                 this.IsLinkEditDisplayed = true;
 
+                // Fake the mouseover 
+                this.LinkEditTask.IsSelectedAncestor = true;
+
                 if (this.Mode == PertViewMode.AddLink)
                     this.ToolTipText = "Click to select the dependant task to create a new link";
 
@@ -219,6 +233,7 @@ namespace Project_Foresight.Views
             }
             else
             {
+                this.ViewModel.SelectedTask = task;
                 // This is the second click
                 if (this.Mode == PertViewMode.AddLink)
                 {
@@ -273,17 +288,7 @@ namespace Project_Foresight.Views
                 this.RadialMargin = new Thickness(mousePosition.X - (this.RadialMenu.Width / 2.0), mousePosition.Y - (this.RadialMenu.Height / 2.0), 0, 0);
             }
 
-            // Add task logic
-            if (this.Mode == PertViewMode.AddTask && e.LeftButton == MouseButtonState.Pressed)
-            {
-                this.ViewModel.AddTask(new TaskViewModel
-                {
-                    Name = "New Task/Stage",
-                    Description = "- - -", 
-                    X = this.CanvasMousePoint.X,
-                    Y = this.CanvasMousePoint.Y
-                });
-            }
+
         }
 
         private void ControlOnMouseMove(object sender, MouseEventArgs e)
@@ -315,19 +320,67 @@ namespace Project_Foresight.Views
             this.ViewModel.AddTask(new TaskViewModel {Name = "New Task", Description = "Description", X = position.X, Y=position.Y});
         }
 
-        private void TaskView_OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        private void ViewAreaPreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (this.Mode == PertViewMode.AddLink || this.Mode == PertViewMode.RemoveLink)
+            // If the mode is adding or removing a link, the click will be passed to the link edit click handling method
+            // which will manage the semi-selected state and the transition between that and the creation of actual links
+            if ((this.Mode == PertViewMode.AddLink || this.Mode == PertViewMode.RemoveLink) && this.ViewModel.IsMouseOverATask)
             {
                 e.Handled = true;
-                this.LinkEditClick(((TaskView)sender).ViewModel);
+                this.LinkEditClick(this.ViewModel.MouseOverTask);
+                return;
             }
 
-            if (this.Mode == PertViewMode.RemoveTask)
+            // If the mode is removing a task, we pass to the task removal
+            if (this.Mode == PertViewMode.RemoveTask && this.ViewModel.IsMouseOverATask)
             {
                 e.Handled = true;
-                this.ViewModel.RemoveTask(((TaskView)sender).ViewModel);
+                this.ViewModel.RemoveTask(this.ViewModel.MouseOverTask);
+                return;
             }
+
+            // If the mode is adding a task, we create a task where the click happened
+            if (this.Mode == PertViewMode.AddTask && e.LeftButton == MouseButtonState.Pressed)
+            {
+                this.ViewModel.AddTask(new TaskViewModel
+                {
+                    Name = "New Task/Stage",
+                    Description = "- - -",
+                    X = this.CanvasMousePoint.X,
+                    Y = this.CanvasMousePoint.Y
+                });
+                return;
+            }
+
+            // If there there is no specified mode, we select the task and begin dragging
+            if (e.LeftButton == MouseButtonState.Pressed && this.ViewModel.IsMouseOverATask)
+            {
+                this.ViewModel.SelectedTask = this.ViewModel.MouseOverTask;
+                this._mouseDownPoint = e.GetPosition(ViewArea);
+                this._taskDragStartPoint = this.ViewModel.MouseOverTask.CenterPoint;
+                this._isDragging = true;
+                this._dragTask = this.ViewModel.MouseOverTask;
+            }
+        }
+
+        private void ViewAreaPreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (_isDragging)
+            {
+                var currentShift = new Point
+                {
+                    X=e.GetPosition(ViewArea).X - _mouseDownPoint.X,
+                    Y=e.GetPosition(ViewArea).Y - _mouseDownPoint.Y
+                };
+                this._dragTask.X = this._taskDragStartPoint.X + currentShift.X;
+                this._dragTask.Y = this._taskDragStartPoint.Y + currentShift.Y;
+
+            }
+        }
+
+        private void ViewAreaPreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            this._isDragging = false;
         }
     }
 }

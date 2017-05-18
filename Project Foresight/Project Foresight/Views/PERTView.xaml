@@ -25,6 +25,9 @@
                 BorderBrush="Black"
                 BorderThickness=".5"
                 Background="White"
+                PreviewMouseDown="ViewAreaPreviewMouseDown"
+                PreviewMouseMove="ViewAreaPreviewMouseMove"
+                PreviewMouseUp="ViewAreaPreviewMouseUp"
                 MouseWheel="ControlOnMouseWheel"
                 MouseDown="ControlOnMouseDown"
                 MouseMove="ControlOnMouseMove">
@@ -42,7 +45,7 @@
                     </Border.RenderTransform>
 
                     <Canvas x:Name="ViewCanvas">
-                        
+                        <!-- Links Objects -->
                         <ItemsControl ItemsSource="{Binding ViewModel.Links}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -72,7 +75,42 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-                        
+
+                        <!-- Link Editing Floating Tag -->
+                        <Line X1="{Binding LinkEditTask.X}"
+                              X2="{Binding ViewModel.MouseOverTask.X}"
+                              Y1="{Binding LinkEditTask.Y}"
+                              Y2="{Binding ViewModel.MouseOverTask.Y}"
+                              StrokeThickness="4"
+                              StrokeDashArray="2 2">
+                            <Line.Style>
+                                <Style TargetType="Line">
+                                    <Setter Property="Visibility" Value="Hidden" />
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding IsLinkEditDisplayed}" Value="True" />
+                                                <Condition Binding="{Binding ViewModel.IsMouseOverATask}" Value="True" />
+                                            </MultiDataTrigger.Conditions>
+                                            <MultiDataTrigger.Setters>
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </MultiDataTrigger.Setters>
+                                        </MultiDataTrigger>
+
+                                        <DataTrigger Binding="{Binding Mode}" Value="{x:Static local:PERTView+PertViewMode.AddLink}">
+                                            <Setter Property="Stroke" Value="Blue" />
+                                        </DataTrigger>
+
+                                        <DataTrigger Binding="{Binding Mode}" Value="{x:Static local:PERTView+PertViewMode.RemoveLink}">
+                                            <Setter Property="Stroke" Value="Red" />
+                                        </DataTrigger>
+
+                                    </Style.Triggers>
+                                </Style>
+                            </Line.Style>
+                        </Line>
+
+                        <!-- Task Objects -->
                         <local:CanvasItemsControl ItemsSource="{Binding ViewModel.Tasks}">
                             <local:CanvasItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -83,8 +121,7 @@
                             <local:CanvasItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <local:TaskView ViewModel="{Binding}"
-                                                    LayoutElement="{Binding ElementName=ViewCanvas}"
-                                                    PreviewMouseDown="TaskView_OnPreviewMouseDown">
+                                                    LayoutElement="{Binding ElementName=ViewCanvas}">
                                         <local:TaskView.Margin>
                                             <MultiBinding Converter="{StaticResource CenterConverter}">
                                                 <Binding RelativeSource="{RelativeSource Mode=Self}" Path="ActualWidth"/>
@@ -118,24 +155,7 @@
                             </Border.Style>
                         </Border>
 
-                        <Line X1="{Binding LinkEditTask.X}"
-                              X2="{Binding CanvasMousePoint.X}"
-                              Y1="{Binding LinkEditTask.Y}"
-                              Y2="{Binding CanvasMousePoint.Y}"
-                              Stroke="Gray"
-                              StrokeThickness="2"
-                              StrokeDashArray="2 2">
-                            <Line.Style>
-                                <Style TargetType="Line">
-                                    <Setter Property="Visibility" Value="Hidden" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsLinkEditDisplayed}" Value="True">
-                                            <Setter Property="Visibility" Value="Visible" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Line.Style>
-                        </Line>
+                        
                         
                         <!-- Mouse Tooltip -->
                         <Border BorderBrush="Black"

@@ -27,8 +27,6 @@ namespace Project_Foresight.Views
         private Point _mouseDownPoint;
         private bool _isDragging;
 
-        public MouseButtonEventHandler ClickHandler;
-
         public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
             "ViewModel", typeof(TaskViewModel), typeof(TaskView), new PropertyMetadata(default(TaskViewModel)));
 
@@ -162,6 +160,19 @@ namespace Project_Foresight.Views
         {
             var resource = ((Button) sender).Tag as IResource;
             this.ViewModel.Resources.Remove(resource);
+        }
+
+        private void UserMouseControlExit(object sender, MouseEventArgs e)
+        {
+            this.ViewModel.IsMouseOver = false;
+            this.ViewModel.Parent.MouseOverTask = null;
+        }
+
+        private void UserControlMouseEnter(object sender, MouseEventArgs e)
+        {
+            this.ViewModel.IsMouseOver = true;
+            this.ViewModel.Parent.MouseOverTask = this.ViewModel;
+
         }
     }
 }

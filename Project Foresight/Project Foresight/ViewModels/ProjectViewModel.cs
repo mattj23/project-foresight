@@ -18,6 +18,7 @@ namespace Project_Foresight.ViewModels
         private TaskViewModel _selectedTask;
         private OrganizationViewModel _organization;
         private bool _isSimulationDataValid;
+        private TaskViewModel _mouseOverTask;
 
         public Project Model => _project;
 
@@ -88,6 +89,20 @@ namespace Project_Foresight.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        public TaskViewModel MouseOverTask
+        {
+            get { return _mouseOverTask; }
+            set
+            {
+                if (Equals(value, _mouseOverTask)) return;
+                _mouseOverTask = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(IsMouseOverATask));
+            }
+        }
+
+        public bool IsMouseOverATask => this.MouseOverTask != null;
 
         public bool IsSimulationDataValid
         {
