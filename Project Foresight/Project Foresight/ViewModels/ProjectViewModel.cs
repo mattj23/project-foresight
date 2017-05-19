@@ -194,6 +194,30 @@ namespace Project_Foresight.ViewModels
             }
         }
 
+        public void SplitTask(TaskViewModel task)
+        {
+            var newTask = new TaskViewModel
+            {
+                X = task.X + 300,
+                Y = task.Y,
+                Name = task.Name + " (Cont)",
+                Description = task.Description,
+
+            };
+
+            this.AddTask(newTask);
+
+            foreach (var taskDescendant in task.Descendants)
+            {
+                this.RemoveLink(task, TasksById[taskDescendant]);
+                this.AddLink(newTask, TasksById[taskDescendant]);
+            }
+
+            this.AddLink(task, newTask);
+
+
+        }
+
         public void RemoveTask(TaskViewModel task)
         {
             this.IsSimulationDataValid = false;

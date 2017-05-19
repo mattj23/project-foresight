@@ -162,7 +162,38 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-                        
+
+                        <!-- Add Task Floating Box -->
+                        <Border Height="150"
+                                Width="250"
+                                BorderBrush="Gray"
+                                BorderThickness="5"
+                                CornerRadius="5"
+                                Background="{StaticResource HatchedBrush}"
+                                Canvas.Left="{Binding CanvasMousePoint.X, Converter={StaticResource CenterShift}, ConverterParameter=250}"
+                                Canvas.Top="{Binding CanvasMousePoint.Y, Converter={StaticResource CenterShift}, ConverterParameter=150}">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Mode}" Value="{x:Static local:PERTView+PertViewMode.AddTask}" />
+                                                <Condition Binding="{Binding IsInTaskAddSplitMode}" Value="False" />
+                                            </MultiDataTrigger.Conditions>
+                                            <MultiDataTrigger.Setters>
+                                                <Setter Property="Visibility" Value="Visible" />
+
+                                            </MultiDataTrigger.Setters>
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                        </Border>
+
+
+
+
                         <!-- Task Objects -->
                         <local:CanvasItemsControl ItemsSource="{Binding ViewModel.Tasks}">
                             <local:CanvasItemsControl.ItemsPanel>
@@ -174,6 +205,7 @@
                             <local:CanvasItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <local:TaskView ViewModel="{Binding}"
+                                                    Width="250"
                                                     LayoutElement="{Binding ElementName=ViewCanvas}">
                                         <local:TaskView.Margin>
                                             <MultiBinding Converter="{StaticResource CenterConverter}">
@@ -187,27 +219,50 @@
                             </local:CanvasItemsControl.ItemTemplate>
                         </local:CanvasItemsControl>
 
-                        <!-- Add Task Floating Box -->
-                        <Border Height="60"
-                                Width="200"
-                                BorderBrush="Gray"
-                                BorderThickness="2"
-                                CornerRadius="5"
-                                Background="{StaticResource HatchedBrush}"
-                                Canvas.Left="{Binding CanvasMousePoint.X, Converter={StaticResource CenterShift}, ConverterParameter=200}"
-                                Canvas.Top="{Binding CanvasMousePoint.Y, Converter={StaticResource CenterShift}, ConverterParameter=60}">
-                            <Border.Style>
-                                <Style TargetType="Border">
+
+                        <!-- Split Task Floating Box -->
+                        <Canvas Canvas.Left="{Binding ViewModel.MouseOverTask.X}"
+                                Canvas.Top="{Binding ViewModel.MouseOverTask.Y}">
+                            <Canvas.RenderTransform>
+                                <TranslateTransform X="200" 
+                                                    Y="-75"/>
+                            </Canvas.RenderTransform>
+                            
+                            <Canvas.Style>
+                                <Style TargetType="Canvas">
                                     <Setter Property="Visibility" Value="Collapsed" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Mode}" Value="{x:Static local:PERTView+PertViewMode.AddTask}">
-                                            <Setter Property="Visibility" Value="Visible" />
-                                        </DataTrigger>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Mode}" Value="{x:Static local:PERTView+PertViewMode.AddTask}" />
+                                                <Condition Binding="{Binding IsInTaskAddSplitMode}" Value="True" />
+                                            </MultiDataTrigger.Conditions>
+                                            <MultiDataTrigger.Setters>
+                                                <Setter Property="Visibility" Value="Visible" />
+
+                                            </MultiDataTrigger.Setters>
+                                        </MultiDataTrigger>
                                     </Style.Triggers>
                                 </Style>
-                            </Border.Style>
-                        </Border>
-
+                            </Canvas.Style>
+                            
+                            <Border Width="250"
+                                BorderBrush="Gray"
+                                BorderThickness="5"
+                                CornerRadius="5"
+                                Height="150"
+                                Background="{StaticResource HatchedBrush}">
+                                
+                            </Border>
+                            
+                            <Line Stroke="Gray"
+                                  StrokeThickness="5"
+                                  X1="-75"
+                                  Y1="75"
+                                  X2="0"
+                                  Y2="75"></Line>
+                        </Canvas>
+                        
 
                         <!-- Link Removal Snipping Line -->
                         <Line X1="{Binding LinkSnippingStartPoint.X}"

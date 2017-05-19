@@ -82,6 +82,15 @@ namespace Project_Foresight.Views
         public static readonly DependencyProperty HightlightLinksProperty = DependencyProperty.Register(
             "HightlightLinks", typeof(ObservableCollection<LinkViewModel>), typeof(PERTView), new PropertyMetadata(default(ObservableCollection<LinkViewModel>)));
 
+        public static readonly DependencyProperty IsInTaskAddSplitModeProperty = DependencyProperty.Register(
+            "IsInTaskAddSplitMode", typeof(bool), typeof(PERTView), new PropertyMetadata(default(bool)));
+
+        public bool IsInTaskAddSplitMode
+        {
+            get { return (bool) GetValue(IsInTaskAddSplitModeProperty); }
+            set { SetValue(IsInTaskAddSplitModeProperty, value); }
+        }
+
         public ObservableCollection<LinkViewModel> HightlightLinks
         {
             get { return (ObservableCollection<LinkViewModel>) GetValue(HightlightLinksProperty); }
@@ -207,6 +216,7 @@ namespace Project_Foresight.Views
             this.IsRadialMenuOpen = false;
             this.LinkEditReset();
             this.ToolTipText = "Click to place new task";
+            this.IsInTaskAddSplitMode = false;
         });
         public ICommand ActivateRemoveTaskMode => new RelayCommand(() =>
         {
@@ -327,6 +337,19 @@ namespace Project_Foresight.Views
                 this.RadialMargin = new Thickness(mousePosition.X - (this.RadialMenu.Width / 2.0), mousePosition.Y - (this.RadialMenu.Height / 2.0), 0, 0);
             }
 
+            // If the mode is adding a task, we create a task where the click happened
+            if (this.Mode == PertViewMode.AddTask && e.LeftButton == MouseButtonState.Pressed)
+            {
+                this.ViewModel.AddTask(new TaskViewModel
+                {
+                    Name = "New Task/Stage",
+                    Description = "- - -",
+                    X = this.CanvasMousePoint.X,
+                    Y = this.CanvasMousePoint.Y
+                });
+                return;
+            }
+
 
         }
 
@@ -361,7 +384,6 @@ namespace Project_Foresight.Views
 
         private void ViewAreaPreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-
             if (e.LeftButton != MouseButtonState.Pressed)
                 return;
 
@@ -391,18 +413,12 @@ namespace Project_Foresight.Views
                 return;
             }
 
-            // If the mode is adding a task, we create a task where the click happened
-            if (this.Mode == PertViewMode.AddTask && e.LeftButton == MouseButtonState.Pressed)
+            if (this.Mode == PertViewMode.AddTask && this.ViewModel.IsMouseOverATask)
             {
-                this.ViewModel.AddTask(new TaskViewModel
-                {
-                    Name = "New Task/Stage",
-                    Description = "- - -",
-                    X = this.CanvasMousePoint.X,
-                    Y = this.CanvasMousePoint.Y
-                });
-                return;
+                e.Handled = true;
+                this.ViewModel.SplitTask(this.ViewModel.MouseOverTask);
             }
+           
 
             // If there there is no specified mode, we select the task and begin dragging
             if (e.LeftButton == MouseButtonState.Pressed && this.ViewModel.IsMouseOverATask)
@@ -421,6 +437,7 @@ namespace Project_Foresight.Views
                 }
 
             }
+
         }
 
         private void ViewAreaPreviewMouseMove(object sender, MouseEventArgs e)
@@ -479,6 +496,21 @@ namespace Project_Foresight.Views
                 }
                 
             }
+
+            if (this.Mode == PertViewMode.AddTask)
+            {
+                if (this.ViewModel.IsMouseOverATask)
+                {
+                    this.ToolTipText = "Click on this item to split it into two tasks";
+                    this.IsInTaskAddSplitMode = true;
+                }
+                else
+                {
+                    this.ToolTipText = "Click to place new task";
+                    this.IsInTaskAddSplitMode = false;
+                }
+            }
+
         }
 
         private List<LinkViewModel> SnippingLinks(Point mousePosition)
