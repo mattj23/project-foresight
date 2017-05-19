@@ -23,6 +23,7 @@ namespace Project_Foresight.ViewModels
         private ProbabilityDensityData _selectedDensityChart;
         private bool _isGenerated;
         public event PropertyChangedEventHandler PropertyChanged;
+        public event EventHandler SimulationComplete;
 
         public AppViewModel Parent { get; set; }
 
@@ -232,6 +233,7 @@ namespace Project_Foresight.ViewModels
 
             clock.Stop();
             this.SimulationTime = clock.Elapsed.TotalSeconds;
+            this.SimulationComplete?.Invoke(this, EventArgs.Empty);
         }
 
        

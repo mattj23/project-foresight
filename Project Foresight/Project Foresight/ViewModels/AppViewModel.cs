@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Project_Foresight.Annotations;
@@ -50,12 +52,37 @@ namespace Project_Foresight.ViewModels
 
         public SimulationToolViewModel SimulationTool { get; set; }
 
+        public ObservableCollection<NotificationViewModel> Notifications { get; set; }
+
         public AppViewModel()
         {
             this.LoadedProjectPath = "";
             this.Project = new ProjectViewModel {Name = "Hello world!"};
             this.SimulationTool = new SimulationToolViewModel(this);
+            this.SimulationTool.SimulationComplete += SimulationToolOnSimulationComplete;
+            this.Notifications = new ObservableCollection<NotificationViewModel>();
+        }
 
+        private void SimulationToolOnSimulationComplete(object sender, EventArgs eventArgs)
+        {
+            this.AddNotification($"Monte-Carlo simulation completed in {SimulationTool.SimulationTime:N1} seconds", 3, new SolidColorBrush(Colors.Yellow));
+        }
+
+        public void AddNotification(string message, double displaySeconds, SolidColorBrush brush = null)
+        {
+            var notification = new NotificationViewModel()
+            {
+                Message = message,
+                Color = brush ?? new SolidColorBrush(Colors.WhiteSmoke)
+            };
+            this.Notifications.Add(notification);
+            DelayedAction.Execute(() => this.RemoveNotification(notification), (int) (displaySeconds * 1000));
+        }
+
+        public void RemoveNotification(NotificationViewModel notification)
+        {
+            notification.IsRemoving = true;
+            DelayedAction.Execute(() => this.Notifications.Remove(notification), 1000);
         }
 
         public void SaveProject()
@@ -67,6 +94,8 @@ namespace Project_Foresight.ViewModels
             else
             {
                 File.WriteAllText(this.LoadedProjectPath, JsonConvert.SerializeObject(SerializeableProjectViewModel.FromProjectViewModel(this.Project), Formatting.Indented));
+                this.AddNotification($"Saved project '{Path.GetFileName(this.LoadedProjectPath)}'", 5, new SolidColorBrush(Colors.Aqua));
+
             }
         }
 
@@ -84,6 +113,7 @@ namespace Project_Foresight.ViewModels
             {
                 this.LoadedProjectPath = dialog.FileName;
                 File.WriteAllText(this.LoadedProjectPath, JsonConvert.SerializeObject(SerializeableProjectViewModel.FromProjectViewModel(this.Project), Formatting.Indented));
+                this.AddNotification($"Saved project '{Path.GetFileName(dialog.FileName)}'", 5, new SolidColorBrush(Colors.Aqua));
             }
 
         }
@@ -103,6 +133,8 @@ namespace Project_Foresight.ViewModels
                 var text = File.ReadAllText(this.LoadedProjectPath);
                 var working = JsonConvert.DeserializeObject<SerializeableProjectViewModel>(text);
                 this.Project = SerializeableProjectViewModel.ToProjectViewModel(working);
+                this.AddNotification($"Opened project '{Path.GetFileName(dialog.FileName)}'", 5, new SolidColorBrush(Colors.LightGreen));
+
             }
         }
 

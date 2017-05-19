@@ -82,6 +82,7 @@
     <Compile Include="ViewModels\EstimateViewModel.cs" />
     <Compile Include="ViewModels\FixedCostViewModel.cs" />
     <Compile Include="ViewModels\LinkViewModel.cs" />
+    <Compile Include="ViewModels\NotificationViewModel.cs" />
     <Compile Include="ViewModels\OrganizationViewModel.cs" />
     <Compile Include="ViewModels\ProbabilityDensityData.cs" />
     <Compile Include="ViewModels\ProjectViewModel.cs" />
