@@ -76,7 +76,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                        <!-- Link Editing Floating Tag -->
+                        <!-- Link Editing Floating Line -->
                         <Line X1="{Binding LinkEditTask.X}"
                               X2="{Binding ViewModel.MouseOverTask.X}"
                               Y1="{Binding LinkEditTask.Y}"
@@ -110,6 +110,59 @@
                             </Line.Style>
                         </Line>
 
+                        <!-- Link Highlighting -->
+                        <ItemsControl ItemsSource="{Binding HightlightLinks}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Line X1="{Binding Start.X}"
+                                          X2="{Binding End.X}"
+                                          Y1="{Binding Start.Y}"
+                                          Y2="{Binding End.Y}"
+                                          StrokeThickness="10"
+                                          Stroke="Orange">
+                                    </Line>
+
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- Link Objects -->
+                        <ItemsControl ItemsSource="{Binding ViewModel.Links}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Line X1="{Binding Start.X}"
+                                          X2="{Binding End.X}"
+                                          Y1="{Binding Start.Y}"
+                                          Y2="{Binding End.Y}"
+                                          StrokeThickness="3">
+                                        <Line.Stroke>
+                                            <LinearGradientBrush StartPoint="{Binding Start.CenterPoint}"
+                                                                 EndPoint="{Binding End.CenterPoint}"
+                                                                 MappingMode="Absolute">
+                                                <GradientStop Offset="0" Color="Red" />
+                                                <GradientStop Offset="0.45" Color="Red" />
+                                                <GradientStop Offset="0.55" Color="Blue" />
+                                                <GradientStop Offset="1" Color="Blue" />
+                                            </LinearGradientBrush>
+                                        </Line.Stroke>
+                                    </Line>
+
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        
                         <!-- Task Objects -->
                         <local:CanvasItemsControl ItemsSource="{Binding ViewModel.Tasks}">
                             <local:CanvasItemsControl.ItemsPanel>
@@ -155,8 +208,57 @@
                             </Border.Style>
                         </Border>
 
+
+                        <!-- Link Removal Snipping Line -->
+                        <Line X1="{Binding LinkSnippingStartPoint.X}"
+                              X2="{Binding CanvasMousePoint.X}"
+                              Y1="{Binding LinkSnippingStartPoint.Y}"
+                              Y2="{Binding CanvasMousePoint.Y}"
+                              StrokeThickness="4"
+                              Stroke="Red"
+                              StrokeDashArray="2 2">
+                            <Line.Style>
+                                <Style TargetType="Line">
+                                    <Setter Property="Visibility" Value="Hidden" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsSnipping}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+
+                                    </Style.Triggers>
+                                </Style>
+                            </Line.Style>
+                        </Line>
                         
+                        <!-- Debugging markers 
+                        <local:CanvasItemsControl ItemsSource="{Binding Markers}">
+                            <local:CanvasItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas></Canvas>
+                                </ItemsPanelTemplate>
+                            </local:CanvasItemsControl.ItemsPanel>
+
+                            <local:CanvasItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Ellipse Height="20"
+                                             Width="20"
+                                             Stroke="Red"
+                                             StrokeThickness="3">
+                                        <Ellipse.Margin>
+                                            <MultiBinding Converter="{StaticResource CenterConverter}">
+                                                <Binding RelativeSource="{RelativeSource Mode=Self}" Path="ActualWidth"/>
+                                                <Binding RelativeSource="{RelativeSource Mode=Self}" Path="ActualHeight"/>
+                                            </MultiBinding>
+                                        </Ellipse.Margin>
+
+                                    </Ellipse>
+                                </DataTemplate>
+                            </local:CanvasItemsControl.ItemTemplate>
+                        </local:CanvasItemsControl>
+                        -->
                         
+
+
                         <!-- Mouse Tooltip -->
                         <Border BorderBrush="Black"
                                 BorderThickness="1"

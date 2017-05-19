@@ -33,7 +33,7 @@ namespace Project_Foresight.ViewModels
             set
             {
                 if (value.Equals(_x)) return;
-                _x = value;
+                _x = Math.Round(value / 10) * 10;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(CenterPoint));
             }
@@ -45,7 +45,7 @@ namespace Project_Foresight.ViewModels
             set
             {
                 if (value.Equals(_y)) return;
-                _y = value;
+                _y = Math.Round(value / 10) * 10;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(CenterPoint));
 

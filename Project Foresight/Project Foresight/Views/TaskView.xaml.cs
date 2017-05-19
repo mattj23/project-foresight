@@ -24,8 +24,6 @@ namespace Project_Foresight.Views
     /// </summary>
     public partial class TaskView : UserControl
     {
-        private Point _mouseDownPoint;
-        private bool _isDragging;
 
         public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
             "ViewModel", typeof(TaskViewModel), typeof(TaskView), new PropertyMetadata(default(TaskViewModel)));
@@ -56,61 +54,6 @@ namespace Project_Foresight.Views
         public TaskView()
         {
             InitializeComponent();
-        }
-
-        private void UIElement_OnMouseMove(object sender, MouseEventArgs e)
-        {
-            if (_isDragging && e.LeftButton == MouseButtonState.Pressed)
-            {
-                Point canvasPoint = e.GetPosition(this.LayoutElement);
-
-                double shiftX = (canvasPoint.X - _mouseDownPoint.X);
-                double shiftY = (canvasPoint.Y - _mouseDownPoint.Y);
-                this.ViewModel.X += shiftX;
-                this.ViewModel.Y += shiftY;
-
-                if (Keyboard.IsKeyDown(Key.LeftShift))
-                {
-                    foreach (Guid descendantId in this.ViewModel.AllDescendants)
-                    {
-                        var descendant = this.ViewModel.Parent.GetTaskById(descendantId);
-                        descendant.X += shiftX;
-                        descendant.Y += shiftY;
-                    }
-                }
-
-                if (Keyboard.IsKeyDown(Key.LeftCtrl))
-                {
-                    foreach (Guid ancestorId in this.ViewModel.AllAncestors)
-                    {
-                        var ancestor = this.ViewModel.Parent.GetTaskById(ancestorId);
-                        ancestor.X += shiftX;
-                        ancestor.Y += shiftY;
-                    }
-                }
-
-
-                this._mouseDownPoint = canvasPoint;
-            }
-
-        }
-
-        private void UIElement_OnMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                _mouseDownPoint = e.GetPosition(this.LayoutElement);
-                this.BringToFront();
-                _isDragging = true;
-
-                this.ViewModel.Parent.SelectedTask = this.ViewModel;
-            }
-        }
-
-        private void UIElement_OnMouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (_isDragging)
-                _isDragging = false;
         }
 
         private void BringToFront()

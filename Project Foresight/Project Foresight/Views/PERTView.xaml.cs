@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MathNet.Spatial.Euclidean;
 using Project_Foresight.Tools;
 using Project_Foresight.ViewModels;
 
@@ -68,6 +70,40 @@ namespace Project_Foresight.Views
         public static readonly DependencyProperty LinkEditTaskProperty = DependencyProperty.Register(
             "LinkEditTask", typeof(TaskViewModel), typeof(PERTView), new PropertyMetadata(default(TaskViewModel)));
 
+        public static readonly DependencyProperty LinkSnippingStartPointProperty = DependencyProperty.Register(
+            "LinkSnippingStartPoint", typeof(Point), typeof(PERTView), new PropertyMetadata(default(Point)));
+
+        public static readonly DependencyProperty IsSnippingProperty = DependencyProperty.Register(
+            "IsSnipping", typeof(bool), typeof(PERTView), new PropertyMetadata(default(bool)));
+
+        public static readonly DependencyProperty MarkersProperty = DependencyProperty.Register(
+            "Markers", typeof(ObservableCollection<Point>), typeof(PERTView), new PropertyMetadata(default(ObservableCollection<Point>)));
+
+        public static readonly DependencyProperty HightlightLinksProperty = DependencyProperty.Register(
+            "HightlightLinks", typeof(ObservableCollection<LinkViewModel>), typeof(PERTView), new PropertyMetadata(default(ObservableCollection<LinkViewModel>)));
+
+        public ObservableCollection<LinkViewModel> HightlightLinks
+        {
+            get { return (ObservableCollection<LinkViewModel>) GetValue(HightlightLinksProperty); }
+            set { SetValue(HightlightLinksProperty, value); }
+        }
+
+        public ObservableCollection<Point> Markers
+        {
+            get { return (ObservableCollection<Point>) GetValue(MarkersProperty); }
+            set { SetValue(MarkersProperty, value); }
+        }
+        public bool IsSnipping
+        {
+            get { return (bool) GetValue(IsSnippingProperty); }
+            set { SetValue(IsSnippingProperty, value); }
+        }
+
+        public Point LinkSnippingStartPoint
+        {
+            get { return (Point) GetValue(LinkSnippingStartPointProperty); }
+            set { SetValue(LinkSnippingStartPointProperty, value); }
+        }
         public TaskViewModel LinkEditTask
         {
             get { return (TaskViewModel) GetValue(LinkEditTaskProperty); }
@@ -193,6 +229,8 @@ namespace Project_Foresight.Views
             this.Zoom = 1;
             this.ToolTipText = "";
             this._relativeDragPoints = new Dictionary<Guid, Point>();
+            this.Markers = new ObservableCollection<Point>();
+            this.HightlightLinks = new ObservableCollection<LinkViewModel>();
         }
 
 
@@ -200,7 +238,7 @@ namespace Project_Foresight.Views
         {
             // Because the link edit task uses the IsSelectedAncestor flag to display the red border on the diagram
             // wiping the 
-            if (this.LinkEditTask != null)
+            if (this.LinkEditTask != null && this.ViewModel.SelectedTask != null)
             {
                 if (!this.ViewModel.SelectedTask.Ancestors.Contains(this.LinkEditTask.Id))
                     this.LinkEditTask.IsSelectedAncestor = false;
@@ -323,6 +361,10 @@ namespace Project_Foresight.Views
 
         private void ViewAreaPreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
+
+            if (e.LeftButton != MouseButtonState.Pressed)
+                return;
+
             // If the mode is adding or removing a link, the click will be passed to the link edit click handling method
             // which will manage the semi-selected state and the transition between that and the creation of actual links
             if ((this.Mode == PertViewMode.AddLink || this.Mode == PertViewMode.RemoveLink) && this.ViewModel.IsMouseOverATask)
@@ -330,6 +372,15 @@ namespace Project_Foresight.Views
                 e.Handled = true;
                 this.LinkEditClick(this.ViewModel.MouseOverTask);
                 return;
+            }
+
+            // If the mode is removing a link but the mouse is not over a task, we start the line drag deletion mode
+            // for removing links, which at this point involves setting the snipping startpoint and the snipping flag
+            if (this.Mode == PertViewMode.RemoveLink && !this.ViewModel.IsMouseOverATask)
+            {
+                this.IsSnipping = true;
+                this.LinkSnippingStartPoint = e.GetPosition(ViewCanvas);
+                this.ToolTipText = "Drag snipping line across links to break them";
             }
 
             // If the mode is removing a task, we pass to the task removal
@@ -360,7 +411,7 @@ namespace Project_Foresight.Views
                 this.ViewModel.SelectedTask = this.ViewModel.MouseOverTask;
 
                 // Prepare for dragging
-                this._mouseDownPoint = e.GetPosition(ViewArea);
+                this._mouseDownPoint = e.GetPosition(ViewCanvas);
                 this._dragTask = ViewModel.MouseOverTask;
                 this._taskDragStartPoint = this._dragTask.CenterPoint;
                 this._relativeDragPoints.Clear();
@@ -368,6 +419,7 @@ namespace Project_Foresight.Views
                 {
                     this._relativeDragPoints.Add(viewModelTask.Id, viewModelTask.CenterPoint);
                 }
+
             }
         }
 
@@ -378,8 +430,8 @@ namespace Project_Foresight.Views
                 // Compute the shift
                 var currentShift = new Point
                 {
-                    X=e.GetPosition(ViewArea).X - _mouseDownPoint.X,
-                    Y=e.GetPosition(ViewArea).Y - _mouseDownPoint.Y
+                    X=e.GetPosition(ViewCanvas).X - _mouseDownPoint.X,
+                    Y=e.GetPosition(ViewCanvas).Y - _mouseDownPoint.Y
                 };
 
                 // Shift the drag task
@@ -413,7 +465,59 @@ namespace Project_Foresight.Views
                         }
                 }
 
+                this.ToolTipText =
+                    "'A' to drag ancestors, 'D' to drag descendants, +Shift for all ancestors/descendants";
+
             }
+
+            if (this.IsSnipping)
+            {
+                this.HightlightLinks.Clear();
+                foreach (var linkViewModel in SnippingLinks(e.GetPosition(ViewCanvas)))
+                {
+                    this.HightlightLinks.Add(linkViewModel);
+                }
+                
+            }
+        }
+
+        private List<LinkViewModel> SnippingLinks(Point mousePosition)
+        {
+            var links = new List<LinkViewModel>();
+            Line2D snipLine;
+            try
+            {
+                snipLine = new Line2D(new Point2D(LinkSnippingStartPoint.X, LinkSnippingStartPoint.Y),
+                        new Point2D(mousePosition.X, mousePosition.Y));
+            }
+            catch (ArgumentException )
+            {
+                return links;
+            }
+
+            foreach (var link in this.ViewModel.Links)
+            {
+                Line2D linkLine;
+                try
+                {
+                    linkLine = new Line2D(new Point2D(link.Start.X, link.Start.Y),
+                    new Point2D(link.End.X, link.End.Y));
+                }
+                catch (ArgumentException)
+                {
+                    continue;
+                }
+
+                var intersection = snipLine.IntersectWith(linkLine);
+                if (intersection == null)
+                    continue;
+
+                if (Math.Abs(linkLine.Length - (intersection.Value.DistanceTo(linkLine.StartPoint) + intersection.Value.DistanceTo(linkLine.EndPoint))) < 1.0 &&
+                    Math.Abs(snipLine.Length - (intersection.Value.DistanceTo(snipLine.StartPoint) + intersection.Value.DistanceTo(snipLine.EndPoint))) < 1.0)
+                    links.Add(link);
+            }
+
+            return links;
         }
 
         private void ShiftTask(Guid taskId, Point shift)
@@ -425,7 +529,23 @@ namespace Project_Foresight.Views
 
         private void ViewAreaPreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
-            this._dragTask = null;
+            if (this._dragTask != null)
+            {
+                this._dragTask = null;
+                this.ToolTipText = "";
+            }
+
+            if (this.IsSnipping)
+            {
+                foreach (var link in SnippingLinks(e.GetPosition(ViewCanvas)))
+                {
+                    this.ViewModel.RemoveLink(link.Start, link.End);
+                }
+                this.HightlightLinks.Clear();
+                this.IsSnipping = false;
+                this.LinkEditReset();
+            }
+            
         }
     }
 }
