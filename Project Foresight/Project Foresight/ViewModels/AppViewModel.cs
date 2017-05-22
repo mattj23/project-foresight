@@ -68,16 +68,21 @@ namespace Project_Foresight.ViewModels
         public ObservableCollection<NotificationViewModel> Notifications { get; set; }
 
         private List<SerializableProjectViewModel> _undoChain;
+        private SerializableProjectViewModel _lastProjectState;
 
         public AppViewModel()
         {
             this.LoadedProjectPath = "";
+
+            // Load the project and set the last undo state
             this.Project = new ProjectViewModel {Name = "Hello world!"};
+            this._lastProjectState = SerializableProjectViewModel.FromProjectViewModel(this.Project);
+            this._undoChain = new List<SerializableProjectViewModel>();
+
             this.SimulationTool = new SimulationToolViewModel(this);
             this.SimulationTool.SimulationComplete += SimulationToolOnSimulationComplete;
             this.Notifications = new ObservableCollection<NotificationViewModel>();
 
-            this._undoChain = new List<SerializableProjectViewModel>();
         }
 
         private void SimulationToolOnSimulationComplete(object sender, EventArgs eventArgs)
@@ -150,6 +155,7 @@ namespace Project_Foresight.ViewModels
                 var text = File.ReadAllText(this.LoadedProjectPath);
                 var working = JsonConvert.DeserializeObject<SerializableProjectViewModel>(text);
                 this.Project = SerializableProjectViewModel.ToProjectViewModel(working);
+                this._lastProjectState = SerializableProjectViewModel.FromProjectViewModel(this.Project);
                 this.AddNotification($"Opened project '{Path.GetFileName(dialog.FileName)}'", 5, new SolidColorBrush(Colors.LightGreen));
                 this._undoChain.Clear();
             }
@@ -165,7 +171,8 @@ namespace Project_Foresight.ViewModels
 
         private void SaveUndoStep()
         {
-            this._undoChain.Add(SerializableProjectViewModel.FromProjectViewModel(this.Project));
+            this._undoChain.Add(_lastProjectState);
+            _lastProjectState = SerializableProjectViewModel.FromProjectViewModel(this.Project);
             if (this._undoChain.Count > 30)
             {
                 this._undoChain.RemoveAt(0);
@@ -177,9 +184,9 @@ namespace Project_Foresight.ViewModels
         {
             if (this._undoChain.Any())
             {
-                var project = this._undoChain.Last();
-                this._undoChain.Remove(project);
-                this.Project = SerializableProjectViewModel.ToProjectViewModel(project);
+                _lastProjectState = this._undoChain.Last();
+                this._undoChain.Remove(_lastProjectState);
+                this.Project = SerializableProjectViewModel.ToProjectViewModel(_lastProjectState);
             }
 
         }

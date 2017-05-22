@@ -129,6 +129,9 @@ namespace Project_Foresight.ViewModels
             get { return this._task.Name; }
             set
             {
+                if (this._task.Name == value)
+                    return;
+
                 this._task.Name = value;
                 OnPropertyChanged();
                 this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
@@ -141,6 +144,8 @@ namespace Project_Foresight.ViewModels
             get { return this._task.Description; }
             set
             {
+                if (this._task.Description == value)
+                    return;
                 this._task.Description = value;
                 this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
                 OnPropertyChanged();
