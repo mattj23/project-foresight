@@ -9,6 +9,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="1200">
     <UserControl.Resources>
+        
         <conv:CenterConverter x:Key="CenterConverter" />
         <conv:CenterShiftConverter x:Key="CenterShift" />
         <VisualBrush x:Key="HatchedBrush" TileMode="Tile" Viewport="0,0,15,15" ViewportUnits="Absolute" Viewbox="0,0,15,15" ViewboxUnits="Absolute">

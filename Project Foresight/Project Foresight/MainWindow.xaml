@@ -13,6 +13,7 @@
         <KeyBinding Command="{Binding SaveCommand}" Key="S" Modifiers="Control" />
         <KeyBinding Command="{Binding OpenCommand}" Key="O" Modifiers="Control" />
         <KeyBinding Command="{Binding RunSimulationCommand}" Key="R" Modifiers="Control" />
+        <KeyBinding Command="{Binding ActivateNormalMode, ElementName=PertView}" Key="Escape" />
     </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -31,7 +32,8 @@
             <TabControl Grid.Column="1"
                         Background="WhiteSmoke">
                 <TabItem Header="PERT Network">
-                    <views:PERTView ViewModel="{Binding Project}" />
+                    <views:PERTView x:Name="PertView" 
+                                    ViewModel="{Binding Project}" />
                 </TabItem>
                 
                 <TabItem Header="Project Costs">

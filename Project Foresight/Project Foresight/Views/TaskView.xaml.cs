@@ -64,7 +64,7 @@ namespace Project_Foresight.Views
 
         private void EditBoxKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if (e.Key == Key.Enter || e.Key == Key.Escape)
             {
                 Keyboard.ClearFocus();
                 (sender as TextBox).IsReadOnly = true;
