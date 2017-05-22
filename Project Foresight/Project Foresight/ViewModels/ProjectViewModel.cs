@@ -11,6 +11,8 @@ namespace Project_Foresight.ViewModels
 {
     public class ProjectViewModel : INotifyPropertyChanged
     {
+        public static CategoryViewModel EmptyCategory = new CategoryViewModel{Name = "No Task Category", ColorName = "White"};
+
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler SimulationInvalidated;
 
@@ -168,6 +170,8 @@ namespace Project_Foresight.ViewModels
             this.Tasks.Add(task);
             this.TasksById.Add(task.Id, task);
             this.IsSimulationDataValid = false;
+            if (task.Category == null)
+                task.Category = EmptyCategory;
         }
 
         private void Task_DependentDataChanged(object sender, EventArgs e)
@@ -202,6 +206,7 @@ namespace Project_Foresight.ViewModels
                 Y = task.Y,
                 Name = task.Name + " (Cont)",
                 Description = task.Description,
+                Category = task.Category
 
             };
 

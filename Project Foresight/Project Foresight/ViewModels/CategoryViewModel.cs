@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
@@ -9,6 +10,7 @@ namespace Project_Foresight.ViewModels
 {
     public class CategoryViewModel : INotifyPropertyChanged
     {
+        private static Dictionary<string, Color> _colorDictionary = new Dictionary<string, Color>();
 
         private string _name;
         private string _colorName;
@@ -33,6 +35,7 @@ namespace Project_Foresight.ViewModels
                 if (value == _colorName) return;
                 _colorName = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(Background));
             }
         }
 
@@ -41,10 +44,18 @@ namespace Project_Foresight.ViewModels
         {
             get
             {
-                Color? val = Enum.Parse(typeof(Colors), this.ColorName) as Color?;
-                if (val == null)
+                if (_colorDictionary.ContainsKey(this.ColorName))
+                    return new SolidColorBrush(_colorDictionary[this.ColorName]);
+
+                var colorType = typeof(System.Windows.Media.Colors);
+                var property = colorType.GetProperty(this.ColorName);
+                if (property == null)
                     return new SolidColorBrush(Colors.White);
-                return new SolidColorBrush(val.Value);
+
+                var colorObject = (Color) property.GetValue(null);
+                _colorDictionary.Add(this.ColorName, colorObject);
+
+                return new SolidColorBrush(colorObject);
             }
         }
 

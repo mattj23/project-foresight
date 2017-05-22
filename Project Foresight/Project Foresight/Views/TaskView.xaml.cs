@@ -34,6 +34,15 @@ namespace Project_Foresight.Views
         public static readonly DependencyProperty IsSelectingResourceProperty = DependencyProperty.Register(
             "IsSelectingResource", typeof(bool), typeof(TaskView), new PropertyMetadata(default(bool)));
 
+        public static readonly DependencyProperty IsEditingCategoryProperty = DependencyProperty.Register(
+            "IsEditingCategory", typeof(bool), typeof(TaskView), new PropertyMetadata(default(bool)));
+
+        public bool IsEditingCategory
+        {
+            get { return (bool) GetValue(IsEditingCategoryProperty); }
+            set { SetValue(IsEditingCategoryProperty, value); }
+        }
+
         public bool IsSelectingResource
         {
             get { return (bool) GetValue(IsSelectingResourceProperty); }
@@ -115,6 +124,21 @@ namespace Project_Foresight.Views
         {
             this.ViewModel.IsMouseOver = true;
             this.ViewModel.Parent.MouseOverTask = this.ViewModel;
+
+        }
+
+        private void EditCategoryOnClick(object sender, MouseButtonEventArgs e)
+        {
+            this.IsEditingCategory = true;
+        }
+
+        private void CategoryEditOnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this.IsEditingCategory = false;
+
+            var category = (CategoryViewModel) ((Border) sender).Tag;
+            this.ViewModel.Category = category;
+            e.Handled = true;
 
         }
     }

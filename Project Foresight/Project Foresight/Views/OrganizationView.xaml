@@ -9,8 +9,12 @@
     <Grid DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:OrganizationView}}}">
         <Grid.Resources>
             <CollectionViewSource x:Key="ResourceGroups" Source="{Binding ViewModel.ResourceGroupNames}" />
+            <CollectionViewSource x:Key="WindowsColorNames" Source="{Binding ColorNames}" />
         </Grid.Resources>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -92,7 +96,7 @@
             </Button>
         </StackPanel>
         
-        
+        <!-- Employees -->
         <TextBlock Margin="5"
                    Grid.Row="6"
                    FontWeight="Bold">
@@ -129,6 +133,45 @@
                            Text="-" />
             </Button>
         </StackPanel>
+        
+        <!-- Category colors -->
+        <TextBlock Margin="5"
+                   Grid.Row="9"
+                   FontWeight="Bold">
+            Task Categories
+        </TextBlock>
+        <DataGrid Grid.Row="10"
+                  ItemsSource="{Binding ViewModel.Categories}"
+                  SelectedItem="{Binding SelectedCategory}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  Margin="5 0"
+                  MinHeight="100"
+                  MaxHeight="400">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridComboBoxColumn Header="Color"
+                                        SelectedValueBinding="{Binding ColorName, UpdateSourceTrigger=PropertyChanged}"
+                                        ItemsSource="{Binding Source={StaticResource WindowsColorNames}}" />
+
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="11"
+                    Orientation="Horizontal">
+            <Button Margin="5"
+                    Click="AddCategoryClick">
+                <TextBlock Margin="5 0"
+                           Text="+" />
+            </Button>
+            <Button Margin="5"
+                    Click="DeleteCategoryClick">
+                <TextBlock Margin="7 0"
+                           Text="-" />
+            </Button>
+        </StackPanel>
+        
     </Grid>
 </UserControl>
 

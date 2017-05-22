@@ -18,7 +18,8 @@ namespace Project_Foresight.Serialization
                 Name = viewModel.Name,
                 Description = viewModel.Description,
                 Organization = SerializableOrganizationViewModel.FromOrganizationViewModel(viewModel.Organization),
-                FixedCosts = viewModel.FixedCosts.Select(x => x.Model).ToList()
+                FixedCosts = viewModel.FixedCosts.Select(x => x.Model).ToList(),
+                
             };
 
             working.Tasks = viewModel.Tasks.Select(x => SerializablePertTask.FromPertTask(x.Model)).ToList();
@@ -54,10 +55,16 @@ namespace Project_Foresight.Serialization
 
             foreach (SerializablePertTask task in working.Tasks)
             {
-                project.AddTask(new TaskViewModel(SerializablePertTask.ToUnlinkedPertTask(task)));
+                var taskViewmodel = new TaskViewModel(SerializablePertTask.ToUnlinkedPertTask(task));
+                var category = project.Organization.Categories.FirstOrDefault(x => x.Name == task.Category);
+                if (category == null)
+                    taskViewmodel.Category = ProjectViewModel.EmptyCategory;
+                else
+                    taskViewmodel.Category = category;
+                project.AddTask(taskViewmodel);
             }
 
-            // Now go through each task and make the necessary links and linked attributes (like employees)
+            // Now go through each task and make the necessary links and linked attributes (like employees, categories, etc)
             foreach (SerializablePertTask serializeablePertTask in working.Tasks)
             {
                 var actualTask = project.GetTaskById(serializeablePertTask.Id);
@@ -80,6 +87,8 @@ namespace Project_Foresight.Serialization
                     if (locatedResource != null)
                         actualTask.Resources.Add(locatedResource);
                 }
+
+
             }
 
 

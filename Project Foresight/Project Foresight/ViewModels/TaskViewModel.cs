@@ -151,6 +151,7 @@ namespace Project_Foresight.ViewModels
             {
                 if (Equals(value, _category)) return;
                 _category = value;
+                this.Model.Category = value.Name;
                 OnPropertyChanged();
             }
         }

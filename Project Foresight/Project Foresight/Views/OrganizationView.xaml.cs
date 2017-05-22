@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,6 +32,24 @@ namespace Project_Foresight.Views
         public static readonly DependencyProperty SelectedEmployeeViewModelProperty = DependencyProperty.Register(
             "SelectedEmployeeViewModel", typeof(EmployeeViewModel), typeof(OrganizationView), new PropertyMetadata(default(EmployeeViewModel)));
 
+        public static readonly DependencyProperty SelectedCategoryProperty = DependencyProperty.Register(
+            "SelectedCategory", typeof(CategoryViewModel), typeof(OrganizationView), new PropertyMetadata(default(CategoryViewModel)));
+
+        public static readonly DependencyProperty ColorNamesProperty = DependencyProperty.Register(
+            "ColorNames", typeof(ObservableCollection<string>), typeof(OrganizationView), new PropertyMetadata(default(ObservableCollection<string>)));
+
+        public ObservableCollection<string> ColorNames
+        {
+            get { return (ObservableCollection<string>) GetValue(ColorNamesProperty); }
+            set { SetValue(ColorNamesProperty, value); }
+        }
+
+        public CategoryViewModel SelectedCategory
+        {
+            get { return (CategoryViewModel) GetValue(SelectedCategoryProperty); }
+            set { SetValue(SelectedCategoryProperty, value); }
+        }
+
         public EmployeeViewModel SelectedEmployeeViewModel
         {
             get { return (EmployeeViewModel) GetValue(SelectedEmployeeViewModelProperty); }
@@ -52,6 +71,13 @@ namespace Project_Foresight.Views
         public OrganizationView()
         {
             InitializeComponent();
+
+            this.ColorNames = new ObservableCollection<string>();
+            Type colors = typeof(System.Windows.Media.Colors);
+            foreach (var propertyInfo in colors.GetProperties())
+            {
+                this.ColorNames.Add(propertyInfo.Name);
+            }
         }
 
         private void AddResourceGroupClick(object sender, RoutedEventArgs e)
@@ -77,6 +103,18 @@ namespace Project_Foresight.Views
         private void ResourceGroupComboSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ;
+        }
+
+        private void AddCategoryClick(object sender, RoutedEventArgs e)
+        {
+            this.ViewModel.Categories.Add(new CategoryViewModel {Name = "New Category", ColorName = "White"});
+        }
+
+        private void DeleteCategoryClick(object sender, RoutedEventArgs e)
+        {
+            if (this.SelectedCategory != null)
+                this.ViewModel.Categories.Remove(this.SelectedCategory);
+
         }
     }
 }
