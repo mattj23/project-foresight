@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Foresight;
 using Project_Foresight.Annotations;
+using Project_Foresight.Serialization;
 
 namespace Project_Foresight.ViewModels
 {
@@ -15,12 +16,15 @@ namespace Project_Foresight.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler SimulationInvalidated;
+        public event EventHandler JournalDataChanged;
 
         private Foresight.Project _project = null;
         private TaskViewModel _selectedTask;
         private OrganizationViewModel _organization;
         private bool _isSimulationDataValid;
         private TaskViewModel _mouseOverTask;
+
+        private bool _suppressChangeAlert = false;
 
         public Project Model => _project;
 
@@ -31,6 +35,7 @@ namespace Project_Foresight.ViewModels
             {
                 this._project.Name = value;
                 OnPropertyChanged();
+                this.RaiseJournalChangeAlert();
             }
         }
 
@@ -41,6 +46,8 @@ namespace Project_Foresight.ViewModels
             {
                 this._project.Description = value;
                 OnPropertyChanged();
+                this.RaiseJournalChangeAlert();
+
             }
         }
 
@@ -50,11 +57,16 @@ namespace Project_Foresight.ViewModels
             set
             {
                 if (Equals(value, _organization)) return;
+                if (_organization != null)
+                    _organization.JournalDataChanged -= OrganizationOnJournalDataChanged;
                 _organization = value;
+                _organization.JournalDataChanged += OrganizationOnJournalDataChanged;
                 OnPropertyChanged();
+                this.RaiseJournalChangeAlert();
+
             }
         }
-
+        
         public TaskViewModel SelectedTask
         {
             get { return _selectedTask; }
@@ -160,21 +172,30 @@ namespace Project_Foresight.ViewModels
                 }
 
             }
+            this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void AddTask(TaskViewModel task)
         {
             task.Parent = this;
-            task.DependentDataChanged += Task_DependentDataChanged;
+            task.SimulationDataChanged += TaskSimulationDataChanged;
+            task.JournalDataChanged += TaskOnJournalDataChanged;
             this._project.AddTask(task.Model);
             this.Tasks.Add(task);
             this.TasksById.Add(task.Id, task);
             this.IsSimulationDataValid = false;
             if (task.Category == null)
                 task.Category = EmptyCategory;
+
+            this.RaiseJournalChangeAlert();
         }
 
-        private void Task_DependentDataChanged(object sender, EventArgs e)
+        private void TaskOnJournalDataChanged(object sender, EventArgs eventArgs)
+        {
+            this.RaiseJournalChangeAlert();
+        }
+
+        private void TaskSimulationDataChanged(object sender, EventArgs e)
         {
             this.IsSimulationDataValid = false;
         }
@@ -188,18 +209,26 @@ namespace Project_Foresight.ViewModels
         {
             try
             {
+                this._suppressChangeAlert = true;
                 ancestor.LinkToDescendant(descendant);
                 Links.Add(new LinkViewModel {Start = ancestor, End = descendant});
                 this.IsSimulationDataValid = false;
+                this.RaiseJournalChangeAlert();
             }
             catch (ArgumentException e)
             {
                 Console.WriteLine(e);
             }
+            finally
+            {
+                this._suppressChangeAlert = false;
+            }
         }
 
         public void SplitTask(TaskViewModel task)
         {
+            this._suppressChangeAlert = true;
+
             var newTask = new TaskViewModel
             {
                 X = task.X + 300,
@@ -220,13 +249,15 @@ namespace Project_Foresight.ViewModels
 
             this.AddLink(task, newTask);
 
-
+            this._suppressChangeAlert = false;
+            this.RaiseJournalChangeAlert();
         }
 
         public void RemoveTask(TaskViewModel task)
         {
-            this.IsSimulationDataValid = false;
+            this._suppressChangeAlert = true;
 
+            this.IsSimulationDataValid = false;
             // Remove links first
             foreach (var ancestorId in task.Ancestors)
                 this.RemoveLink(this.TasksById[ancestorId], task);
@@ -238,29 +269,65 @@ namespace Project_Foresight.ViewModels
             this.TasksById.Remove(task.Id);
             this.Tasks.Remove(task);
             this.Model.RemoveTask(task.Model);
+
+            this._suppressChangeAlert = false;
+            this.RaiseJournalChangeAlert();
         }
 
         public void RemoveLink(TaskViewModel ancestor, TaskViewModel descendant)
         {
             try
             {
+                this._suppressChangeAlert = true;
                 this.IsSimulationDataValid = false;
+
                 ancestor.UnlinkFromDescendant(descendant);
                 var removeElement = this.Links.FirstOrDefault(x => x.Start == ancestor && x.End == descendant);
+
                 if (removeElement != null)
                     this.Links.Remove(removeElement);
+
+                this._suppressChangeAlert = false;
+                this.RaiseJournalChangeAlert();
             }
             catch (ArgumentException e)
             {
                 Console.WriteLine(e);
             }
-            
+            finally
+            {
+                this._suppressChangeAlert = false;
+            }
+        }
+
+
+        private void OrganizationOnJournalDataChanged(object sender, EventArgs eventArgs)
+        {
+            this.RaiseJournalChangeAlert();
+        }
+
+        private void RaiseJournalChangeAlert()
+        {
+            if (!_suppressChangeAlert)
+                this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Create a deep copy of a ProjectViewModel, including new objects rather than links
+        /// </summary>
+        /// <param name="project"></param>
+        /// <returns></returns>
+        public static ProjectViewModel DeepCopy(ProjectViewModel project)
+        {
+            var serialized = SerializableProjectViewModel.FromProjectViewModel(project);
+            return SerializableProjectViewModel.ToProjectViewModel(serialized);
         }
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            //this.RaiseJournalChangeAlert();
         }
     }
 }

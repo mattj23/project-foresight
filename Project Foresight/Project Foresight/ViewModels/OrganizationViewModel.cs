@@ -12,6 +12,7 @@ namespace Project_Foresight.ViewModels
     public class OrganizationViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+        public event EventHandler JournalDataChanged;
 
         public Organization Model { get; }
 
@@ -82,6 +83,7 @@ namespace Project_Foresight.ViewModels
                     this.ResourceGroups.FirstOrDefault(x => x.Name == employeeViewModel.ResourceGroupName);
             }
 
+            this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
         }
 
 
@@ -107,6 +109,7 @@ namespace Project_Foresight.ViewModels
             }
 
             this.SynchResourceNames();
+            this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -157,6 +160,8 @@ namespace Project_Foresight.ViewModels
                     }
                 }
             }
+
+            this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public IResource FindResourceByName(string name)
@@ -171,6 +176,7 @@ namespace Project_Foresight.ViewModels
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            JournalDataChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

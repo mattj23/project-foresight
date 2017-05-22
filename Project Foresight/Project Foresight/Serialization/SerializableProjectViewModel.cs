@@ -19,11 +19,10 @@ namespace Project_Foresight.Serialization
                 Description = viewModel.Description,
                 Organization = SerializableOrganizationViewModel.FromOrganizationViewModel(viewModel.Organization),
                 FixedCosts = viewModel.FixedCosts.Select(x => x.Model).ToList(),
-                
+                Tasks = viewModel.Tasks.Select(x => SerializablePertTask.FromPertTask(x.Model)).ToList(),
+                TaskPositions = new Dictionary<Guid, Point>(),
             };
 
-            working.Tasks = viewModel.Tasks.Select(x => SerializablePertTask.FromPertTask(x.Model)).ToList();
-            working.TaskPositions = new Dictionary<Guid, Point>();
             foreach (var viewModelTask in viewModel.Tasks)
             {
                 working.TaskPositions.Add(viewModelTask.Id, viewModelTask.CenterPoint);

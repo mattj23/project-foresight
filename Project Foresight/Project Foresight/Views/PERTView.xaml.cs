@@ -563,6 +563,12 @@ namespace Project_Foresight.Views
         {
             if (this._dragTask != null)
             {
+                if (Math.Abs(this._taskDragStartPoint.X - this._dragTask.X) > 1.0 ||
+                    Math.Abs(this._taskDragStartPoint.Y - this._dragTask.Y) > 1.0)
+                {
+                    this._dragTask.ReportJournalDataChanged();
+                }
+
                 this._dragTask = null;
                 this.ToolTipText = "";
             }

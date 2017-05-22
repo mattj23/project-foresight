@@ -14,6 +14,7 @@
         <KeyBinding Command="{Binding OpenCommand}" Key="O" Modifiers="Control" />
         <KeyBinding Command="{Binding RunSimulationCommand}" Key="R" Modifiers="Control" />
         <KeyBinding Command="{Binding ActivateNormalMode, ElementName=PertView}" Key="Escape" />
+        <KeyBinding Command="{Binding UndoCommand}" Key="Z" Modifiers="Control" />
     </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -80,7 +81,9 @@
                 <Separator />
                 <MenuItem Header="Quit" Command="{Binding QuitCommand}"></MenuItem>
             </MenuItem>
-            
+            <MenuItem Header="Edit">
+                <MenuItem Header="Undo" Command="{Binding UndoCommand}" />
+            </MenuItem>
             <MenuItem Header="Simulation">
                 <MenuItem Header="Run Simulation" Command="{Binding RunSimulationCommand}" />
             </MenuItem>

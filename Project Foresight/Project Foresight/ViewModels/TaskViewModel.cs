@@ -12,7 +12,8 @@ namespace Project_Foresight.ViewModels
     public class TaskViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        public event EventHandler DependentDataChanged;
+        public event EventHandler SimulationDataChanged;
+        public event EventHandler JournalDataChanged;
 
         private Foresight.PertTask _task = null;
         private double _y;
@@ -49,7 +50,6 @@ namespace Project_Foresight.ViewModels
                 _y = Math.Round(value / 10) * 10;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(CenterPoint));
-
             }
         }
 
@@ -131,6 +131,8 @@ namespace Project_Foresight.ViewModels
             {
                 this._task.Name = value;
                 OnPropertyChanged();
+                this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
+
             }
         }
 
@@ -140,6 +142,7 @@ namespace Project_Foresight.ViewModels
             set
             {
                 this._task.Description = value;
+                this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
                 OnPropertyChanged();
             }
         }
@@ -152,6 +155,7 @@ namespace Project_Foresight.ViewModels
                 if (Equals(value, _category)) return;
                 _category = value;
                 this.Model.Category = value.Name;
+                this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
                 OnPropertyChanged();
             }
         }
@@ -196,12 +200,15 @@ namespace Project_Foresight.ViewModels
 
         private void TimeEstimate_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            this.DependentDataChanged?.Invoke(this, EventArgs.Empty);
+            this.SimulationDataChanged?.Invoke(this, EventArgs.Empty);
+            this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
+
         }
 
         private void Resources_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            this.DependentDataChanged?.Invoke(this, EventArgs.Empty);
+            this.SimulationDataChanged?.Invoke(this, EventArgs.Empty);
+            this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
 
             this.SynchronizeResources();
         }
@@ -218,31 +225,40 @@ namespace Project_Foresight.ViewModels
         public void LinkToAncestor(TaskViewModel ancestor)
         {
             this._task.LinkToAncestor(ancestor._task);
-            this.DependentDataChanged?.Invoke(this, EventArgs.Empty);
-
+            this.SimulationDataChanged?.Invoke(this, EventArgs.Empty);
+            this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void LinkToDescendant(TaskViewModel descendant)
         {
-                this.DependentDataChanged?.Invoke(this, EventArgs.Empty);
+            this.SimulationDataChanged?.Invoke(this, EventArgs.Empty);
             this._task.LinkToDescendant(descendant._task);
+            this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void UnlinkFromAncestor(TaskViewModel ancestor)
         {
-                this.DependentDataChanged?.Invoke(this, EventArgs.Empty);
+            this.SimulationDataChanged?.Invoke(this, EventArgs.Empty);
             this._task.UnlinkFromAncestor(ancestor._task);
+            this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void UnlinkFromDescendant(TaskViewModel descendant)
         {
-                this.DependentDataChanged?.Invoke(this, EventArgs.Empty);
+            this.SimulationDataChanged?.Invoke(this, EventArgs.Empty);
             this._task.UnlinkFromDescendant(descendant._task);
+            this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void UnlinkAll()
         {
             this._task.UnlinkAll();
+            this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void ReportJournalDataChanged()
+        {
+            this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
         }
 
         [NotifyPropertyChangedInvocator]

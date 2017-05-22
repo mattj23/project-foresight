@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
@@ -26,10 +28,20 @@ namespace Project_Foresight.ViewModels
             set
             {
                 if (Equals(value, _project)) return;
+
+                // Unlink the existing change event handler
+                if (_project != null)
+                    _project.JournalDataChanged -= ProjectOnJournalDataChanged;
+
                 _project = value;
+
+                // Link the new object to the change handler
+                _project.JournalDataChanged += ProjectOnJournalDataChanged;
+
                 OnPropertyChanged();
             }
         }
+
 
         public string LoadedProjectPath
         {
@@ -46,6 +58,7 @@ namespace Project_Foresight.ViewModels
         public ICommand SaveAsCommand => new RelayCommand(SaveProjectAs);
         public ICommand OpenCommand => new RelayCommand(OpenProject);
 
+        public ICommand UndoCommand => new RelayCommand(RestoreFromUndoStep);
         public ICommand QuitCommand => new RelayCommand(Application.Current.Shutdown);
 
         public ICommand RunSimulationCommand => new RelayCommand(this.SimulationTool.RunMonteCarloSimulation);
@@ -54,6 +67,8 @@ namespace Project_Foresight.ViewModels
 
         public ObservableCollection<NotificationViewModel> Notifications { get; set; }
 
+        private List<SerializableProjectViewModel> _undoChain;
+
         public AppViewModel()
         {
             this.LoadedProjectPath = "";
@@ -61,6 +76,8 @@ namespace Project_Foresight.ViewModels
             this.SimulationTool = new SimulationToolViewModel(this);
             this.SimulationTool.SimulationComplete += SimulationToolOnSimulationComplete;
             this.Notifications = new ObservableCollection<NotificationViewModel>();
+
+            this._undoChain = new List<SerializableProjectViewModel>();
         }
 
         private void SimulationToolOnSimulationComplete(object sender, EventArgs eventArgs)
@@ -134,9 +151,39 @@ namespace Project_Foresight.ViewModels
                 var working = JsonConvert.DeserializeObject<SerializableProjectViewModel>(text);
                 this.Project = SerializableProjectViewModel.ToProjectViewModel(working);
                 this.AddNotification($"Opened project '{Path.GetFileName(dialog.FileName)}'", 5, new SolidColorBrush(Colors.LightGreen));
-
+                this._undoChain.Clear();
             }
         }
+
+        private void ProjectOnJournalDataChanged(object sender, EventArgs eventArgs)
+        {
+            if (!sender.Equals(this.Project))
+                throw new ArgumentException("For some reason the event was thrown on an object that isn't this Project");
+            this.SaveUndoStep();
+        }
+
+
+        private void SaveUndoStep()
+        {
+            this._undoChain.Add(SerializableProjectViewModel.FromProjectViewModel(this.Project));
+            if (this._undoChain.Count > 30)
+            {
+                this._undoChain.RemoveAt(0);
+            }
+        }
+
+
+        private void RestoreFromUndoStep()
+        {
+            if (this._undoChain.Any())
+            {
+                var project = this._undoChain.Last();
+                this._undoChain.Remove(project);
+                this.Project = SerializableProjectViewModel.ToProjectViewModel(project);
+            }
+
+        }
+
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
