@@ -123,11 +123,13 @@ namespace Project_Foresight.ViewModels
             get { return _isSimulationDataValid; }
             set
             {
+                if (!value)
+                    SimulationInvalidated?.Invoke(this, EventArgs.Empty);
+
                 if (value == _isSimulationDataValid) return;
                 _isSimulationDataValid = value;
 
-                if (!_isSimulationDataValid)
-                    SimulationInvalidated?.Invoke(this, EventArgs.Empty);
+
                 OnPropertyChanged();
             }
         }

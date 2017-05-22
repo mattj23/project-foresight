@@ -63,7 +63,7 @@ namespace Project_Foresight.ViewModels
         public ICommand UndoCommand => new RelayCommand(RestoreFromUndoStep);
         public ICommand QuitCommand => new RelayCommand(Application.Current.Shutdown);
 
-        public ICommand RunSimulationCommand => new RelayCommand(this.SimulationTool.RunMonteCarloSimulation);
+        public ICommand RunSimulationCommand => new RelayCommand(StartMonteCarloSimulation);
 
         public SimulationToolViewModel SimulationTool { get; set; }
 
@@ -85,6 +85,12 @@ namespace Project_Foresight.ViewModels
             this.SimulationTool.SimulationComplete += SimulationToolOnSimulationComplete;
             this.Notifications = new ObservableCollection<NotificationViewModel>();
 
+        }
+
+        public void StartMonteCarloSimulation()
+        {
+            this.AddNotification("Simulation started", 1.5, new SolidColorBrush(Colors.Yellow));
+            this.SimulationTool.RunMonteCarloSimulation();
         }
 
         private void SimulationToolOnSimulationComplete(object sender, EventArgs eventArgs)
