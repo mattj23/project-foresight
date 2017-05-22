@@ -149,20 +149,8 @@
                 </Grid>
 
                 <!-- Resources -->
-                <DockPanel Grid.Row="3">
-                    <Button DockPanel.Dock="Right" 
-                            Click="AddResourceOnClick">
-                        <TextBlock Text="+" Margin="5 0"></TextBlock>
-                    </Button>
-                    <TextBlock Margin="5"
-                               FontWeight="Black">
-                        Resources
-                    </TextBlock>
-
-                </DockPanel>
-
                 <ItemsControl Grid.Row="4" 
-                              Margin="10"
+                              Margin="10 5 10 15"
                               ItemsSource="{Binding ViewModel.Resources}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -195,7 +183,39 @@
 
             </Grid>
         </Border>
+
         <Border BorderThickness="3"
+                BorderBrush="Black"
+                CornerRadius="5"
+                Padding="3"
+                MouseDown="AddResourceOnClick"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Left">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="WhiteSmoke" />
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ViewModel.IsMouseOver}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="LightBlue" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <TextBlock Margin="2">
+                Add Resource
+            </TextBlock>
+            <Border.RenderTransform>
+                <TranslateTransform X="-10"
+                                    Y="5" />
+            </Border.RenderTransform>
+        </Border>
+
+
+            <Border BorderThickness="3"
                 BorderBrush="Black"
                 Background="Yellow"
                 CornerRadius="5"
