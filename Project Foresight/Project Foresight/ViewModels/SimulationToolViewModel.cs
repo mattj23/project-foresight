@@ -122,9 +122,9 @@ namespace Project_Foresight.ViewModels
             var categories = new HashSet<string>(_workingProject.FixedCosts.Select(x => x.Category));
             var fixedCostsByCategory = categories.ToDictionary(category => category, category => new double[this.IterationCount]);
 
-            var simulator = new ProjectSimulator(_workingProject);
-            for (int i = 0; i < this.IterationCount; i++)
+            Parallel.For(0, IterationCount, i =>
             {
+                var simulator = new ProjectSimulator(_workingProject);
                 var result = simulator.Simulate();
 
                 completionTimes[i] = result.TotalCompletionDays;
@@ -147,14 +147,14 @@ namespace Project_Foresight.ViewModels
                 {
                     // Get the keys of the fixed costs in this category
                     var keys = _workingProject.FixedCosts.Where(x => x.Category == category).Select(x => x.Id).ToList();
-                    
+
                     // Get the total cost of these keys
                     double categoryCost = keys.Select(x => result.FixedCostValues[x]).Sum();
                     totalFixedCost += categoryCost;
                     fixedCostsByCategory[category][i] = categoryCost;
                 }
                 fixedCosts[i] = totalFixedCost;
-            }
+            });
 
             ProbabilityItems.Clear();
 
