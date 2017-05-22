@@ -156,34 +156,40 @@ namespace Project_Foresight.ViewModels
                 fixedCosts[i] = totalFixedCost;
             });
 
-            ProbabilityItems.Clear();
+            var resultDistributions = new List<ProbabilityDensityData>();
+            var taskSimulationData = new Dictionary<Guid, TaskSimulationData>();
+
+            // Lambda to make sure that the result distribution is only added if not empty
+            var addResultDistribution = new Action<ProbabilityDensityData>(x =>
+            {
+                if (!x.IsEmpty)
+                    resultDistributions.Add(x);
+            });
 
             // Main simulation results
-            ProbabilityItems.Add(new ProbabilityDensityData(completionTimes, "Project Duration")
+            addResultDistribution(new ProbabilityDensityData(completionTimes, "Project Duration")
             {
                 XLabel =  "Days",
                 Category = "Main",
                 ValueFormatter = x => $"{x:N0} days"
             });
-            ProbabilityItems.Add(new ProbabilityDensityData(resourceCosts, "Resource Costs")
+            addResultDistribution(new ProbabilityDensityData(resourceCosts, "Resource Costs")
             {
                 XLabel = "Dollars",
                 Category = "Main",
                 ValueFormatter = x => (x > 1000) ? $"${x / 1000:N0}k" : x.ToString("C0")
             });
-            ProbabilityItems.Add(new ProbabilityDensityData(fixedCosts, "Fixed Project Costs")
+            addResultDistribution(new ProbabilityDensityData(fixedCosts, "Fixed Project Costs")
             {
                 XLabel = "Dollars",
                 Category = "Main",
                 ValueFormatter = x => (x > 1000) ? $"${x / 1000:N0}k" : x.ToString("C0")
             });
-
-            this.SelectedDensityChart = ProbabilityItems[0];
-
+            
             // Resource Committment results
             foreach (var resourceTimeData in resourceTime)
             {
-                ProbabilityItems.Add(new ProbabilityDensityData(resourceTimeData.Value, $"{resourceTimeData.Key}")
+                addResultDistribution(new ProbabilityDensityData(resourceTimeData.Value, $"{resourceTimeData.Key}")
                 {
                     Category = "Resource Commitment",
                     XLabel = "Days",
@@ -194,7 +200,7 @@ namespace Project_Foresight.ViewModels
             // Fixed cost category
             foreach (var fixedCost in fixedCostsByCategory)
             {
-                ProbabilityItems.Add(new ProbabilityDensityData(fixedCost.Value, $"{fixedCost.Key}")
+                addResultDistribution(new ProbabilityDensityData(fixedCost.Value, $"{fixedCost.Key}")
                 {
                     XLabel = "Dollars",
                     Category = "Project Fixed Costs",
@@ -205,41 +211,63 @@ namespace Project_Foresight.ViewModels
             // Task start and end times
             foreach (var taskStart in taskStartTimes)
             {
-                var task = this.Parent.Project.GetTaskById(taskStart.Key);
+                var task = _workingProject.GetTaskById(taskStart.Key);
                 var data = new ProbabilityDensityData(taskStart.Value, task.Name)
                 {
                     Category = "Task Start Day",
                     XLabel = "Days",
                     ValueFormatter = x => $"Day {x:N0}"
                 };
-                ProbabilityItems.Add(data);
-                task.SimulatedData = new TaskSimulationData
+                addResultDistribution(data);
+
+                taskSimulationData.Add(task.Id, new TaskSimulationData
                 {
                     MedianStart = data.MedianValue,
                     HighStart = data.UpperConfidence,
-                    LowStart =  data.LowerConfidence
-                };
+                    LowStart = data.LowerConfidence
+                });
             }
 
             foreach (var taskStart in taskEndTimes)
             {
-                var task = this.Parent.Project.GetTaskById(taskStart.Key);
+                var task = _workingProject.GetTaskById(taskStart.Key);
                 var data = new ProbabilityDensityData(taskStart.Value, task.Name)
                 {
                     Category = "Task End Day",
                     XLabel = "Days",
                     ValueFormatter = x => $"Day {x:N0}"
                 };
-                ProbabilityItems.Add(data);
-                task.SimulatedData.MedianEnd = data.MedianValue;
-                task.SimulatedData.HighEnd = data.UpperConfidence;
-                task.SimulatedData.LowEnd = data.LowerConfidence;
+                addResultDistribution(data);
+                taskSimulationData[task.Id].MedianEnd = data.MedianValue;
+                taskSimulationData[task.Id].HighEnd = data.UpperConfidence;
+                taskSimulationData[task.Id].LowEnd = data.LowerConfidence;
+            }
+
+            clock.Stop();
+
+            // If we've been invalidated, we exit here
+            if (!_isValid)
+            {
+                return;
             }
 
             // Set simulated data
             this.Parent.Project.IsSimulationDataValid = true;
 
-            clock.Stop();
+            // Add the probability items
+            this.ProbabilityItems.Clear();
+            foreach (var probabilityDensityData in resultDistributions)
+            {
+                this.ProbabilityItems.Add(probabilityDensityData);
+            }
+
+            // Set the simulated task data
+            foreach (var simData in taskSimulationData)
+            {
+                var task = this.Parent.Project.GetTaskById(simData.Key);
+                task.SimulatedData = simData.Value;
+            }
+
             this.SimulationTime = clock.Elapsed.TotalSeconds;
             this.SimulationComplete?.Invoke(this, EventArgs.Empty);
         }

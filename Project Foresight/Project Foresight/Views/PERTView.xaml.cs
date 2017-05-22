@@ -324,11 +324,6 @@ namespace Project_Foresight.Views
                     this.IsRadialMenuOpen = false;
             }
 
-            if (e.MiddleButton == MouseButtonState.Pressed)
-            {
-                this._dragStartShift = new Point(this.ShiftX, this.ShiftY);
-                this._dragStartMouse = e.GetPosition(this.ViewArea);
-            }
 
             if (e.RightButton == MouseButtonState.Pressed)
             {
@@ -384,6 +379,14 @@ namespace Project_Foresight.Views
 
         private void ViewAreaPreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
+            if (e.MiddleButton == MouseButtonState.Pressed)
+            {
+                this._dragStartShift = new Point(this.ShiftX, this.ShiftY);
+                this._dragStartMouse = e.GetPosition(this.ViewArea);
+                e.Handled = true;
+            }
+
+
             if (e.LeftButton != MouseButtonState.Pressed)
                 return;
 

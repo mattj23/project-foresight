@@ -54,6 +54,8 @@ namespace Project_Foresight.ViewModels
         public string FormattedLower => this.ValueFormatter(LowerConfidence);
         public string FormattedUpper => this.ValueFormatter(UpperConfidence);
 
+        public bool IsEmpty => this._rawData.Any(x => Math.Abs(x) > 0.0001);
+
         public double MedianValue
         {
             get { return _medianValue; }

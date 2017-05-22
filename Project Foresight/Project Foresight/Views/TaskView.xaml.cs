@@ -93,11 +93,6 @@ namespace Project_Foresight.Views
             DelayedAction.Execute(textBox.SelectAll, 50);
         }
 
-        private void AddResourceOnClick(object sender, RoutedEventArgs e)
-        {
-            this.IsSelectingResource = !this.IsSelectingResource;
-            this.BringToFront();
-        }
 
         private void SelectorDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -134,12 +129,24 @@ namespace Project_Foresight.Views
 
         private void CategoryEditOnMouseDown(object sender, MouseButtonEventArgs e)
         {
-            this.IsEditingCategory = false;
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                this.IsEditingCategory = false;
 
-            var category = (CategoryViewModel) ((Border) sender).Tag;
-            this.ViewModel.Category = category;
-            e.Handled = true;
+                var category = (CategoryViewModel) ((Border) sender).Tag;
+                this.ViewModel.Category = category;
+                e.Handled = true;
+            }
 
+        }
+
+        private void AddResourceOnClick(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                this.IsSelectingResource = !this.IsSelectingResource;
+                this.BringToFront();
+            }
         }
     }
 }
