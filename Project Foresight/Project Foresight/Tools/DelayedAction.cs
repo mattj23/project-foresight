@@ -4,27 +4,48 @@ using System.Windows.Threading;
 
 namespace Project_Foresight.Tools
 {
-    public static class DelayedAction
+    public class DelayedAction
     {
-        public static void Execute(Action action, TimeSpan delay)
+        public static DelayedAction Execute(Action action, TimeSpan delay)
         {
-            var timer = new DispatcherTimer
-            {
-                Interval = delay
-            };
+            var item = new DelayedAction(action, delay);
+            item.Reset();
+            return item;
+        }
 
-            timer.Tick += (sender, args) =>
+        public static DelayedAction Execute(Action action, int milliseconds)
+        {
+            return DelayedAction.Execute(action, new TimeSpan(0, 0, 0, 0, milliseconds));
+        }
+
+        private Action _action;
+        private TimeSpan _delay;
+        private readonly DispatcherTimer _timer;
+
+        public DelayedAction(Action action, TimeSpan delay)
+        {
+            _action = action;
+            _delay = delay;
+            _timer = new DispatcherTimer {Interval = delay};
+
+            _timer.Tick += (sender, args) =>
             {
                 action.Invoke();
-                timer.Stop();
+                _timer.Stop();
             };
 
-            timer.Start();
+            
         }
 
-        public static void Execute(Action action, int milliseconds)
+        public void Reset()
         {
-            DelayedAction.Execute(action, new TimeSpan(0, 0, 0, 0, milliseconds));
+            _timer.Start();
         }
+
+        public void Stop()
+        {
+            _timer.Stop();
+        }
+
     }
 }

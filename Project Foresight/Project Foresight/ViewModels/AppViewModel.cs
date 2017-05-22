@@ -72,6 +72,9 @@ namespace Project_Foresight.ViewModels
         private List<SerializableProjectViewModel> _undoChain;
         private SerializableProjectViewModel _lastProjectState;
 
+        private DelayedAction _autoSimulationAction;
+        private bool _isAutoSimulateOn = false;
+
         public AppViewModel()
         {
             this.LoadedProjectPath = "";
@@ -96,6 +99,7 @@ namespace Project_Foresight.ViewModels
         private void SimulationToolOnSimulationComplete(object sender, EventArgs eventArgs)
         {
             this.AddNotification($"Monte-Carlo simulation completed in {SimulationTool.SimulationTime:N1} seconds", 3, new SolidColorBrush(Colors.Yellow));
+            this._isAutoSimulateOn = true;
         }
 
         public void AddNotification(string message, double displaySeconds, SolidColorBrush brush = null)
@@ -159,6 +163,7 @@ namespace Project_Foresight.ViewModels
 
             if (dialog.ShowDialog() == true)
             {
+                this._isAutoSimulateOn = false;
                 this.LoadedProjectPath = dialog.FileName;
                 var text = File.ReadAllText(this.LoadedProjectPath);
                 var working = JsonConvert.DeserializeObject<SerializableProjectViewModel>(text);
@@ -202,8 +207,19 @@ namespace Project_Foresight.ViewModels
         private void ProjectOnSimulationInvalidated(object sender, EventArgs eventArgs)
         {
             this.SimulationTool.Invalidate();
+            this.StartAutosimulateCountdown();
         }
 
+        private void StartAutosimulateCountdown()
+        {
+            if (_isAutoSimulateOn)
+            {
+                if (_autoSimulationAction == null)
+                    _autoSimulationAction = DelayedAction.Execute(this.SimulationTool.RunMonteCarloSimulation, TimeSpan.FromSeconds(5));
+
+                _autoSimulationAction.Reset();
+            }
+        }
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

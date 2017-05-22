@@ -162,7 +162,10 @@ namespace Project_Foresight.ViewModels
             var categories = new HashSet<string>(_workingProject.FixedCosts.Select(x => x.Category));
             var fixedCostsByCategory = categories.ToDictionary(category => category, category => new double[this.IterationCount]);
 
-            Parallel.For(0, IterationCount, i =>
+            var options = new ParallelOptions();
+            options.MaxDegreeOfParallelism = -1;
+
+            Parallel.For(0, IterationCount, options, i =>
             {
                 var simulator = new ProjectSimulator(_workingProject);
                 var result = simulator.Simulate();
