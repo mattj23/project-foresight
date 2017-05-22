@@ -60,7 +60,7 @@
         
         <!-- Data contents border -->
         <Border CornerRadius="5"
-                Background="WhiteSmoke"
+                Background="{Binding ViewModel.Category.Background}"
                 Margin="10"
                 Padding="5">
             <!--
@@ -184,6 +184,7 @@
             </Grid>
         </Border>
 
+        <!-- Pop-up add resource button -->
         <Border BorderThickness="3"
                 BorderBrush="Black"
                 CornerRadius="5"
@@ -214,14 +215,79 @@
             </Border.RenderTransform>
         </Border>
 
+        <!-- Category border -->
+        <Border BorderThickness="3"
+                BorderBrush="Black"
+                CornerRadius="5"
+                Padding="3"
+                MouseDown="EditCategoryOnClick"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left">
+            <Border.RenderTransform>
+                <TranslateTransform X="-10"
+                                    Y="-15" />
+            </Border.RenderTransform>
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="{Binding ViewModel.Category.Background}" />
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ViewModel.IsMouseOver}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
 
-            <Border BorderThickness="3"
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Grid>
+
+                <!-- Display of category name -->
+                <TextBlock Margin="15 2"
+                           FontWeight="Bold"
+                           Text="{Binding ViewModel.Category.Name}" />
+
+                <!-- Category selection control -->
+                <ItemsControl ItemsSource="{Binding ViewModel.Parent.Organization.Categories}">
+                    <ItemsControl.Style>
+                        <Style TargetType="ItemsControl">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsEditingCategory}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ItemsControl.Style>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderThickness="1"
+                                    BorderBrush="Black"
+                                    MouseDown="CategoryEditOnMouseDown"
+                                    Tag="{Binding}"
+                                    Background="{Binding Background}">
+                                <TextBlock Text="{Binding Name}"
+                                           FontWeight="Bold"
+                                           Margin="10 5"></TextBlock>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </Border>
+        
+
+
+        <!-- Monte carlo start and end date -->
+        <Border BorderThickness="3"
                 BorderBrush="Black"
                 Background="Yellow"
                 CornerRadius="5"
                 Padding="3"
-                VerticalAlignment="Bottom"
+                VerticalAlignment="Top"
                 HorizontalAlignment="Right">
+            <Border.Effect>
+                <DropShadowEffect />
+            </Border.Effect>
             <Border.ToolTip>
                 The Monte-Carlo median start date and end date for this task.
             </Border.ToolTip>
@@ -235,23 +301,37 @@
                     </Style.Triggers>
                 </Style>
             </Border.Style>
+            
             <StackPanel Orientation="Horizontal">
-                <TextBlock Margin="2" 
+                <TextBlock Margin="2"
                            Text="{Binding ViewModel.SimulatedData.MedianStart}" />
                 <TextBlock Margin="2"
                            Text="->" />
-                <TextBlock Margin="2" 
+                <TextBlock Margin="2"
                            Text="{Binding ViewModel.SimulatedData.MedianEnd}" />
-                
+
             </StackPanel>
             <Border.RenderTransform>
-                <TranslateTransform X="10"
-                                    Y="5"></TranslateTransform>
+                <TranslateTransform X="30"
+                                    Y="-10" />
             </Border.RenderTransform>
         </Border>
+        
     </Grid>
     
 </UserControl>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
