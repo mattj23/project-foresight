@@ -9,19 +9,19 @@ using Project_Foresight.ViewModels;
 
 namespace Project_Foresight.Serialization
 {
-    public class SerializeableProjectViewModel
+    public class SerializableProjectViewModel
     {
-        public static SerializeableProjectViewModel FromProjectViewModel(ProjectViewModel viewModel)
+        public static SerializableProjectViewModel FromProjectViewModel(ProjectViewModel viewModel)
         {
-            var working = new SerializeableProjectViewModel
+            var working = new SerializableProjectViewModel
             {
                 Name = viewModel.Name,
                 Description = viewModel.Description,
-                Organization = SerializableOrganization.FromOrganization(viewModel.Organization.Model),
+                Organization = SerializableOrganizationViewModel.FromOrganizationViewModel(viewModel.Organization),
                 FixedCosts = viewModel.FixedCosts.Select(x => x.Model).ToList()
             };
 
-            working.Tasks = viewModel.Tasks.Select(x => SerializeablePertTask.FromPertTask(x.Model)).ToList();
+            working.Tasks = viewModel.Tasks.Select(x => SerializablePertTask.FromPertTask(x.Model)).ToList();
             working.TaskPositions = new Dictionary<Guid, Point>();
             foreach (var viewModelTask in viewModel.Tasks)
             {
@@ -31,17 +31,17 @@ namespace Project_Foresight.Serialization
             return working;
         }
 
-        public static ProjectViewModel ToProjectViewModel(SerializeableProjectViewModel working)
+        public static ProjectViewModel ToProjectViewModel(SerializableProjectViewModel working)
         {
             if (working.Organization == null)
             {
-                working.Organization = new SerializableOrganization();
+                working.Organization = new SerializableOrganizationViewModel();
             }
             var project = new ProjectViewModel
             {
                 Name = working.Name,
                 Description = working.Description,
-                Organization = new OrganizationViewModel(SerializableOrganization.ToOrganization(working.Organization))
+                Organization = SerializableOrganizationViewModel.ToOrganizationViewModel(working.Organization)
             };
             project.Model.Organization = project.Organization.Model;
 
@@ -52,13 +52,13 @@ namespace Project_Foresight.Serialization
                 project.FixedCosts.Add(new FixedCostViewModel(cost));
             }
 
-            foreach (SerializeablePertTask task in working.Tasks)
+            foreach (SerializablePertTask task in working.Tasks)
             {
-                project.AddTask(new TaskViewModel(SerializeablePertTask.ToUnlinkedPertTask(task)));
+                project.AddTask(new TaskViewModel(SerializablePertTask.ToUnlinkedPertTask(task)));
             }
 
             // Now go through each task and make the necessary links and linked attributes (like employees)
-            foreach (SerializeablePertTask serializeablePertTask in working.Tasks)
+            foreach (SerializablePertTask serializeablePertTask in working.Tasks)
             {
                 var actualTask = project.GetTaskById(serializeablePertTask.Id);
 
@@ -88,9 +88,9 @@ namespace Project_Foresight.Serialization
 
         public string Name { get; set; }
         public string Description { get; set; }
-        public SerializableOrganization Organization { get; set; }
+        public SerializableOrganizationViewModel Organization { get; set; }
 
-        public List<SerializeablePertTask> Tasks { get; set; }
+        public List<SerializablePertTask> Tasks { get; set; }
         public Dictionary<Guid, Point> TaskPositions { get; set; }
 
         public List<FixedCost> FixedCosts { get; set; }

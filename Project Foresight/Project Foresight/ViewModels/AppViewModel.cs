@@ -93,7 +93,7 @@ namespace Project_Foresight.ViewModels
             }
             else
             {
-                File.WriteAllText(this.LoadedProjectPath, JsonConvert.SerializeObject(SerializeableProjectViewModel.FromProjectViewModel(this.Project), Formatting.Indented));
+                File.WriteAllText(this.LoadedProjectPath, JsonConvert.SerializeObject(SerializableProjectViewModel.FromProjectViewModel(this.Project), Formatting.Indented));
                 this.AddNotification($"Saved project '{Path.GetFileName(this.LoadedProjectPath)}'", 5, new SolidColorBrush(Colors.Aqua));
 
             }
@@ -112,7 +112,7 @@ namespace Project_Foresight.ViewModels
             if (dialog.ShowDialog() == true)
             {
                 this.LoadedProjectPath = dialog.FileName;
-                File.WriteAllText(this.LoadedProjectPath, JsonConvert.SerializeObject(SerializeableProjectViewModel.FromProjectViewModel(this.Project), Formatting.Indented));
+                File.WriteAllText(this.LoadedProjectPath, JsonConvert.SerializeObject(SerializableProjectViewModel.FromProjectViewModel(this.Project), Formatting.Indented));
                 this.AddNotification($"Saved project '{Path.GetFileName(dialog.FileName)}'", 5, new SolidColorBrush(Colors.Aqua));
             }
 
@@ -131,8 +131,8 @@ namespace Project_Foresight.ViewModels
             {
                 this.LoadedProjectPath = dialog.FileName;
                 var text = File.ReadAllText(this.LoadedProjectPath);
-                var working = JsonConvert.DeserializeObject<SerializeableProjectViewModel>(text);
-                this.Project = SerializeableProjectViewModel.ToProjectViewModel(working);
+                var working = JsonConvert.DeserializeObject<SerializableProjectViewModel>(text);
+                this.Project = SerializableProjectViewModel.ToProjectViewModel(working);
                 this.AddNotification($"Opened project '{Path.GetFileName(dialog.FileName)}'", 5, new SolidColorBrush(Colors.LightGreen));
 
             }

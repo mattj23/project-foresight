@@ -42,6 +42,8 @@ namespace Project_Foresight.ViewModels
 
         public ObservableCollection<string> ResourceNames { get; set; }
 
+        public ObservableCollection<CategoryViewModel> Categories { get; set; }
+
         public OrganizationViewModel() : this(new Organization()) { }
 
         public OrganizationViewModel(Organization model)
@@ -51,6 +53,7 @@ namespace Project_Foresight.ViewModels
             this.ResourceGroups = new ObservableCollection<ResourceGroupViewModel>();
             this.ResourceNames = new ObservableCollection<string>();
             this.ResourceGroupNames = new ObservableCollection<string>();
+            this.Categories = new ObservableCollection<CategoryViewModel>();
 
             // Synchronize the employees and resource groups
             foreach (var modelResourceGroup in this.Model.ResourceGroups)

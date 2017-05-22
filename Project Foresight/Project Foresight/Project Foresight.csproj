@@ -74,10 +74,12 @@
     </ApplicationDefinition>
     <Compile Include="Converters\CenterConverter.cs" />
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="Serialization\SerializeableProjectViewModel.cs" />
+    <Compile Include="Serialization\SerializableOrganizationViewModel.cs" />
+    <Compile Include="Serialization\SerializableProjectViewModel.cs" />
     <Compile Include="Tools\DelayedAction.cs" />
     <Compile Include="Tools\RelayCommand.cs" />
     <Compile Include="ViewModels\AppViewModel.cs" />
+    <Compile Include="ViewModels\CategoryViewModel.cs" />
     <Compile Include="ViewModels\EmployeeViewModel.cs" />
     <Compile Include="ViewModels\EstimateViewModel.cs" />
     <Compile Include="ViewModels\FixedCostViewModel.cs" />

@@ -12,7 +12,7 @@ namespace Foresight.Serialization
 
         public SerializableOrganization Organization { get; set; }
 
-        public List<SerializeablePertTask> Tasks { get; set; }
+        public List<SerializablePertTask> Tasks { get; set; }
 
         public List<FixedCost> FixedCosts { get; set; }
 
@@ -22,7 +22,7 @@ namespace Foresight.Serialization
             {
                 Name = item.Name,
                 Description = item.Description,
-                Tasks = item.Tasks.Select(SerializeablePertTask.FromPertTask).ToList(),
+                Tasks = item.Tasks.Select(SerializablePertTask.FromPertTask).ToList(),
                 Organization = SerializableOrganization.FromOrganization(item.Organization),
                 FixedCosts = item.FixedCosts.ToList()
             };
@@ -44,7 +44,7 @@ namespace Foresight.Serialization
 
             // Add all the tasks to the project tasks, but without linking
             foreach (var serTask in item.Tasks)
-                working.AddTask(SerializeablePertTask.ToUnlinkedPertTask(serTask));
+                working.AddTask(SerializablePertTask.ToUnlinkedPertTask(serTask));
 
             // Now go through and link and add employees
             foreach (var serTask in item.Tasks)

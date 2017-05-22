@@ -23,6 +23,7 @@ namespace Project_Foresight.ViewModels
         private bool _isSelectedDescendant;
         private TaskSimulationData _simulatedData;
         private bool _isMouseOver;
+        private CategoryViewModel _category;
 
         #region View-related Properties
         public Point CenterPoint => new Point(this.X, this.Y);
@@ -139,6 +140,17 @@ namespace Project_Foresight.ViewModels
             set
             {
                 this._task.Description = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public CategoryViewModel Category
+        {
+            get { return _category; }
+            set
+            {
+                if (Equals(value, _category)) return;
+                _category = value;
                 OnPropertyChanged();
             }
         }

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Foresight.Serialization
 {
-    public class SerializeablePertTask
+    public class SerializablePertTask
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -17,9 +17,11 @@ namespace Foresight.Serialization
 
         public List<string> ResourceNames { get; set; }
 
-        public static SerializeablePertTask FromPertTask(PertTask item)
+        public string Category { get; set; }
+
+        public static SerializablePertTask FromPertTask(PertTask item)
         {
-            return new SerializeablePertTask
+            return new SerializablePertTask
             {
                 Name = item.Name,
                 Id = item.Id,
@@ -28,6 +30,7 @@ namespace Foresight.Serialization
                 Ancestors = item.Ancestors.Select(x => x.Id).ToList(),
                 Descendants = item.Descendants.Select(x => x.Id).ToList(),
                 ResourceNames = item.Resources.Select(x => x.Name).ToList(),
+                Category = item.Category
             };
 
         }
@@ -38,7 +41,7 @@ namespace Foresight.Serialization
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public static PertTask ToUnlinkedPertTask(SerializeablePertTask item)
+        public static PertTask ToUnlinkedPertTask(SerializablePertTask item)
         {
             var working = new PertTask
             {
@@ -46,7 +49,8 @@ namespace Foresight.Serialization
                 Id = item.Id,
                 Description = item.Description,
                 TimeEstimate = item.TimeEstimate,
-                Resources = new HashSet<IResource>()
+                Resources = new HashSet<IResource>(),
+                Category =  item.Category
             };
 
             if (working.TimeEstimate == null)

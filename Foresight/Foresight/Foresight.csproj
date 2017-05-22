@@ -61,7 +61,7 @@
     <Compile Include="Serialization\SerializableEmployee.cs" />
     <Compile Include="Serialization\SerializableOrganization.cs" />
     <Compile Include="Serialization\SerializableProject.cs" />
-    <Compile Include="Serialization\SerializeablePertTask.cs" />
+    <Compile Include="Serialization\SerializablePertTask.cs" />
     <Compile Include="Simulation\ProjectSimulator.cs" />
     <Compile Include="Simulation\WorkTimeUsage.cs" />
     <Compile Include="Simulation\SimulatedTaskData.cs" />
