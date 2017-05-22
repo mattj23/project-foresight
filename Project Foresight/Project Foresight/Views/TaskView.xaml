@@ -103,45 +103,44 @@
 
                 <!-- Time Estimate -->
                 <Grid Grid.Row="2">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Row="0"
-                               Grid.ColumnSpan="3"
-                               FontWeight="Black"
+                    <TextBlock FontWeight="Black"
+                               VerticalAlignment="Center"
                                Margin="5">
-                        Time Estimate (days)
+                        Time (d)
                     </TextBlock>
 
-                    <TextBox Grid.Row="1"
-                             Grid.Column="0"
+                    <TextBox Grid.Column="1"
+                             VerticalAlignment="Center"
                              Text="{Binding ViewModel.TimeEstimate.Min, StringFormat=N1}"
                              GotFocus="EditBoxGotFocus"
                              KeyDown="EditBoxKeyDown"
                              LostFocus="EditBoxLostFocus"
                              Style="{StaticResource HiddenEditField}"
                              HorizontalAlignment="Center"
+                             FontWeight="DemiBold"
                              TextAlignment="Center" />
-                    <TextBox Grid.Row="1"
-                             Grid.Column="1"
+                    <TextBox Grid.Column="2"
+                             VerticalAlignment="Center"
                              Text="{Binding ViewModel.TimeEstimate.Mode, StringFormat=N1}"
                              GotFocus="EditBoxGotFocus"
                              KeyDown="EditBoxKeyDown"
                              LostFocus="EditBoxLostFocus"
                              Style="{StaticResource HiddenEditField}"
+                             FontWeight="DemiBold"
                              HorizontalAlignment="Center"
                              TextAlignment="Center" />
-                    <TextBox Grid.Row="1"
-                             Grid.Column="2"
+                    <TextBox Grid.Column="3"
+                             VerticalAlignment="Center"
                              Text="{Binding ViewModel.TimeEstimate.Max, StringFormat=N1}"
                              GotFocus="EditBoxGotFocus"
+                             FontWeight="DemiBold"
                              KeyDown="EditBoxKeyDown"
                              LostFocus="EditBoxLostFocus"
                              Style="{StaticResource HiddenEditField}"
