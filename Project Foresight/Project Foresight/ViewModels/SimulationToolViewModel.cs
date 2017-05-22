@@ -92,15 +92,55 @@ namespace Project_Foresight.ViewModels
             _isValid = false;
         }
 
-        public void RunMonteCarloSimulation()
+        private class AsynchSimulationResult
         {
-            // Update this with a local deep copy
+            public List<ProbabilityDensityData> Distributions { get; set; }
+            public Dictionary<Guid, TaskSimulationData> TaskData { get; set; }
+        }
+
+        public async void RunMonteCarloSimulation()
+        {
             _isValid = true;
             _workingProject = this.Parent.Project.DeepCopy().Model;
 
             Stopwatch clock = new Stopwatch();
             clock.Start();
-            
+
+            var result = await Task.Run(() => this.ComputeSimulationResults());
+
+            clock.Stop();
+
+            // If we've been invalidated, we exit here
+            if (!_isValid)
+            {
+                return;
+            }
+
+            // Set simulated data
+            this.Parent.Project.IsSimulationDataValid = true;
+
+            // Add the probability items
+            this.ProbabilityItems.Clear();
+            foreach (var probabilityDensityData in result.Distributions)
+            {
+                probabilityDensityData.CreateChartCollection(); // This must be done on the UI thread, apparently
+                this.ProbabilityItems.Add(probabilityDensityData);
+            }
+
+            // Set the simulated task data
+            foreach (var simData in result.TaskData)
+            {
+                var task = this.Parent.Project.GetTaskById(simData.Key);
+                task.SimulatedData = simData.Value;
+            }
+
+            this.SimulationTime = clock.Elapsed.TotalSeconds;
+            this.SimulationComplete?.Invoke(this, EventArgs.Empty);
+        }
+
+
+        private AsynchSimulationResult ComputeSimulationResults()
+        {
             // These double arrays store the double floating point result value for the simulation iteration at
             // the index value.  These distributions are then analyzed as probability models.
             double[] completionTimes = new double[this.IterationCount];
@@ -162,14 +202,14 @@ namespace Project_Foresight.ViewModels
             // Lambda to make sure that the result distribution is only added if not empty
             var addResultDistribution = new Action<ProbabilityDensityData>(x =>
             {
-                if (!x.IsEmpty)
+                // if (!x.IsEmpty)
                     resultDistributions.Add(x);
             });
 
             // Main simulation results
             addResultDistribution(new ProbabilityDensityData(completionTimes, "Project Duration")
             {
-                XLabel =  "Days",
+                XLabel = "Days",
                 Category = "Main",
                 ValueFormatter = x => $"{x:N0} days"
             });
@@ -185,7 +225,7 @@ namespace Project_Foresight.ViewModels
                 Category = "Main",
                 ValueFormatter = x => (x > 1000) ? $"${x / 1000:N0}k" : x.ToString("C0")
             });
-            
+
             // Resource Committment results
             foreach (var resourceTimeData in resourceTime)
             {
@@ -243,36 +283,14 @@ namespace Project_Foresight.ViewModels
                 taskSimulationData[task.Id].LowEnd = data.LowerConfidence;
             }
 
-            clock.Stop();
-
-            // If we've been invalidated, we exit here
-            if (!_isValid)
+            return new AsynchSimulationResult
             {
-                return;
-            }
-
-            // Set simulated data
-            this.Parent.Project.IsSimulationDataValid = true;
-
-            // Add the probability items
-            this.ProbabilityItems.Clear();
-            foreach (var probabilityDensityData in resultDistributions)
-            {
-                this.ProbabilityItems.Add(probabilityDensityData);
-            }
-
-            // Set the simulated task data
-            foreach (var simData in taskSimulationData)
-            {
-                var task = this.Parent.Project.GetTaskById(simData.Key);
-                task.SimulatedData = simData.Value;
-            }
-
-            this.SimulationTime = clock.Elapsed.TotalSeconds;
-            this.SimulationComplete?.Invoke(this, EventArgs.Empty);
+                Distributions = resultDistributions,
+                TaskData = taskSimulationData
+            };
         }
 
-       
+
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

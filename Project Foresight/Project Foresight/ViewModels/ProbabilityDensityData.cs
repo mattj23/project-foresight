@@ -54,7 +54,7 @@ namespace Project_Foresight.ViewModels
         public string FormattedLower => this.ValueFormatter(LowerConfidence);
         public string FormattedUpper => this.ValueFormatter(UpperConfidence);
 
-        public bool IsEmpty => this._rawData.Any(x => Math.Abs(x) > 0.0001);
+        public bool IsEmpty => !this._rawData.All(x => Math.Abs(x) > 0.0001);
 
         public double MedianValue
         {
@@ -120,6 +120,7 @@ namespace Project_Foresight.ViewModels
         private double _lowerConfidence;
         private double _medianValue;
         private string _category;
+        private ChartValues<ObservablePoint> _chartValues;
 
         public ProbabilityDensityData(IEnumerable<double> rawData, string seriesTitle)
         {
@@ -142,22 +143,15 @@ namespace Project_Foresight.ViewModels
                 binWidth = 1;
 
             var histogram = new Histogram(_rawData, (binCount / binWidth) + 2, minValue - binWidth, maxValue + binWidth);
-            var chartValues = new ChartValues<ObservablePoint>();
+            _chartValues = new ChartValues<ObservablePoint>();
 
             for (int i = 0; i < histogram.BucketCount; i++)
             {
-                chartValues.Add(new ObservablePoint(
+                _chartValues.Add(new ObservablePoint(
                     (histogram[i].LowerBound + histogram[i].UpperBound) / 2.0,
                     histogram[i].Count / _rawData.Count));
             }
-            this.ChartCollection = new SeriesCollection
-            {
-                new LineSeries
-                {
-                    Title = SeriesTitle,
-                    Values = chartValues
-                }
-            };
+
 
             var dataArray = _rawData.ToArray();
             this.MedianValue = SortedArrayStatistics.Median(dataArray);
@@ -166,6 +160,18 @@ namespace Project_Foresight.ViewModels
             
             this.XMax = histogram.UpperBound;
             this.XMin = histogram.LowerBound;
+        }
+
+        public void CreateChartCollection()
+        {
+            this.ChartCollection = new SeriesCollection
+            {
+                new LineSeries
+                {
+                    Title = SeriesTitle,
+                    Values = _chartValues
+                }
+            };
         }
 
         [NotifyPropertyChangedInvocator]
