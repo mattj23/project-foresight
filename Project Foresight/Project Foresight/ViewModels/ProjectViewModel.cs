@@ -312,6 +312,11 @@ namespace Project_Foresight.ViewModels
                 this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        public ProjectViewModel DeepCopy()
+        {
+            return ProjectViewModel.DeepCopy(this);
+        }
+
         /// <summary>
         /// Create a deep copy of a ProjectViewModel, including new objects rather than links
         /// </summary>

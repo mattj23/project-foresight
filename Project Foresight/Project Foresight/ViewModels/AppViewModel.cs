@@ -31,17 +31,19 @@ namespace Project_Foresight.ViewModels
 
                 // Unlink the existing change event handler
                 if (_project != null)
+                {
                     _project.JournalDataChanged -= ProjectOnJournalDataChanged;
+                    _project.SimulationInvalidated -= ProjectOnSimulationInvalidated;
+                }
 
                 _project = value;
 
                 // Link the new object to the change handler
                 _project.JournalDataChanged += ProjectOnJournalDataChanged;
-
+                _project.SimulationInvalidated += ProjectOnSimulationInvalidated;
                 OnPropertyChanged();
             }
         }
-
 
         public string LoadedProjectPath
         {
@@ -189,6 +191,11 @@ namespace Project_Foresight.ViewModels
                 this.Project = SerializableProjectViewModel.ToProjectViewModel(_lastProjectState);
             }
 
+        }
+
+        private void ProjectOnSimulationInvalidated(object sender, EventArgs eventArgs)
+        {
+            this.SimulationTool.Invalidate();
         }
 
 

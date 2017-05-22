@@ -60,6 +60,10 @@ namespace Project_Foresight.ViewModels
             }
         }
 
+        // Multithreading and validation objects
+        private bool _isValid;
+        private Project _workingProject;
+
         // Chart Objects
         public ObservableCollection<ProbabilityDensityData> ProbabilityItems { get; set; }
 
@@ -81,10 +85,17 @@ namespace Project_Foresight.ViewModels
             this.ProbabilityItems = new ObservableCollection<ProbabilityDensityData>();
         }
 
+
+        public void Invalidate()
+        {
+            _isValid = false;
+        }
+
         public void RunMonteCarloSimulation()
         {
             // Update this with a local deep copy
-            Project workingProject = this.Parent.Project.Model;
+            _isValid = true;
+            _workingProject = this.Parent.Project.DeepCopy().Model;
 
             Stopwatch clock = new Stopwatch();
             clock.Start();
@@ -99,9 +110,9 @@ namespace Project_Foresight.ViewModels
             var fixedCostsByCategory = new Dictionary<string, double[]>();
 
             // Store the base project's fixed cost categories
-            var categories = new HashSet<string>(workingProject.FixedCosts.Select(x => x.Category));
+            var categories = new HashSet<string>(_workingProject.FixedCosts.Select(x => x.Category));
 
-            var simulator = new ProjectSimulator(workingProject);
+            var simulator = new ProjectSimulator(_workingProject);
             for (int i = 0; i < this.IterationCount; i++)
             {
                 var result = simulator.Simulate();
@@ -133,7 +144,7 @@ namespace Project_Foresight.ViewModels
                 foreach (string category in categories)
                 {
                     // Get the keys of the fixed costs in this category
-                    var keys = workingProject.FixedCosts.Where(x => x.Category == category).Select(x => x.Id).ToList();
+                    var keys = _workingProject.FixedCosts.Where(x => x.Category == category).Select(x => x.Id).ToList();
                     
                     // Get the total cost of these keys
                     double categoryCost = keys.Select(x => result.FixedCostValues[x]).Sum();
