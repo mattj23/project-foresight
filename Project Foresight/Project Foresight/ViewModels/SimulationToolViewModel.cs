@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Policy;
+using System.Threading.Tasks;
 using Foresight;
 using Foresight.Simulation;
 using LiveCharts;
@@ -100,42 +101,43 @@ namespace Project_Foresight.ViewModels
             Stopwatch clock = new Stopwatch();
             clock.Start();
             
+            // These double arrays store the double floating point result value for the simulation iteration at
+            // the index value.  These distributions are then analyzed as probability models.
             double[] completionTimes = new double[this.IterationCount];
             double[] resourceCosts = new double[this.IterationCount];
             double[] fixedCosts = new double[this.IterationCount];
 
-            var resourceTime = new Dictionary<string, double[]>();
-            var taskStartTimes = new Dictionary<Guid, double[]>();
-            var taskEndTimes = new Dictionary<Guid, double[]>();
-            var fixedCostsByCategory = new Dictionary<string, double[]>();
+            // The resourceTime dictionary has the employee names as the key and the time usage distribution 
+            // as the value.
+            var resourceTime = _workingProject.Organization.Employees.ToDictionary(organizationEmployee => organizationEmployee.Name, organizationEmployee => new double[IterationCount]);
 
-            // Store the base project's fixed cost categories
+            // The taskStartTimes dictionary has the task ID as the key and the starting time distribution as the value
+            var taskStartTimes = _workingProject.Tasks.ToDictionary(x => x.Id, x => new double[IterationCount]);
+
+            // The taskEndTimes dictionary has the task ID as the key and the task ending time distribution as the value
+            var taskEndTimes = _workingProject.Tasks.ToDictionary(x => x.Id, x => new double[IterationCount]);
+
+            // The fixedCostsByCategory dictionary has the fixed cost category name as the key and the category total cost
+            // distribution as the value
             var categories = new HashSet<string>(_workingProject.FixedCosts.Select(x => x.Category));
+            var fixedCostsByCategory = categories.ToDictionary(category => category, category => new double[this.IterationCount]);
 
             var simulator = new ProjectSimulator(_workingProject);
             for (int i = 0; i < this.IterationCount; i++)
             {
                 var result = simulator.Simulate();
+
                 completionTimes[i] = result.TotalCompletionDays;
                 resourceCosts[i] = result.TotalResourceCost();
 
                 // Aggregate the usage times for each resource, by name
                 foreach (string resourceName in result.ResourceUtilization.Keys)
-                {
-                    if (!resourceTime.ContainsKey(resourceName))
-                        resourceTime.Add(resourceName, new double[this.IterationCount]);
                     resourceTime[resourceName][i] = result.ResourceUtilization[resourceName].Select(x => x.Amount).Sum();
-                }
 
                 // Aggregate the distribution of start and end times for each task
                 foreach (var taskId in result.TaskStartTime.Keys)
                 {
-                    if (!taskStartTimes.ContainsKey(taskId))
-                        taskStartTimes.Add(taskId, new double[this.IterationCount]);
                     taskStartTimes[taskId][i] = result.TaskStartTime[taskId];
-
-                    if (!taskEndTimes.ContainsKey(taskId))
-                        taskEndTimes.Add(taskId, new double[this.IterationCount]);
                     taskEndTimes[taskId][i] = result.TaskEndTime[taskId];
                 }
 
@@ -149,14 +151,9 @@ namespace Project_Foresight.ViewModels
                     // Get the total cost of these keys
                     double categoryCost = keys.Select(x => result.FixedCostValues[x]).Sum();
                     totalFixedCost += categoryCost;
-
-                    if (!fixedCostsByCategory.ContainsKey(category))
-                        fixedCostsByCategory.Add(category, new double[this.IterationCount]);
-
                     fixedCostsByCategory[category][i] = categoryCost;
                 }
                 fixedCosts[i] = totalFixedCost;
-
             }
 
             ProbabilityItems.Clear();
