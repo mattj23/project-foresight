@@ -103,11 +103,6 @@ namespace Project_Foresight.Views
             this.IsSelectingResource = false;
         }
 
-        private void DeleteResourceOnClick(object sender, RoutedEventArgs e)
-        {
-            var resource = ((Button) sender).Tag as IResource;
-            this.ViewModel.Resources.Remove(resource);
-        }
 
         private void UserMouseControlExit(object sender, MouseEventArgs e)
         {
@@ -146,6 +141,15 @@ namespace Project_Foresight.Views
             {
                 this.IsSelectingResource = !this.IsSelectingResource;
                 this.BringToFront();
+            }
+        }
+
+        private void DeleteResourceButtonOnClick(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                var resource = ((Grid)sender).Tag as IResource;
+                this.ViewModel.Resources.Remove(resource);
             }
         }
     }

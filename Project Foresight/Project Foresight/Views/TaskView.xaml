@@ -154,14 +154,43 @@
                               ItemsSource="{Binding ViewModel.Resources}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <DockPanel>
-                                <Button DockPanel.Dock="Right"
-                                        Tag="{Binding}"
-                                        Click="DeleteResourceOnClick">
-                                    <TextBlock Text="-" Margin="5 -2" />
-                                </Button>
-                                <TextBlock Text="{Binding Name}"/>
-                            </DockPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Name}"
+                                           Margin="0 0 5 0"/>
+                                <Grid Tag="{Binding}"
+                                      MouseDown="DeleteResourceButtonOnClick">
+                                    <Grid.Style>
+                                        <Style TargetType="Grid">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ViewModel.IsMouseOver, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TaskView}}}"
+                                                             Value="True">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Grid.Style>
+                                    <Ellipse
+                                         Height="15"
+                                         Width="15"
+                                         Stroke="Black"
+                                         StrokeThickness="1"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                         Fill="Red">
+                                    </Ellipse>
+                                    <Line X1="0"
+                                          X2="10"
+                                          Y1="1"
+                                          Y2="1"
+                                          Stroke="White"
+                                          StrokeThickness="3"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"></Line>
+                                </Grid>
+                                
+                                
+                            </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
