@@ -41,6 +41,9 @@ namespace Project_Foresight.ViewModels
 
         public ObservableCollection<string> ResourceGroupNames { get; }
 
+        /// <summary>
+        /// All resource names, employees and groups
+        /// </summary>
         public ObservableCollection<string> ResourceNames { get; set; }
 
         public ObservableCollection<CategoryViewModel> Categories { get; set; }
@@ -115,7 +118,7 @@ namespace Project_Foresight.ViewModels
         /// <summary>
         /// Synchronize the Group names and all resource names
         /// </summary>
-        private void SynchResourceNames()
+        public void SynchResourceNames()
         {
             this.ResourceGroupNames.Clear();
             this.ResourceNames.Clear();
@@ -161,6 +164,7 @@ namespace Project_Foresight.ViewModels
                 }
             }
 
+            this.SynchResourceNames();
             this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
         }
 

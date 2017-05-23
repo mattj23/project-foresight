@@ -24,6 +24,7 @@ namespace Project_Foresight.Views
     /// </summary>
     public partial class TaskView : UserControl
     {
+        public event EventHandler<TaskViewModel> ResourceEditOnClick;
 
         public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
             "ViewModel", typeof(TaskViewModel), typeof(TaskView), new PropertyMetadata(default(TaskViewModel)));
@@ -139,8 +140,9 @@ namespace Project_Foresight.Views
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                this.IsSelectingResource = !this.IsSelectingResource;
+                this.ResourceEditOnClick?.Invoke(this, this.ViewModel);
                 this.BringToFront();
+                e.Handled = true;
             }
         }
 

@@ -85,6 +85,23 @@ namespace Project_Foresight.Views
         public static readonly DependencyProperty IsInTaskAddSplitModeProperty = DependencyProperty.Register(
             "IsInTaskAddSplitMode", typeof(bool), typeof(PERTView), new PropertyMetadata(default(bool)));
 
+        public static readonly DependencyProperty IsResourcePaneVisibleProperty = DependencyProperty.Register(
+            "IsResourcePaneVisible", typeof(bool), typeof(PERTView), new PropertyMetadata(default(bool)));
+
+        public static readonly DependencyProperty ResourcePanePointProperty = DependencyProperty.Register(
+            "ResourcePanePoint", typeof(Point), typeof(PERTView), new PropertyMetadata(default(Point)));
+
+        public Point ResourcePanePoint
+        {
+            get { return (Point) GetValue(ResourcePanePointProperty); }
+            set { SetValue(ResourcePanePointProperty, value); }
+        }
+
+        public bool IsResourcePaneVisible
+        {
+            get { return (bool) GetValue(IsResourcePaneVisibleProperty); }
+            set { SetValue(IsResourcePaneVisibleProperty, value); }
+        }
         public bool IsInTaskAddSplitMode
         {
             get { return (bool) GetValue(IsInTaskAddSplitModeProperty); }
@@ -186,6 +203,8 @@ namespace Project_Foresight.Views
             IsRadialMenuOpen = false;
             this.ToolTipText = "";
             this.LinkEditReset();
+            this.IsResourcePaneVisible = false;
+            this._resourceEditTask = null;
         });
         public ICommand ActivateNormalMode => new RelayCommand(() =>
         {
@@ -193,6 +212,8 @@ namespace Project_Foresight.Views
             this.IsRadialMenuOpen = false;
             this.LinkEditReset();
             this.ToolTipText = "";
+            this.IsResourcePaneVisible = false;
+            this._resourceEditTask = null;
         });
         public ICommand ActivateAddLinkMode => new RelayCommand(() =>
         {
@@ -200,6 +221,8 @@ namespace Project_Foresight.Views
             this.IsRadialMenuOpen = false;
             this.ToolTipText = "Click to add link";
             this.LinkEditReset();
+            this.IsResourcePaneVisible = false;
+            this._resourceEditTask = null;
         });
         public ICommand ActivateRemoveLinkMode => new RelayCommand(() => 
         {
@@ -208,6 +231,8 @@ namespace Project_Foresight.Views
             this.IsRadialMenuOpen = false;
             this.ToolTipText = "Click to remove link";
             this.LinkEditReset();
+            this.IsResourcePaneVisible = false;
+            this._resourceEditTask = null;
 
         });
         public ICommand ActivateAddTaskMode => new RelayCommand(() =>
@@ -217,6 +242,8 @@ namespace Project_Foresight.Views
             this.LinkEditReset();
             this.ToolTipText = "Click to place new task";
             this.IsInTaskAddSplitMode = false;
+            this.IsResourcePaneVisible = false;
+            this._resourceEditTask = null;
         });
         public ICommand ActivateRemoveTaskMode => new RelayCommand(() =>
         {
@@ -224,6 +251,8 @@ namespace Project_Foresight.Views
             this.IsRadialMenuOpen = false;
             this.ToolTipText = "Click to remove task";
             this.LinkEditReset();
+            this.IsResourcePaneVisible = false;
+            this._resourceEditTask = null;
         });
 
         private double _minZoom = 0.1;
@@ -232,6 +261,7 @@ namespace Project_Foresight.Views
         private Point _taskDragStartPoint;
         private Dictionary<Guid, Point> _relativeDragPoints;
         private TaskViewModel _dragTask;
+        private TaskViewModel _resourceEditTask;
 
         public PERTView()
         {
@@ -324,6 +354,11 @@ namespace Project_Foresight.Views
                     this.IsRadialMenuOpen = false;
             }
 
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                this.IsResourcePaneVisible = false;
+                this._resourceEditTask = null;
+            }
 
             if (e.RightButton == MouseButtonState.Pressed)
             {
@@ -587,6 +622,27 @@ namespace Project_Foresight.Views
                 this.LinkEditReset();
             }
             
+        }
+
+        private void TaskView_OnResourceEditOnClick(object sender, TaskViewModel e)
+        {
+            this.IsResourcePaneVisible = true;
+            this._resourceEditTask = e;
+            this.ResourcePanePoint = CanvasMousePoint;
+        }
+
+        private void ResourceTaskOnClick(object sender, RoutedEventArgs e)
+        {
+            string resourceName = ((Button) sender).Tag as string;
+            var resource = this.ViewModel.Organization.FindResourceByName(resourceName);
+            if (resource != null)
+            {
+                if (!this._resourceEditTask.Resources.Contains(resource))
+                    this._resourceEditTask.Resources.Add(resource);
+            }
+
+            this._resourceEditTask = null;
+            this.IsResourcePaneVisible = false;
         }
     }
 }

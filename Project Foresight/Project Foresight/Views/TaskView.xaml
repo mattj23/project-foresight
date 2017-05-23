@@ -188,27 +188,12 @@
                                           HorizontalAlignment="Center"
                                           VerticalAlignment="Center"></Line>
                                 </Grid>
-                                
-                                
+
+
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-
-                <ListBox Grid.Row="4"
-                         ItemsSource="{Binding ViewModel.Parent.Organization.ResourceNames}"
-                         MouseDoubleClick="SelectorDoubleClick">
-                    <ListBox.Style>
-                        <Style TargetType="ListBox">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsSelectingResource}" Value="True">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ListBox.Style>
-                </ListBox>
 
             </Grid>
         </Border>
