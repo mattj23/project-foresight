@@ -39,7 +39,6 @@ namespace Project_Foresight.ViewModels
         public ObservableCollection<EmployeeViewModel> Employees { get; }
         public ObservableCollection<ResourceGroupViewModel> ResourceGroups { get; }
 
-        public ObservableCollection<string> ResourceGroupNames { get; }
 
         /// <summary>
         /// All resource names, employees and groups
@@ -56,7 +55,6 @@ namespace Project_Foresight.ViewModels
             this.Employees = new ObservableCollection<EmployeeViewModel>();
             this.ResourceGroups = new ObservableCollection<ResourceGroupViewModel>();
             this.ResourceNames = new ObservableCollection<string>();
-            this.ResourceGroupNames = new ObservableCollection<string>();
             this.Categories = new ObservableCollection<CategoryViewModel>();
 
             // Synchronize the employees and resource groups
@@ -65,108 +63,34 @@ namespace Project_Foresight.ViewModels
 
             foreach (var employeeModel in this.Model.Employees)
             {
-                var newEmployee = new EmployeeViewModel(employeeModel);
+                var newEmployee = new EmployeeViewModel(employeeModel, this.ResourceGroups);
                 this.Employees.Add(newEmployee);
-                newEmployee.PropertyChanged += EmployeeOnPropertyChanged;
             }
 
-            // Subscribe to the ObservableCollection to keep the model synchronized
-            this.Employees.CollectionChanged += EmployeesOnCollectionChanged;
-            this.ResourceGroups.CollectionChanged += ResourceGroupsOnCollectionChanged;
-            this.SynchResourceNames();
+            // Subscribe to the ObservableCollection to keep the resource names synchronized
+            this.ResourceGroups.CollectionChanged += SynchronizeCollections;
+            this.Employees.CollectionChanged += SynchronizeCollections;
+            this.SynchronizeCollections(null, null);
         }
 
-
-        private void EmployeeOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void SynchronizeCollections(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.PropertyName == "ResourceGroupName")
+            //var all = this.ResourceGroups.Select(x => x.Name).Concat(this.Employees.Select(x => x.Name)).ToArray();
+            var all = this.Employees.Select(x => x.Name).ToArray();
+            var remove = this.ResourceNames.Where(ex => !all.Contains(ex)).ToArray();
+            foreach (var s in remove)
             {
-                var employeeViewModel = sender as EmployeeViewModel;
-                employeeViewModel.Group =
-                    this.ResourceGroups.FirstOrDefault(x => x.Name == employeeViewModel.ResourceGroupName);
+                this.ResourceNames.Remove(s);
             }
 
-            this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
+            var missing = all.Where(a => !this.ResourceNames.Contains(a)).ToArray();
+            foreach (var s in missing)
+            {
+                this.ResourceNames.Add(s);
+            }
+
         }
 
-
-        private void ResourceGroupsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs n)
-        {
-            if (n.NewItems != null)
-            {
-                foreach (object newItem in n.NewItems)
-                {
-                    this.Model.ResourceGroups.Add((newItem as ResourceGroupViewModel).Model);
-                }
-            }
-
-            if (n.OldItems != null)
-            {
-                foreach (object oldItem in n.OldItems)
-                {
-                    if (!this.ResourceGroups.Contains(oldItem as ResourceGroupViewModel))
-                    {
-                        this.Model.ResourceGroups.Remove((oldItem as ResourceGroupViewModel).Model);
-                    }
-                }
-            }
-
-            this.SynchResourceNames();
-            this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// Synchronize the Group names and all resource names
-        /// </summary>
-        public void SynchResourceNames()
-        {
-            this.ResourceGroupNames.Clear();
-            this.ResourceNames.Clear();
-
-            var sortedResourceGroupNames = this.ResourceGroups.Select(x => x.Name).ToList();
-            var sortedResourceNames =
-                sortedResourceGroupNames.Concat(this.Employees.Select(x => x.Name).ToList()).ToList();
-            sortedResourceNames.Sort();
-            sortedResourceGroupNames.Sort();
-            foreach (var name in sortedResourceGroupNames)
-            {
-                this.ResourceGroupNames.Add(name);
-            }
-
-            foreach (var name in sortedResourceNames)
-            {
-                this.ResourceNames.Add(name);
-            }
-        }
-
-        private void EmployeesOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs n)
-        {
-            if (n.NewItems != null)
-            {
-                foreach (object newItem in n.NewItems)
-                {
-                    var employeeViewModel = (EmployeeViewModel) newItem;
-                    this.Model.Employees.Add(employeeViewModel.Model);
-                    employeeViewModel.PropertyChanged += EmployeeOnPropertyChanged;
-                }
-            }
-
-            if (n.OldItems != null)
-            {
-                foreach (object oldItem in n.OldItems)
-                {
-                    if (!this.Employees.Contains(oldItem as EmployeeViewModel))
-                    {
-                        var oldViewModel = oldItem as EmployeeViewModel;
-                        oldViewModel.PropertyChanged -= EmployeeOnPropertyChanged;
-                        this.Model.Employees.Remove(oldViewModel.Model);
-                    }
-                }
-            }
-
-            this.SynchResourceNames();
-            this.JournalDataChanged?.Invoke(this, EventArgs.Empty);
-        }
 
         public IResource FindResourceByName(string name)
         {

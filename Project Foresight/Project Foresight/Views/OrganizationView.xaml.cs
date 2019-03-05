@@ -92,7 +92,7 @@ namespace Project_Foresight.Views
 
         private void AddEmployeeClick(object sender, RoutedEventArgs e)
         {
-            this.ViewModel.Employees.Add(new EmployeeViewModel());
+            this.ViewModel.Employees.Add(new EmployeeViewModel(this.ViewModel.ResourceGroups));
         }
 
         private void DeleteResourceGroupClick(object sender, RoutedEventArgs e)

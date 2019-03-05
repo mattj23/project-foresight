@@ -8,7 +8,6 @@
              d:DesignHeight="700" d:DesignWidth="400">
     <Grid DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:OrganizationView}}}">
         <Grid.Resources>
-            <CollectionViewSource x:Key="ResourceGroups" Source="{Binding ViewModel.ResourceGroupNames}" />
             <CollectionViewSource x:Key="WindowsColorNames" Source="{Binding ColorNames}" />
         </Grid.Resources>
         <Grid.RowDefinitions>
@@ -53,11 +52,13 @@
 
             <TextBox Grid.Row="0"
                      Grid.Column="1"
+                     VerticalContentAlignment="Center"
                      Text="{Binding ViewModel.Name}" />
 
             <TextBox Grid.Row="1"
                      Grid.Column="1"
                      TextWrapping="Wrap"
+                     VerticalContentAlignment="Center"
                      Text="{Binding ViewModel.Description}" />
         </Grid>
         
@@ -74,6 +75,7 @@
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
                   Margin="5 0"
+                  VerticalContentAlignment="Center"
                   MinHeight="100"
                   MaxHeight="400">
             <DataGrid.Columns>
@@ -113,9 +115,20 @@
                   MaxHeight="400">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
-                <DataGridComboBoxColumn Header="Resource Type"
-                                        SelectedValueBinding="{Binding ResourceGroupName, UpdateSourceTrigger=PropertyChanged}"
-                                        ItemsSource="{Binding Source={StaticResource ResourceGroups}}" />
+                <DataGridTemplateColumn Header="Resource Type">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding ResourceGroups}"
+                                      SelectedItem="{Binding Group, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 
             </DataGrid.Columns>
         </DataGrid>

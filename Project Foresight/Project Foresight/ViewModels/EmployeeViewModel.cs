@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Foresight;
 using Project_Foresight.Annotations;
@@ -8,11 +9,11 @@ namespace Project_Foresight.ViewModels
     public class EmployeeViewModel : INotifyPropertyChanged, IResource
     {
         private ResourceGroupViewModel _group;
-        private string _resourceGroupName;
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Employee Model { get; }
 
+        public ObservableCollection<ResourceGroupViewModel> ResourceGroups { get; }
 
         public string Name
         {
@@ -29,7 +30,7 @@ namespace Project_Foresight.ViewModels
 
         public ResourceGroupViewModel Group
         {
-            get { return _group; }
+            get => _group;
             set
             {
                 if (Equals(value, _group)) return;
@@ -40,32 +41,23 @@ namespace Project_Foresight.ViewModels
             }
         }
 
-        public string ResourceGroupName
-        {
-            get { return _resourceGroupName; }
-            set
-            {
-                if (value == _resourceGroupName) return;
-                _resourceGroupName = value;
-                OnPropertyChanged();
-            }
-        }
 
         public double Rate => this.Model.Rate;
 
         public int Available => this.Model.Available;
 
-        public EmployeeViewModel()
+        public EmployeeViewModel(ObservableCollection<ResourceGroupViewModel> resourceGroups)
         {
+            ResourceGroups = resourceGroups;
             this.Model = new Employee();
             this.Group = new ResourceGroupViewModel();
         }
 
-        public EmployeeViewModel(Employee model)
+        public EmployeeViewModel(Employee model, ObservableCollection<ResourceGroupViewModel> resourceGroups)
         {
             this.Model = model;
+            ResourceGroups = resourceGroups;
             this.Group = new ResourceGroupViewModel(model.Group);
-            this.ResourceGroupName = this.Group.Name;
         }
 
         [NotifyPropertyChangedInvocator]

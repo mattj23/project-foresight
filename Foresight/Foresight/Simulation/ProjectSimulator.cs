@@ -85,6 +85,7 @@ namespace Foresight.Simulation
                     resources.Add(employeeResource.Name, 1.0);
                 }
                 //TODO: Add base resource groups
+                
 
                 // Current schedule prioritization: first, the most resources necessary
                 // Second, the longest critical path

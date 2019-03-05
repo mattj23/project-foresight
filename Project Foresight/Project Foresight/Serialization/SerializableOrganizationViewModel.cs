@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Foresight;
 using Foresight.Serialization;
 using Project_Foresight.ViewModels;
@@ -44,11 +45,13 @@ namespace Project_Foresight.Serialization
 
             foreach (SerializableEmployee serializableEmployee in item.Employees)
             {
-                working.Employees.Add(new EmployeeViewModel()
+                var model = new Employee();
+                working.Model.Employees.Add(model);
+
+                working.Employees.Add(new EmployeeViewModel(model, working.ResourceGroups)
                 {
                     Name = serializableEmployee.Name,
                     Group = working.ResourceGroups.FirstOrDefault(x => x.Name == serializableEmployee.ResourceGroupName),
-                    ResourceGroupName = serializableEmployee.ResourceGroupName
                 });
             }
 
